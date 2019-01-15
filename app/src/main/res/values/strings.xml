@@ -1,0 +1,34 @@
+<resources>
+    <string name="app_name">Primal Fitness</string>
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
+    <string name="title_first_name">First Name:</string>
+    <string name="title_surname">Surname:</string>
+    <string name="title_email_address">Email Address:</string>
+    <string name="title_password">Password:</string>
+    <string name="title_password_confirm">Confirm Password:</string>
+    <string name="title_user_type">Type:</string>
+    <string name="title_submit">Submit</string>
+    <string name="title_login">Sign In</string>
+    <string name="title_Register">Register</string>
+    <string name="title_username">Username:</string>
+    <string name="placeholder">Li Europan lingues es membres del sam familie.
+        Lor separat existentie es un myth. Por scientie, musica, sport etc, litot
+        Europa usa li sam vocabular. Li lingues differe solmen in li grammatica,
+        li pronunciation e li plu commun vocabules. Omnicos directe al desirabilite
+        de un nov lingua franca: On refusa continuar payar custosi traductores. At
+        solmen va esser necessi far uniform grammatica, pronunciation e plu commun paroles.</string>
+
+    <string-array name="user_type_array">
+        <item>Coach</item>
+        <item>Athlete</item>
+        <item>Standard</item>
+    </string-array>
+    <string name="title_activity_navigation">NavigationActivity</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+
+</resources>
