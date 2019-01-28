@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -34,25 +35,31 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     }
     @Override
     public void onClick(View v) {
-        if(v.equals(signIn)) {
-            String username = emailAddress.getText().toString();
-            String password = passwordLogin.getText().toString();
-            String type = "login";
-            try {
-                password = AESCrypt.encrypt(password);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            BackgroundWorker backgroundWorker = new BackgroundWorker(this);
-            backgroundWorker.execute(type, username, password);
-        }else if(v.equals(register)){
-            Intent in = new Intent(this, RegisterActivity.class);
-            startActivity(in);
-            LoginActivity.this.finish();
-        } else if(v.equals(test)){
-            Intent in = new Intent(this, NavigationActivity.class);
-            startActivity(in);
-            LoginActivity.this.finish();
+        switch(v.getId()){
+
+            case R.id.test:
+                startActivity (new Intent(this, NavigationActivity.class));
+                LoginActivity.this.finish();
+            break;
+
+            case R.id.register:
+                startActivity(new Intent(this, RegisterActivity.class));
+                LoginActivity.this.finish();
+            break;
+
+            case R.id.signIn:
+                String username = emailAddress.getText().toString();
+                String password = passwordLogin.getText().toString();
+                String type = "login";
+                try {
+                    password = AESCrypt.encrypt(password);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                BackgroundWorker backgroundWorker = new BackgroundWorker(this);
+                backgroundWorker.execute(type, username, password);
+            break;
+
         }
     }
 }

@@ -10,6 +10,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -17,7 +18,7 @@ import android.widget.Toast;
 
 public class NavigationActivity extends AppCompatActivity {
     private TabLayout mTabLayout;
-    private ImageView fitness;
+
 
     private int[] mTabsIcons = {
             R.drawable.ic_home_black_24dp,
@@ -50,6 +51,7 @@ public class NavigationActivity extends AppCompatActivity {
         }
 
     }
+
 
     private class MyPagerAdapter extends FragmentPagerAdapter {
 

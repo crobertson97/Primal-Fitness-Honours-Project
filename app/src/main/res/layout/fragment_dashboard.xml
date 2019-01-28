@@ -5,24 +5,27 @@
     android:layout_height="match_parent"
     tools:context="com.example.crobe.primalfitness.DashboardFragment">
 
-    <!-- TODO: Update blank fragment layout -->
+    <!-- TODO: Update blank fragment layout
+    android:background="@drawable/clipart41263" -->
 
     <android.support.constraint.ConstraintLayout
         android:id="@+id/gridLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <ImageView
+        <Button
             android:id="@+id/fitnessImage"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_marginBottom="6dp"
             android:layout_marginTop="16dp"
-            android:src="@drawable/clipart41263"
+
+            android:text="Click Me Hoe"
             app:layout_constraintBottom_toTopOf="@+id/fitnessLabel"
             app:layout_constraintEnd_toEndOf="@+id/imageView15"
             app:layout_constraintStart_toStartOf="@+id/imageView15"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Click Me Hoe" />
 
         <ImageView
             android:id="@+id/imageView8"
