@@ -49,12 +49,6 @@ public class NavigationActivity extends AppCompatActivity {
             mTabLayout.getTabAt(0).getCustomView().setSelected(true);
         }
 
-        ImageView img = (ImageView) findViewById(R.id.fitnessImage);
-        img.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                System.out.println("No");
-            }
-        });
     }
 
     private class MyPagerAdapter extends FragmentPagerAdapter {
