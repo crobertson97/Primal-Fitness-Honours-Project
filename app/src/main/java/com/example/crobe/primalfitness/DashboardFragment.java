@@ -45,10 +45,10 @@ public class DashboardFragment extends Fragment implements OnClickListener {
                 startActivity(new Intent(getActivity(), PlansActivity.class));
                 break;
             case R.id.fitnessImage:
-                Toast.makeText(getActivity(), "Yeah! Fitness my dude!", Toast.LENGTH_LONG).show();
+                startActivity(new Intent(getActivity(), FitnessActivity.class));
                 break;
             case R.id.nutritionImage:
-                Toast.makeText(getActivity(), "Yeah! Nutrition my dude!", Toast.LENGTH_LONG).show();
+                startActivity(new Intent(getActivity(), NutritionActivity.class));
                 break;
             case R.id.messageImage:
                 Toast.makeText(getActivity(), "Yeah! Messages my dude!", Toast.LENGTH_LONG).show();

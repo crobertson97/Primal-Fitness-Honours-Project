@@ -32,6 +32,8 @@
         <activity
             android:name=".PlansActivity"
             android:screenOrientation="portrait" />
+        <activity android:name=".NutritionActivity" />
+        <activity android:name=".FitnessActivity"></activity>
     </application>
 
 </manifest>
