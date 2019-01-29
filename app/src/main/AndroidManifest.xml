@@ -28,10 +28,10 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".NavigationActivity"
-            android:label="@string/title_activity_navigation" />
+            android:screenOrientation="portrait" />
         <activity
             android:name=".PlansActivity"
-            android:label="@string/title_activity_plans"></activity>
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>
