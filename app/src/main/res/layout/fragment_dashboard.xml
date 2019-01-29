@@ -1,116 +1,115 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.crobe.primalfitness.DashboardFragment">
+    tools:context=".DashboardFragment">
 
-    <!-- TODO: Update blank fragment layout
-    android:background="@drawable/clipart41263" -->
+    <!-- TODO: Update blank fragment layout -->
 
-    <android.support.constraint.ConstraintLayout
-        android:id="@+id/gridLayout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+    <ImageButton
+        android:id="@+id/plansImage"
+        android:layout_width="0dp"
+        android:layout_height="@android:dimen/thumbnail_height"
+        android:layout_marginEnd="11dp"
+        android:layout_marginLeft="208dp"
+        android:layout_marginRight="11dp"
+        android:layout_marginStart="208dp"
+        android:layout_marginTop="316dp"
+        android:background="@drawable/plans"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/messageImage"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-        <Button
-            android:id="@+id/fitnessImage"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_marginBottom="6dp"
-            android:layout_marginTop="16dp"
+    <TextView
+        android:id="@+id/nutritionLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="42dp"
+        android:layout_marginLeft="23dp"
+        android:layout_marginStart="23dp"
+        android:text="Nutrition"
+        android:textColor="@android:color/background_dark"
+        android:textSize="30sp"
+        app:layout_constraintBottom_toTopOf="@+id/messageImage"
+        app:layout_constraintStart_toStartOf="@+id/nutritionImage" />
 
-            android:text="Click Me Hoe"
-            app:layout_constraintBottom_toTopOf="@+id/fitnessLabel"
-            app:layout_constraintEnd_toEndOf="@+id/imageView15"
-            app:layout_constraintStart_toStartOf="@+id/imageView15"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:text="Click Me Hoe" />
+    <ImageButton
+        android:id="@+id/fitnessImage"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginEnd="11dp"
+        android:layout_marginRight="11dp"
+        android:background="@drawable/clipart41263"
+        app:layout_constraintBottom_toBottomOf="@+id/nutritionImage"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/nutritionImage"
+        app:layout_constraintTop_toTopOf="@+id/nutritionImage" />
 
-        <ImageView
-            android:id="@+id/imageView8"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:src="@drawable/download"
-            app:layout_constraintBottom_toBottomOf="@+id/fitnessImage"
-            app:layout_constraintEnd_toEndOf="@+id/imageView13"
-            app:layout_constraintStart_toStartOf="@+id/imageView13"
-            app:layout_constraintTop_toTopOf="@+id/fitnessImage"
-            tools:layout_conversion_absoluteHeight="192dp"
-            tools:layout_conversion_absoluteWidth="1015dp" />
+    <TextView
+        android:id="@+id/fitnessLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="39dp"
+        android:layout_marginStart="39dp"
+        android:layout_marginTop="17dp"
+        android:text="Fitness"
+        android:textColor="@android:color/background_dark"
+        android:textSize="30sp"
+        app:layout_constraintStart_toStartOf="@+id/fitnessImage"
+        app:layout_constraintTop_toBottomOf="@+id/fitnessImage" />
 
-        <ImageView
-            android:id="@+id/imageView13"
-            android:layout_width="@android:dimen/thumbnail_width"
-            android:layout_height="0dp"
-            android:layout_marginStart="16dp"
-            android:src="@drawable/messages"
-            app:layout_constraintBottom_toBottomOf="@+id/imageView15"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/imageView15" />
+    <ImageButton
+        android:id="@+id/nutritionImage"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="17dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="25dp"
+        android:background="@drawable/download"
+        app:layout_constraintBottom_toTopOf="@+id/nutritionLabel"
+        app:layout_constraintEnd_toStartOf="@+id/fitnessImage"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-        <ImageView
-            android:id="@+id/imageView15"
-            android:layout_width="@android:dimen/thumbnail_width"
-            android:layout_height="0dp"
-            android:layout_marginBottom="46dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginTop="62dp"
-            android:src="@drawable/plans"
-            app:layout_constraintBottom_toBottomOf="@+id/plansLabel"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/fitnessLabel" />
+    <TextView
+        android:id="@+id/messagesLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="14dp"
+        android:layout_marginStart="14dp"
+        android:layout_marginTop="10dp"
+        android:text="Messenger"
+        android:textColor="@android:color/background_dark"
+        android:textSize="30sp"
+        app:layout_constraintStart_toStartOf="@+id/messageImage"
+        app:layout_constraintTop_toBottomOf="@+id/messageImage" />
 
-        <TextView
-            android:id="@+id/nutritionLabel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="41dp"
-            android:layout_marginTop="6dp"
-            android:text="Nutrition"
-            android:textColor="@android:color/background_dark"
-            android:textSize="24sp"
-            app:layout_constraintStart_toStartOf="@+id/imageView8"
-            app:layout_constraintTop_toBottomOf="@+id/imageView8" />
+    <ImageButton
+        android:id="@+id/messageImage"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginStart="16dp"
+        android:background="@drawable/messages"
+        app:layout_constraintBottom_toBottomOf="@+id/plansImage"
+        app:layout_constraintEnd_toStartOf="@+id/plansImage"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/plansImage" />
 
-        <TextView
-            android:id="@+id/fitnessLabel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="54dp"
-            android:layout_marginStart="54dp"
-            android:layout_marginTop="214dp"
-            android:text="Fitness"
-            android:textColor="@android:color/background_dark"
-            android:textSize="24sp"
-            app:layout_constraintEnd_toEndOf="@+id/fitnessImage"
-            app:layout_constraintStart_toEndOf="@+id/imageView8"
-            app:layout_constraintTop_toTopOf="parent" />
+    <TextView
+        android:id="@+id/plansLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="Plans"
+        android:textColor="@android:color/background_dark"
+        android:textSize="30sp"
+        app:layout_constraintEnd_toEndOf="@+id/plansImage"
+        app:layout_constraintStart_toStartOf="@+id/plansImage"
+        app:layout_constraintTop_toBottomOf="@+id/plansImage" />
 
-        <TextView
-            android:id="@+id/messagesLabel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="30dp"
-            android:layout_marginTop="14dp"
-            android:text="Messanger"
-            android:textColor="@android:color/background_dark"
-            android:textSize="24sp"
-            app:layout_constraintStart_toStartOf="@+id/imageView13"
-            app:layout_constraintTop_toBottomOf="@+id/imageView13" />
 
-        <TextView
-            android:id="@+id/plansLabel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="180dp"
-            android:text="Plans"
-            android:textColor="@android:color/background_dark"
-            android:textSize="24sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="@+id/imageView15"
-            app:layout_constraintStart_toStartOf="@+id/imageView15" />
-
-    </android.support.constraint.ConstraintLayout>
-
-</FrameLayout>
+</android.support.constraint.ConstraintLayout>

@@ -2,12 +2,11 @@ package com.example.crobe.primalfitness;
 
 import android.content.Intent;
 import android.content.res.Configuration;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -39,12 +38,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
             case R.id.test:
                 startActivity (new Intent(this, NavigationActivity.class));
-                LoginActivity.this.finish();
             break;
 
             case R.id.register:
                 startActivity(new Intent(this, RegisterActivity.class));
-                LoginActivity.this.finish();
             break;
 
             case R.id.signIn:
