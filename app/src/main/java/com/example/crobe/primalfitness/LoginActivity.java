@@ -10,8 +10,8 @@ import android.widget.EditText;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
 
-    private Button signIn, register, test;
     public static EditText passwordLogin;
+    private Button signIn, register, test;
     private EditText emailAddress;
 
     @Override
@@ -26,23 +26,24 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         test.setOnClickListener(this);
         register = (Button) this.findViewById(R.id.register);
         register.setOnClickListener(this);
-        emailAddress = (EditText)findViewById(R.id.username);
+        emailAddress = (EditText) findViewById(R.id.username);
         emailAddress.setText("");
-        passwordLogin = (EditText)findViewById(R.id.password);
+        passwordLogin = (EditText) findViewById(R.id.password);
         passwordLogin.setText("");
 
     }
+
     @Override
     public void onClick(View v) {
-        switch(v.getId()){
+        switch (v.getId()) {
 
             case R.id.test:
-                startActivity (new Intent(this, NavigationActivity.class));
-            break;
+                startActivity(new Intent(this, NavigationActivity.class));
+                break;
 
             case R.id.register:
                 startActivity(new Intent(this, RegisterActivity.class));
-            break;
+                break;
 
             case R.id.signIn:
                 String username = emailAddress.getText().toString();
@@ -55,7 +56,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 }
                 BackgroundWorker backgroundWorker = new BackgroundWorker(this);
                 backgroundWorker.execute(type, username, password);
-            break;
+                break;
 
         }
     }

@@ -40,7 +40,7 @@ public class DashboardFragment extends Fragment implements OnClickListener {
     }
 
     public void onClick(View v) {
-        switch(v.getId()){
+        switch (v.getId()) {
             case R.id.plansImage:
                 startActivity(new Intent(getActivity(), PlansActivity.class));
                 break;

@@ -25,6 +25,7 @@
         </activity>
         <activity
             android:name=".RegisterActivity"
+            android:label="Register"
             android:screenOrientation="portrait" />
         <activity
             android:name=".NavigationActivity"
