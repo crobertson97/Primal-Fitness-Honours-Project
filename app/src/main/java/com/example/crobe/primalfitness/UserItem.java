@@ -53,7 +53,7 @@ public class UserItem {
         return mPassword;
     }
 
-    public final void setPassword(String mSurname) {
+    public final void setPassword(String mPassword) {
         this.mPassword = mPassword;
     }
 

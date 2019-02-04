@@ -103,9 +103,9 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
             refreshItemsFromTable();
         } catch (MalformedURLException e) {
-            createAndShowDialog(new Exception("There was an error creating the Mobile Service. Verify the URL"), "Error");
+            createAndShowDialog(new Exception("There was an error creating the Mobile Service. Verify the URL"), "Error at 106");
         } catch (Exception e) {
-            createAndShowDialog(e, "Error");
+            createAndShowDialog(e, "Error at 108");
         }
 
     }
@@ -171,13 +171,11 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
         // Create a new item
         final UserItem item = new UserItem();
-        String password_str = password.getText().toString();
 
-        item.setFirstName(firstName.getText().toString());
-        item.setSurname(surname.getText().toString());
-        item.setEmail(emailAddress.getText().toString());
-        item.setPassword(password.getText().toString());
         try {
+            item.setFirstName(AESCrypt.encrypt(firstName.getText().toString()));
+            item.setSurname(AESCrypt.encrypt(surname.getText().toString()));
+            item.setEmail(AESCrypt.encrypt(emailAddress.getText().toString()));
             item.setPassword(AESCrypt.encrypt(password.getText().toString()));
         } catch (Exception e) {
             e.printStackTrace();
@@ -191,23 +189,22 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                 try {
                     final UserItem entity = addItemInTable(item);
 
-//                    runOnUiThread(new Runnable() {
-//                        @Override
-//                        public void run() {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
 //                            if(!entity.isComplete()){
 //                                mAdapter.add(entity);
 //                            }
-//                        }
-//                    });
+                        }
+                    });
                 } catch (final Exception e) {
-                    createAndShowDialogFromTask(e, "Error");
+                    createAndShowDialogFromTask(e, "Error at 203");
                 }
                 return null;
             }
         };
 
         runAsyncTask(task);
-
     }
 
     private AsyncTask<Void, Void, Void> runAsyncTask(AsyncTask<Void, Void, Void> task) {
@@ -227,8 +224,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                createAndShowDialog(exception, "Error");
-                return;
+                createAndShowDialog(exception, "Error at 229");
             }
         });
     }
@@ -239,7 +235,6 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
             ex = exception.getCause();
         }
         createAndShowDialog(ex.getMessage(), title);
-        return;
     }
 
     private void createAndShowDialog(final String message, final String title) {
@@ -248,7 +243,6 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         builder.setMessage(message);
         builder.setTitle(title);
         builder.create().show();
-        return;
     }
 
     private AsyncTask<Void, Void, Void> initLocalStore() throws MobileServiceLocalStoreException, ExecutionException, InterruptedException {
@@ -279,7 +273,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
 
                 } catch (final Exception e) {
-                    createAndShowDialogFromTask(e, "Error");
+                    createAndShowDialogFromTask(e, "Error at 278");
                 }
 
                 return null;
@@ -302,7 +296,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                     final List<UserItem> results = refreshItemsFromMobileServiceTable();
 
                     //Offline Sync
-                    //final List<ToDoItem> results = refreshItemsFromMobileServiceTableSyncTable();
+                    //final List<UserItem> results = refreshItemsFromMobileServiceTableSyncTable();
 
                     runOnUiThread(new Runnable() {
                         @Override
@@ -315,7 +309,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                         }
                     });
                 } catch (final Exception e) {
-                    createAndShowDialogFromTask(e, "Error");
+                    createAndShowDialogFromTask(e, "Error at 314");
                 }
 
                 return null;
