@@ -173,10 +173,13 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         final UserItem item = new UserItem();
 
         try {
+
             item.setFirstName(AESCrypt.encrypt(firstName.getText().toString()));
             item.setSurname(AESCrypt.encrypt(surname.getText().toString()));
-            item.setEmail(AESCrypt.encrypt(emailAddress.getText().toString()));
+            item.setEmail(emailAddress.getText().toString());
             item.setPassword(AESCrypt.encrypt(password.getText().toString()));
+            item.setProfileType(type.getSelectedItem().toString());
+            item.setLoggedIn(false);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -264,8 +267,10 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                     tableDefinition.put("surname", ColumnDataType.String);
                     tableDefinition.put("id", ColumnDataType.String);
                     tableDefinition.put("password", ColumnDataType.String);
+                    tableDefinition.put("profileType", ColumnDataType.String);
+                    tableDefinition.put("loggedIn", ColumnDataType.String);
 
-                    localStore.defineTable("UserItem", tableDefinition);
+                    localStore.defineTable("useritem", tableDefinition);
 
                     SimpleSyncHandler handler = new SimpleSyncHandler();
 

@@ -14,15 +14,23 @@ public class UserItem {
     @com.google.gson.annotations.SerializedName("password")
     private String mPassword;
 
+    @com.google.gson.annotations.SerializedName("profileType")
+    private String mProfileType;
+
+    @com.google.gson.annotations.SerializedName("loggedIn")
+    private Boolean mLoggedIn;
+
     public UserItem() {
 
     }
 
-    public UserItem(String mFirstName, String mSurname, String mEmail, String mPassword) {
+    public UserItem(String mFirstName, String mSurname, String mEmail, String mPassword, String mProfileType) {
         this.setFirstName(mFirstName);
         this.setSurname(mSurname);
         this.setEmail(mEmail);
         this.setPassword(mPassword);
+        this.setProfileType(mProfileType);
+        this.setLoggedIn(false);
     }
 
     public String getFirstName() {
@@ -55,6 +63,22 @@ public class UserItem {
 
     public final void setPassword(String mPassword) {
         this.mPassword = mPassword;
+    }
+
+    public String getProfileType() {
+        return mProfileType;
+    }
+
+    public final void setProfileType(String mProfileType) {
+        this.mProfileType = mProfileType;
+    }
+
+    public Boolean getLoggedIn() {
+        return mLoggedIn;
+    }
+
+    public final void setLoggedIn(Boolean mLoggedIn) {
+        this.mLoggedIn = mLoggedIn;
     }
 
     @Override
