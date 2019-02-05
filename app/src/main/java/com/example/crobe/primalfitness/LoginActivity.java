@@ -1,18 +1,31 @@
 package com.example.crobe.primalfitness;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import java.net.MalformedURLException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
 
     public static EditText passwordLogin;
     private Button signIn, register, test;
     private EditText emailAddress;
+    private MobileServiceClient mClient;
+    private MobileServiceTable<UserItem> mUserTable;
+    private boolean loggedIn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,6 +43,38 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         emailAddress.setText("");
         passwordLogin = (EditText) findViewById(R.id.password);
         passwordLogin.setText("");
+        loggedIn = false;
+
+        try {
+            // Create the Mobile Service Client instance, using the provided
+
+            // Mobile Service URL and key
+            mClient = new MobileServiceClient(
+                    "https://primalfitnesshonours.azurewebsites.net",
+                    this);
+
+            // Extend timeout from default of 10s to 20s
+            mClient.setAndroidHttpClientFactory(new OkHttpClientFactory() {
+                @Override
+                public OkHttpClient createOkHttpClient() {
+                    OkHttpClient client = new OkHttpClient();
+                    client.setReadTimeout(20, TimeUnit.SECONDS);
+                    client.setWriteTimeout(20, TimeUnit.SECONDS);
+                    return client;
+                }
+            });
+
+            mToDoTable = mClient.getTable(ToDoItem.class);
+
+            initLocalStore().get();
+
+            refreshItemsFromTable();
+
+        } catch (MalformedURLException e) {
+            createAndShowDialog(new Exception("There was an error creating the Mobile Service. Verify the URL"), "Error");
+        } catch (Exception e) {
+            createAndShowDialog(e, "Error");
+        }
 
     }
 
@@ -46,17 +91,157 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 break;
 
             case R.id.signIn:
-                String username = emailAddress.getText().toString();
-                String password = passwordLogin.getText().toString();
-                String type = "login";
-                try {
-                    password = AESCrypt.encrypt(password);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                BackgroundWorker backgroundWorker = new BackgroundWorker(this);
-                backgroundWorker.execute(type, username, password);
+                checkItem();
                 break;
         }
     }
+
+    public void checkItem(final UserItem item) {
+        if (mClient == null) {
+            return;
+        }
+
+        // Set the item as completed and update it in the table
+        //loggedIn = true;
+
+        AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... params) {
+                try {
+                    final List<UserItem> results = refreshItemsFromMobileServiceTable();
+                    checkItemInTable(item);
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            for (UserItem item : results) {
+                                String tempPassword = "";
+                                try {
+                                    tempPassword = AESCrypt.encrypt(passwordLogin.getText().toString());
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                                if (((emailAddress.getText().toString()).equals(item.getEmail())) && (tempPassword.equals(item.getPassword()))) {
+                                    loggedIn = true;
+                                } else {
+                                    loggedIn = false;
+                                }
+                            }
+                        }
+                    });
+                } catch (final Exception e) {
+                    createAndShowDialogFromTask(e, "Error");
+                }
+
+                return null;
+            }
+        };
+
+        runAsyncTask(task);
+    }
+
+    public void checkItemInTable(UserItem item) throws ExecutionException, InterruptedException {
+        mUserTable.update(item).get();
+    }
+
+    private AsyncTask<Void, Void, Void> initLocalStore() throws MobileServiceLocalStoreException, ExecutionException, InterruptedException {
+
+        AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... params) {
+                try {
+
+                    MobileServiceSyncContext syncContext = mClient.getSyncContext();
+
+                    if (syncContext.isInitialized())
+                        return null;
+
+                    SQLiteLocalStore localStore = new SQLiteLocalStore(mClient.getContext(), "OfflineStore", null, 1);
+
+                    Map<String, ColumnDataType> tableDefinition = new HashMap<String, ColumnDataType>();
+                    tableDefinition.put("id", ColumnDataType.String);
+                    tableDefinition.put("text", ColumnDataType.String);
+                    tableDefinition.put("complete", ColumnDataType.Boolean);
+
+                    localStore.defineTable("UserItem", tableDefinition);
+
+                    SimpleSyncHandler handler = new SimpleSyncHandler();
+
+                    syncContext.initialize(localStore, handler).get();
+
+                } catch (final Exception e) {
+                    createAndShowDialogFromTask(e, "Error");
+                }
+
+                return null;
+            }
+        };
+
+        return runAsyncTask(task);
+    }
+
+    private AsyncTask<Void, Void, Void> runAsyncTask(AsyncTask<Void, Void, Void> task) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            return task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        } else {
+            return task.execute();
+        }
+    }
+
+    private void createAndShowDialog(final String message, final String title) {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        builder.setMessage(message);
+        builder.setTitle(title);
+        builder.create().show();
+    }
+
+    private void createAndShowDialog(Exception exception, String title) {
+        Throwable ex = exception;
+        if (exception.getCause() != null) {
+            ex = exception.getCause();
+        }
+        createAndShowDialog(ex.getMessage(), title);
+    }
+
+    private void createAndShowDialogFromTask(final Exception exception, String title) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                createAndShowDialog(exception, "Error");
+            }
+        });
+    }
+
+    private void refreshItemsFromTable() {
+
+        AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... params) {
+
+                try {
+                    final List<UserItem> results = refreshItemsFromMobileServiceTable();
+
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            for (UserItem item : results) {
+                                //mAdapter.add(item);
+                            }
+                        }
+                    });
+                } catch (final Exception e) {
+                    createAndShowDialogFromTask(e, "Error");
+                }
+                return null;
+            }
+        };
+
+        runAsyncTask(task);
+    }
+
+    private List<UserItem> refreshItemsFromMobileServiceTable() throws ExecutionException, InterruptedException {
+        return mUserTable.where().field("complete").
+                eq(val(false)).execute().get();
+    }
+
 }
