@@ -8,7 +8,7 @@
     <string name="title_email_address">Email Address:</string>
     <string name="title_password">Password:</string>
     <string name="title_password_confirm">Confirm Password:</string>
-    <string name="title_user_type">Type:</string>
+    <string name="title_user_type">Profile Type:</string>
     <string name="title_submit">Submit</string>
     <string name="title_login">Sign In</string>
     <string name="title_Register">Register</string>

@@ -11,6 +11,6 @@
         android:layout_height="wrap_content"
         android:text="Soup of the day my G"
         android:textSize="36sp"
-        tools:layout_editor_absoluteX="54dp"
-        tools:layout_editor_absoluteY="275dp" />
+        tools:layout_editor_absoluteX="0dp"
+        tools:layout_editor_absoluteY="130dp" />
 </android.support.constraint.ConstraintLayout>
