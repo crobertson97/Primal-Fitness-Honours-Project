@@ -33,7 +33,7 @@ import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
-import static com.microsoft.windowsazure.mobileservices.table.query.QueryOperations.*;
+import static com.microsoft.windowsazure.mobileservices.table.query.QueryOperations.val;
 
 public class RegisterActivity extends AppCompatActivity implements View.OnClickListener {
 

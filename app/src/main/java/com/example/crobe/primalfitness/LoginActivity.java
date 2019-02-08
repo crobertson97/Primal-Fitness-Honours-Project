@@ -106,6 +106,13 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
             case R.id.signIn:
                 checkItem();
+//                try{
+//                    final List<UserItem> results = mUserTable.where().field("id").eq(emailAddress.getText().toString())
+//                            .and().field("password").eq(passwordLogin.getText().toString()).execute().get();
+//                    Log.d("LoginActivity",""+results);
+//                }catch(Exception e){
+//                }
+
                 break;
         }
     }
@@ -126,22 +133,13 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             @Override
             protected Void doInBackground(Void... params) {
                 try {
-                    final List<UserItem> results = mUserTable.where().field("id").eq(emailAddress.getText().toString()).execute().get();
+                    final List<UserItem> results = mUserTable.where().field("id").eq(emailAddress.getText().toString())
+                            .and().field("password").eq((AESCrypt.encrypt(passwordLogin.getText().toString()))).execute().get();
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             for (UserItem item : results) {
-                                try {
-                                    if ((AESCrypt.encrypt(passwordLogin.getText().toString()).equals(item.getPassword()))) {
-                                        newActivity(true);
-                                        return;
-                                    } else {
-                                        newActivity(false);
-                                    }
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
-
+                                newActivity(true);
                             }
                         }
                     });
