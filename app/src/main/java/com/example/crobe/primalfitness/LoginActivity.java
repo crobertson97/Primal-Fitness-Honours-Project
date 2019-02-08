@@ -1,5 +1,6 @@
 package com.example.crobe.primalfitness;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -10,6 +11,17 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
+
+import com.microsoft.windowsazure.mobileservices.MobileServiceClient;
+import com.microsoft.windowsazure.mobileservices.http.OkHttpClientFactory;
+import com.microsoft.windowsazure.mobileservices.table.MobileServiceTable;
+import com.microsoft.windowsazure.mobileservices.table.sync.MobileServiceSyncContext;
+import com.microsoft.windowsazure.mobileservices.table.sync.localstore.ColumnDataType;
+import com.microsoft.windowsazure.mobileservices.table.sync.localstore.MobileServiceLocalStoreException;
+import com.microsoft.windowsazure.mobileservices.table.sync.localstore.SQLiteLocalStore;
+import com.microsoft.windowsazure.mobileservices.table.sync.synchandler.SimpleSyncHandler;
+import com.squareup.okhttp.OkHttpClient;
 
 import java.net.MalformedURLException;
 import java.util.HashMap;
@@ -18,6 +30,8 @@ import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
+import static com.microsoft.windowsazure.mobileservices.table.query.QueryOperations.val;
+
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
 
     public static EditText passwordLogin;
@@ -25,7 +39,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private EditText emailAddress;
     private MobileServiceClient mClient;
     private MobileServiceTable<UserItem> mUserTable;
-    private boolean loggedIn;
+    private Boolean loggedIn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,7 +78,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 }
             });
 
-            mToDoTable = mClient.getTable(ToDoItem.class);
+            mUserTable = mClient.getTable(UserItem.class);
 
             initLocalStore().get();
 
@@ -96,7 +110,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         }
     }
 
-    public void checkItem(final UserItem item) {
+    public void checkItem() {
         if (mClient == null) {
             return;
         }
@@ -104,27 +118,30 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         // Set the item as completed and update it in the table
         //loggedIn = true;
 
-        AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
+        //final UserItem item = new UserItem();
+        // emailAddress.getText().toString().equals(item.getEmail()) &&
+
+
+        @SuppressLint("StaticFieldLeak") AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... params) {
                 try {
-                    final List<UserItem> results = refreshItemsFromMobileServiceTable();
-                    checkItemInTable(item);
+                    final List<UserItem> results = mUserTable.where().field("id").eq(emailAddress.getText().toString()).execute().get();
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             for (UserItem item : results) {
-                                String tempPassword = "";
                                 try {
-                                    tempPassword = AESCrypt.encrypt(passwordLogin.getText().toString());
+                                    if ((AESCrypt.encrypt(passwordLogin.getText().toString()).equals(item.getPassword()))) {
+                                        newActivity(true);
+                                        return;
+                                    } else {
+                                        newActivity(false);
+                                    }
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                 }
-                                if (((emailAddress.getText().toString()).equals(item.getEmail())) && (tempPassword.equals(item.getPassword()))) {
-                                    loggedIn = true;
-                                } else {
-                                    loggedIn = false;
-                                }
+
                             }
                         }
                     });
@@ -135,8 +152,20 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 return null;
             }
         };
-
         runAsyncTask(task);
+    }
+
+    private void newActivity(Boolean logIn) {
+        if (logIn) {
+            startActivity(new Intent(this, NavigationActivity.class));
+        } else {
+            Toast.makeText(this, "Invalid Email/Password.", Toast.LENGTH_SHORT).show();
+        }
+
+    }
+
+    private void newActivity() {
+        Toast.makeText(this, "Invalid Email/Password.", Toast.LENGTH_SHORT).show();
     }
 
     public void checkItemInTable(UserItem item) throws ExecutionException, InterruptedException {
@@ -159,17 +188,19 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
                     Map<String, ColumnDataType> tableDefinition = new HashMap<String, ColumnDataType>();
                     tableDefinition.put("id", ColumnDataType.String);
-                    tableDefinition.put("text", ColumnDataType.String);
-                    tableDefinition.put("complete", ColumnDataType.Boolean);
+                    tableDefinition.put("password", ColumnDataType.String);
+                    tableDefinition.put("profileType", ColumnDataType.String);
 
-                    localStore.defineTable("UserItem", tableDefinition);
+
+                    localStore.defineTable("useritem", tableDefinition);
 
                     SimpleSyncHandler handler = new SimpleSyncHandler();
 
                     syncContext.initialize(localStore, handler).get();
 
+
                 } catch (final Exception e) {
-                    createAndShowDialogFromTask(e, "Error");
+                    createAndShowDialogFromTask(e, "Error at 278");
                 }
 
                 return null;
