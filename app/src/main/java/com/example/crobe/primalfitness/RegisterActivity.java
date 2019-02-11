@@ -40,7 +40,6 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     private EditText firstName, surname, emailAddress, password;
     private Spinner type;
     private Button submit;
-    private ProgressBar mProgressBar;
     private MobileServiceClient mClient;
     private MobileServiceTable<UserItem> mUserTable;
     private boolean completeRegistration;
@@ -95,8 +94,6 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         password = (EditText) findViewById(R.id.password);
         type = (Spinner) findViewById(R.id.userTypeChoice);
 
-        mProgressBar = (ProgressBar) findViewById(R.id.loadingProgressBar);
-        mProgressBar.setVisibility(ProgressBar.GONE);
 
         submit = (Button) this.findViewById(R.id.submit);
         submit.setOnClickListener(this);

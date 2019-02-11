@@ -13,12 +13,10 @@
     <string name="title_login">Sign In</string>
     <string name="title_Register">Register</string>
     <string name="title_username">Username:</string>
-    <string name="placeholder">Li Europan lingues es membres del sam familie.
-        Lor separat existentie es un myth. Por scientie, musica, sport etc, litot
-        Europa usa li sam vocabular. Li lingues differe solmen in li grammatica,
-        li pronunciation e li plu commun vocabules. Omnicos directe al desirabilite
-        de un nov lingua franca: On refusa continuar payar custosi traductores. At
-        solmen va esser necessi far uniform grammatica, pronunciation e plu commun paroles.</string>
+    <string name="title_weight">Weight:</string>
+    <string name="title_height">Height:</string>
+    <string name="title_age">Age:</string>
+
 
     <string-array name="user_type_array">
         <item>Coach</item>
