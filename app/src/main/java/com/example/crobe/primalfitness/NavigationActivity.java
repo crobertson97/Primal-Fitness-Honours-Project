@@ -19,9 +19,6 @@ public class NavigationActivity extends AppCompatActivity {
                 case R.id.navigation_home:
                     fragmentManager.beginTransaction().replace(R.id.content, new HomeFragment()).commit();
                     return true;
-                case R.id.navigation_dashboard:
-                    fragmentManager.beginTransaction().replace(R.id.content, new DashboardFragment()).commit();
-                    return true;
                 case R.id.navigation_notifications:
                     fragmentManager.beginTransaction().replace(R.id.content, new NotificationFragment()).commit();
                     return true;
@@ -40,5 +37,7 @@ public class NavigationActivity extends AppCompatActivity {
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation_main);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
     }
+
+
 
 }
