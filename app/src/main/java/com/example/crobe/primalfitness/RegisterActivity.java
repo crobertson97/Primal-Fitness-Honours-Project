@@ -9,11 +9,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Patterns;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ProgressBar;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.microsoft.windowsazure.mobileservices.MobileServiceClient;
@@ -35,9 +36,10 @@ import java.util.concurrent.TimeUnit;
 
 import static com.microsoft.windowsazure.mobileservices.table.query.QueryOperations.val;
 
-public class RegisterActivity extends AppCompatActivity implements View.OnClickListener {
+public class RegisterActivity extends AppCompatActivity implements View.OnClickListener, AdapterView.OnItemSelectedListener {
 
-    private EditText firstName, surname, emailAddress, password;
+    private EditText firstNameInput, surnameInput, emailAddressInput, passwordInput, coachInput, ageInput, weightInput, heightInput;
+    private TextView coachLabel, ageLabel, weightLabel, heightLabel;
     private Spinner type;
     private Button submit;
     private MobileServiceClient mClient;
@@ -88,16 +90,25 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
 
-        firstName = (EditText) findViewById(R.id.firstName);
-        surname = (EditText) findViewById(R.id.surname);
-        emailAddress = (EditText) findViewById(R.id.emailAddress);
-        password = (EditText) findViewById(R.id.password);
-        type = (Spinner) findViewById(R.id.userTypeChoice);
+        firstNameInput = (EditText) findViewById(R.id.firstName);
+        surnameInput = (EditText) findViewById(R.id.surname);
+        emailAddressInput = (EditText) findViewById(R.id.emailAddress);
+        passwordInput = (EditText) findViewById(R.id.password);
+        coachInput = (EditText) findViewById(R.id.coachLink);
+        ageInput = (EditText) findViewById(R.id.age);
+        weightInput = (EditText) findViewById(R.id.weight);
+        heightInput = (EditText) findViewById(R.id.height);
 
+        coachLabel = (TextView) findViewById(R.id.coachIDLabel);
+        ageLabel = (TextView) findViewById(R.id.ageLabel);
+        weightLabel = (TextView) findViewById(R.id.weightLabel);
+        heightLabel = (TextView) findViewById(R.id.heightLabel);
+
+        type = (Spinner) findViewById(R.id.userTypeChoice);
+        type.setOnItemSelectedListener(this);
 
         submit = (Button) this.findViewById(R.id.submit);
         submit.setOnClickListener(this);
-
 
         try {
             mClient = new MobileServiceClient(
@@ -115,8 +126,6 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
             mUserTable = mClient.getTable(UserItem.class);
             initLocalStore().get();
-
-
             refreshItemsFromTable();
         } catch (MalformedURLException e) {
             createAndShowDialog(new Exception("There was an error creating the Mobile Service. Verify the URL"), "Error at 106");
@@ -128,11 +137,11 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
     @Override
     public void onClick(View v) {
-        if (!inputValid(emailAddress.getText().toString()) && !checkString(password.getText().toString())) {
+        if (!inputValid(emailAddressInput.getText().toString()) && !checkString(passwordInput.getText().toString())) {
             Toast.makeText(this, "Invalid Email & Password", Toast.LENGTH_SHORT).show();
-        } else if (!checkString(password.getText().toString())) {
+        } else if (!checkString(passwordInput.getText().toString())) {
             Toast.makeText(this, "Invalid Password", Toast.LENGTH_SHORT).show();
-        } else if (!inputValid(emailAddress.getText().toString())) {
+        } else if (!inputValid(emailAddressInput.getText().toString())) {
             Toast.makeText(this, "Invalid Email", Toast.LENGTH_SHORT).show();
         } else {
             addItem();
@@ -154,10 +163,10 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
         try {
 
-            item.setFirstName(AESCrypt.encrypt(firstName.getText().toString()));
-            item.setSurname(AESCrypt.encrypt(surname.getText().toString()));
-            item.setEmail(emailAddress.getText().toString());
-            item.setPassword(AESCrypt.encrypt(password.getText().toString()));
+            item.setFirstName(AESCrypt.encrypt(firstNameInput.getText().toString()));
+            item.setSurname(AESCrypt.encrypt(surnameInput.getText().toString()));
+            item.setEmail(emailAddressInput.getText().toString());
+            item.setPassword(AESCrypt.encrypt(passwordInput.getText().toString()));
             item.setProfileType(type.getSelectedItem().toString());
             item.setLoggedIn(false);
         } catch (Exception e) {
@@ -282,5 +291,42 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     private List<UserItem> refreshItemsFromMobileServiceTable() throws ExecutionException, InterruptedException {
         return mUserTable.where().field("complete").
                 eq(val(false)).execute().get();
+    }
+
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+        if (parent.getItemAtPosition(pos).toString().equals("Athlete")) {
+            coachLabel.setVisibility(View.VISIBLE);
+            coachInput.setVisibility(View.VISIBLE);
+            ageLabel.setVisibility(View.VISIBLE);
+            ageInput.setVisibility(View.VISIBLE);
+            weightLabel.setVisibility(View.VISIBLE);
+            weightInput.setVisibility(View.VISIBLE);
+            heightLabel.setVisibility(View.VISIBLE);
+            heightInput.setVisibility(View.VISIBLE);
+        } else if (parent.getItemAtPosition(pos).toString().equals("Coach")) {
+            coachLabel.setVisibility(View.GONE);
+            coachInput.setVisibility(View.GONE);
+            ageLabel.setVisibility(View.GONE);
+            ageInput.setVisibility(View.GONE);
+            weightLabel.setVisibility(View.GONE);
+            weightInput.setVisibility(View.GONE);
+            heightLabel.setVisibility(View.GONE);
+            heightInput.setVisibility(View.GONE);
+        } else {
+            coachLabel.setVisibility(View.GONE);
+            coachInput.setVisibility(View.GONE);
+            ageLabel.setVisibility(View.VISIBLE);
+            ageInput.setVisibility(View.VISIBLE);
+            weightLabel.setVisibility(View.VISIBLE);
+            weightInput.setVisibility(View.VISIBLE);
+            heightLabel.setVisibility(View.VISIBLE);
+            heightInput.setVisibility(View.VISIBLE);
+        }
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> adapterView) {
+
     }
 }

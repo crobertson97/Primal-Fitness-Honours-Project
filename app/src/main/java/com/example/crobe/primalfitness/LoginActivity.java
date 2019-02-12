@@ -1,14 +1,11 @@
 package com.example.crobe.primalfitness;
 
-import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -17,21 +14,11 @@ import android.widget.Toast;
 import com.microsoft.windowsazure.mobileservices.MobileServiceClient;
 import com.microsoft.windowsazure.mobileservices.http.OkHttpClientFactory;
 import com.microsoft.windowsazure.mobileservices.table.MobileServiceTable;
-import com.microsoft.windowsazure.mobileservices.table.sync.MobileServiceSyncContext;
-import com.microsoft.windowsazure.mobileservices.table.sync.localstore.ColumnDataType;
-import com.microsoft.windowsazure.mobileservices.table.sync.localstore.MobileServiceLocalStoreException;
-import com.microsoft.windowsazure.mobileservices.table.sync.localstore.SQLiteLocalStore;
-import com.microsoft.windowsazure.mobileservices.table.sync.synchandler.SimpleSyncHandler;
 import com.squareup.okhttp.OkHttpClient;
 
 import java.net.MalformedURLException;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
-
-import static com.microsoft.windowsazure.mobileservices.table.query.QueryOperations.val;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -108,7 +95,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             return;
         }
 
-       AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
+        AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... params) {
                 try {
@@ -120,7 +107,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                             Boolean number = false;
                             for (UserItem item : results) {
                                 try {
-                                    if(item.getPassword().equals(AESCrypt.encrypt(passwordLogin.getText().toString()))){
+                                    if (item.getPassword().equals(AESCrypt.encrypt(passwordLogin.getText().toString()))) {
                                         number = true;
                                     }
                                 } catch (Exception e) {

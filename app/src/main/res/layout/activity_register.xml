@@ -17,6 +17,7 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <android.support.constraint.ConstraintLayout
+            android:id="@+id/innerLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
@@ -116,7 +117,7 @@
             <TextView
                 android:id="@+id/userTypeLabel"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="43dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="31dp"
                 android:text="@string/title_user_type"
@@ -127,7 +128,7 @@
             <Spinner
                 android:id="@+id/userTypeChoice"
                 android:layout_width="0dp"
-                android:layout_height="31dp"
+                android:layout_height="38dp"
                 android:layout_marginBottom="22dp"
                 android:layout_marginTop="22dp"
                 app:layout_constraintBottom_toTopOf="@+id/ageLabel"
@@ -201,6 +202,30 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/height" />
 
+            <TextView
+                android:id="@+id/coachIDLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="6dp"
+                android:layout_marginStart="16dp"
+                android:text="Coaches ID:"
+                android:textSize="20sp"
+                app:layout_constraintBottom_toTopOf="@+id/submit"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/weight"
+                app:layout_constraintVertical_bias="0.814" />
+
+            <EditText
+                android:id="@+id/coachLink"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:layout_marginTop="14dp"
+                android:ems="10"
+                android:inputType="textEmailAddress"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/weight" />
+
             <Button
                 android:id="@+id/submit"
                 android:layout_width="match_parent"
@@ -210,7 +235,8 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/weight" />
+                app:layout_constraintTop_toBottomOf="@+id/coachLink"
+                app:layout_constraintVertical_bias="1.0" />
 
         </android.support.constraint.ConstraintLayout>
 

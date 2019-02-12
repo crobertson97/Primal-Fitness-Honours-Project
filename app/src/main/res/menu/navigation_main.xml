@@ -1,14 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    >
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
         android:id="@+id/navigation_home"
         android:icon="@drawable/ic_home_black_24dp"
         android:state_enabled="true"
         android:title="Home"
-        app:showAsAction="ifRoom"/>
+        app:showAsAction="ifRoom" />
 
 
     <item
@@ -16,13 +15,13 @@
         android:icon="@drawable/ic_dashboard_black_24dp"
         android:state_enabled="true"
         android:title="Dashboard"
-        app:showAsAction="ifRoom"/>
+        app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/navigation_notifications"
         android:icon="@drawable/ic_notifications_black_24dp"
         android:state_enabled="true"
         android:title="Notifications"
-        app:showAsAction="ifRoom"/>
+        app:showAsAction="ifRoom" />
 
 </menu>

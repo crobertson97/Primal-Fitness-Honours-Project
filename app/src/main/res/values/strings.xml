@@ -19,9 +19,9 @@
 
 
     <string-array name="user_type_array">
+        <item>Standard</item>
         <item>Coach</item>
         <item>Athlete</item>
-        <item>Standard</item>
     </string-array>
     <string name="title_activity_navigation">NavigationActivity</string>
 
