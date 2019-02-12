@@ -12,24 +12,22 @@
         android:layout_width="0dp"
         android:layout_height="@android:dimen/thumbnail_height"
         android:layout_marginEnd="11dp"
-        android:layout_marginLeft="208dp"
-        android:layout_marginRight="11dp"
         android:layout_marginStart="208dp"
         android:layout_marginTop="316dp"
         android:background="@drawable/plans"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/messageImage"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:contentDescription="@string/todo" />
 
     <TextView
         android:id="@+id/nutritionLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="42dp"
-        android:layout_marginLeft="23dp"
         android:layout_marginStart="23dp"
-        android:text="Nutrition"
+        android:text="@string/nutrition"
         android:textColor="@android:color/background_dark"
         android:textSize="30sp"
         app:layout_constraintBottom_toTopOf="@+id/messageImage"
@@ -40,21 +38,20 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginEnd="11dp"
-        android:layout_marginRight="11dp"
         android:background="@drawable/clipart41263"
         app:layout_constraintBottom_toBottomOf="@+id/nutritionImage"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/nutritionImage"
-        app:layout_constraintTop_toTopOf="@+id/nutritionImage" />
+        app:layout_constraintTop_toTopOf="@+id/nutritionImage"
+        android:contentDescription="@string/todo" />
 
     <TextView
         android:id="@+id/fitnessLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="39dp"
         android:layout_marginStart="39dp"
         android:layout_marginTop="17dp"
-        android:text="Fitness"
+        android:text="@string/fitness"
         android:textColor="@android:color/background_dark"
         android:textSize="30sp"
         app:layout_constraintStart_toStartOf="@+id/fitnessImage"
@@ -65,23 +62,22 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginBottom="17dp"
-        android:layout_marginLeft="16dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="25dp"
         android:background="@drawable/download"
         app:layout_constraintBottom_toTopOf="@+id/nutritionLabel"
         app:layout_constraintEnd_toStartOf="@+id/fitnessImage"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:contentDescription="@string/todo" />
 
     <TextView
         android:id="@+id/messagesLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="14dp"
         android:layout_marginStart="14dp"
         android:layout_marginTop="10dp"
-        android:text="Messenger"
+        android:text="@string/messenger"
         android:textColor="@android:color/background_dark"
         android:textSize="30sp"
         app:layout_constraintStart_toStartOf="@+id/messageImage"
@@ -91,20 +87,20 @@
         android:id="@+id/messageImage"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginLeft="16dp"
         android:layout_marginStart="16dp"
         android:background="@drawable/messages"
         app:layout_constraintBottom_toBottomOf="@+id/plansImage"
         app:layout_constraintEnd_toStartOf="@+id/plansImage"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/plansImage" />
+        app:layout_constraintTop_toTopOf="@+id/plansImage"
+        android:contentDescription="@string/todo" />
 
     <TextView
         android:id="@+id/plansLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:text="Plans"
+        android:text="@string/plans"
         android:textColor="@android:color/background_dark"
         android:textSize="30sp"
         app:layout_constraintEnd_toEndOf="@+id/plansImage"
