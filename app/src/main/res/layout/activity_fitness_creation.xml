@@ -20,14 +20,14 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
-        android:id="@+id/editText2"
+        android:id="@+id/planType"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="19dp"
         android:layout_marginEnd="16dp"
         android:ems="10"
         android:inputType="textPersonName"
-        app:layout_constraintBottom_toTopOf="@+id/scrollView2"
+        app:layout_constraintBottom_toTopOf="@+id/exercisesScroll"
         app:layout_constraintEnd_toEndOf="parent" />
 
     <Button
@@ -40,7 +40,7 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <ScrollView
-        android:id="@+id/scrollView2"
+        android:id="@+id/exercisesScroll"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginBottom="47dp"
@@ -51,29 +51,23 @@
         app:layout_constraintTop_toTopOf="@+id/planTypeLabel">
 
         <LinearLayout
+            android:id="@+id/exercisesLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical" >
+            android:orientation="vertical">
 
             <Button
-                android:onClick="ShowPopup"
                 android:id="@+id/addExercise"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:onClick="ShowPopup"
                 android:text="New exercise" />
-
-            <ListView
-                android:id="@+id/listViewToDo"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                tools:listitem="@layout/exercise_row_list"
-                android:padding="6dip" />
 
         </LinearLayout>
     </ScrollView>
 
     <EditText
-        android:id="@+id/editText"
+        android:id="@+id/planName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="17dp"

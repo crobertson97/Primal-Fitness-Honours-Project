@@ -2,7 +2,8 @@ package com.example.crobe.primalfitness;
 
 public class ExerciseItem {
 
-    @com.google.gson.annotations.SerializedName("exerciseName")
+    //@com.google.gson.annotations.SerializedName("exerciseName")
+    @com.google.gson.annotations.SerializedName("id")
     private String mExerciseName;
 
     @com.google.gson.annotations.SerializedName("exercisePlanType")
