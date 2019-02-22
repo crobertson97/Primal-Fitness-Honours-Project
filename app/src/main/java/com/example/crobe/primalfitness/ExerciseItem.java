@@ -2,8 +2,16 @@ package com.example.crobe.primalfitness;
 
 public class ExerciseItem {
 
-    //@com.google.gson.annotations.SerializedName("exerciseName")
     @com.google.gson.annotations.SerializedName("id")
+    private String id;
+
+    @com.google.gson.annotations.SerializedName("createdBy")
+    private String mCreatedBy;
+
+    @com.google.gson.annotations.SerializedName("private")
+    private Boolean mPrivate;
+
+    @com.google.gson.annotations.SerializedName("exerciseName")
     private String mExerciseName;
 
     @com.google.gson.annotations.SerializedName("exercisePlanType")
@@ -25,13 +33,40 @@ public class ExerciseItem {
 
     }
 
-    public ExerciseItem(String mExerciseName, String mPlanType, String mPlanName, String mRest, String mSetsSuggested, String mRepsSuggested) {
+    public ExerciseItem(String id, String mExerciseName, String mPlanType, String mPlanName, String mRest, String mSetsSuggested, String mRepsSuggested, String mCreatedBy, Boolean mPrivate) {
+        this.setId(id);
+        this.setCreatedBy(mCreatedBy);
         this.setExerciseName(mExerciseName);
         this.setPlanType(mPlanType);
         this.setPlanName(mPlanName);
         this.setRest(mRest);
         this.setSetsSuggested(mSetsSuggested);
         this.setRepsSuggested(mRepsSuggested);
+        this.setPrivate(mPrivate);
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public final void setId(String id) {
+        this.id = id;
+    }
+
+    public Boolean getPrivate() {
+        return mPrivate;
+    }
+
+    public final void setPrivate(Boolean mPrivate) {
+        this.mPrivate = mPrivate;
+    }
+
+    public String getCreatedBy() {
+        return id;
+    }
+
+    public final void setCreatedBy(String mCreatedBy) {
+        this.mCreatedBy = mCreatedBy;
     }
 
     public String getExerciseName() {

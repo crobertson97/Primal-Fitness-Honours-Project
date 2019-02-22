@@ -8,7 +8,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -31,6 +30,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
@@ -99,16 +99,11 @@ public class FitnessCreationActivity extends AppCompatActivity implements View.O
     public void onClick(View view) {
         switch (view.getId()){
             case R.id.createPlan:
-                Log.d("FitnessCreationActivity", "NAME " + name.getText().toString());
-                Log.d("FitnessCreationActivity", "TYPE " + type.getText().toString());
                 if (name.getText().toString().isEmpty() || type.getText().toString().isEmpty() || array.isEmpty()) {
                     Toast.makeText(this, "Please enter a name and type", Toast.LENGTH_LONG).show();
-                    Log.d("FitnessCreationActivity", "Bazinga: ");
                 } else {
                     for (String[] arra : array) {
-                        Log.d("FitnessCreationActivity", "then: " + arra[0]);
                         addItem(arra);
-                        Log.d("FitnessCreationActivity", "now: " + arra[0]);
                     }
                 }
                 break;
@@ -117,10 +112,6 @@ public class FitnessCreationActivity extends AppCompatActivity implements View.O
                 if(checkInputs()){
                     array.add(new String[]{exercise.getText().toString(), sets.getText().toString(), reps.getText().toString(), rest.getText().toString()});
                     myDialog.dismiss();
-                    for (String[] arra : array){
-                        for(int i=0; i< arra.length; i++)
-                        Log.d("FitnessCreationActivity","here: " + arra[i]);
-                    }
                 }
                 break;
         }
@@ -185,11 +176,12 @@ public class FitnessCreationActivity extends AppCompatActivity implements View.O
                     Map<String, ColumnDataType> tableDefinition = new HashMap<String, ColumnDataType>();
                     tableDefinition.put("planName", ColumnDataType.String);
                     tableDefinition.put("exercisePlanType", ColumnDataType.String);
-                    //tableDefinition.put("exerciseName", ColumnDataType.String);
+                    tableDefinition.put("exerciseName", ColumnDataType.String);
                     tableDefinition.put("id", ColumnDataType.String);
                     tableDefinition.put("setsSuggested", ColumnDataType.String);
                     tableDefinition.put("repsSuggested", ColumnDataType.String);
                     tableDefinition.put("rest", ColumnDataType.String);
+                    tableDefinition.put("createdBy", ColumnDataType.String);
 
                     localStore.defineTable("exerciseitem", tableDefinition);
 
@@ -253,10 +245,13 @@ public class FitnessCreationActivity extends AppCompatActivity implements View.O
         try {
             item.setPlanName(name.getText().toString());
             item.setPlanType(type.getText().toString());
+            item.setId(createTransactionID());
             item.setExerciseName(exercises[0]);
             item.setSetsSuggested(exercises[1]);
             item.setRepsSuggested(exercises[2]);
             item.setRest(exercises[3]);
+            item.setCreatedBy(LoginActivity.loggedInUser);
+            item.setPrivate(true);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -278,6 +273,10 @@ public class FitnessCreationActivity extends AppCompatActivity implements View.O
     public ExerciseItem addItemInTable(ExerciseItem item) throws ExecutionException, InterruptedException {
         ExerciseItem entity = mExerciseTable.insert(item).get();
         return entity;
+    }
+
+    public String createTransactionID() throws Exception {
+        return UUID.randomUUID().toString().replaceAll("-", "").toUpperCase();
     }
 
 }
