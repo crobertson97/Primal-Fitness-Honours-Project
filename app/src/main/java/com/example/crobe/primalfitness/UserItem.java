@@ -2,13 +2,16 @@ package com.example.crobe.primalfitness;
 
 public class UserItem {
 
+    @com.google.gson.annotations.SerializedName("id")
+    private String mId;
+
     @com.google.gson.annotations.SerializedName("firstName")
     private String mFirstName;
 
     @com.google.gson.annotations.SerializedName("surname")
     private String mSurname;
 
-    @com.google.gson.annotations.SerializedName("id")
+    @com.google.gson.annotations.SerializedName("email")
     private String mEmail;
 
     @com.google.gson.annotations.SerializedName("password")
@@ -17,21 +20,39 @@ public class UserItem {
     @com.google.gson.annotations.SerializedName("profileType")
     private String mProfileType;
 
-    @com.google.gson.annotations.SerializedName("loggedIn")
-    private Boolean mLoggedIn;
+    @com.google.gson.annotations.SerializedName("age")
+    private String mAge;
+
+    @com.google.gson.annotations.SerializedName("age")
+    private String mWeight;
+
+    @com.google.gson.annotations.SerializedName("age")
+    private String mHeight;
 
     public UserItem() {
 
     }
 
-    public UserItem(String mFirstName, String mSurname, String mEmail, String mPassword, String mProfileType) {
+    public UserItem(String mId, String mFirstName, String mSurname, String mEmail, String mPassword, String mProfileType, String mAge, String mWeight, String mHeight) {
+        this.setId(mId);
         this.setFirstName(mFirstName);
         this.setSurname(mSurname);
         this.setEmail(mEmail);
         this.setPassword(mPassword);
         this.setProfileType(mProfileType);
-        this.setLoggedIn(false);
+        this.setAge(mAge);
+        this.setWeight(mWeight);
+        this.setWeight(mHeight);
     }
+
+    public String getId() {
+        return mId;
+    }
+
+    public final void setId(String mId) {
+        this.mId = mId;
+    }
+
 
     public String getFirstName() {
         return mFirstName;
@@ -73,12 +94,28 @@ public class UserItem {
         this.mProfileType = mProfileType;
     }
 
-    public Boolean getLoggedIn() {
-        return mLoggedIn;
+    public String getAge() {
+        return mAge;
     }
 
-    public final void setLoggedIn(Boolean mLoggedIn) {
-        this.mLoggedIn = mLoggedIn;
+    public final void setAge(String mAge) {
+        this.mAge = mAge;
+    }
+
+    public String getWeight() {
+        return mWeight;
+    }
+
+    public final void setWeight(String mWeight) {
+        this.mWeight = mWeight;
+    }
+
+    public String getHeight() {
+        return mHeight;
+    }
+
+    public final void setHeight(String mHeight) {
+        this.mHeight = mHeight;
     }
 
     @Override

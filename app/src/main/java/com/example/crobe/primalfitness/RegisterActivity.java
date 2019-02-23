@@ -31,6 +31,7 @@ import java.net.MalformedURLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
@@ -162,13 +163,16 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         final UserItem item = new UserItem();
 
         try {
-
+            item.setId(createTransactionID());
             item.setFirstName(AESCrypt.encrypt(firstNameInput.getText().toString()));
             item.setSurname(AESCrypt.encrypt(surnameInput.getText().toString()));
-            item.setEmail(emailAddressInput.getText().toString());
+            item.setEmail(AESCrypt.encrypt(emailAddressInput.getText().toString()));
             item.setPassword(AESCrypt.encrypt(passwordInput.getText().toString()));
             item.setProfileType(type.getSelectedItem().toString());
-            item.setLoggedIn(false);
+
+            item.setAge(AESCrypt.encrypt(ageInput.getText().toString()));
+            item.setHeight(AESCrypt.encrypt(heightInput.getText().toString()));
+            item.setWeight(AESCrypt.encrypt(weightInput.getText().toString()));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -245,9 +249,12 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                     tableDefinition.put("firstName", ColumnDataType.String);
                     tableDefinition.put("surname", ColumnDataType.String);
                     tableDefinition.put("id", ColumnDataType.String);
+                    tableDefinition.put("email", ColumnDataType.String);
                     tableDefinition.put("password", ColumnDataType.String);
                     tableDefinition.put("profileType", ColumnDataType.String);
-                    tableDefinition.put("loggedIn", ColumnDataType.String);
+                    tableDefinition.put("age", ColumnDataType.String);
+                    tableDefinition.put("weight", ColumnDataType.String);
+                    tableDefinition.put("height", ColumnDataType.String);
 
                     localStore.defineTable("useritem", tableDefinition);
 
@@ -328,5 +335,9 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     @Override
     public void onNothingSelected(AdapterView<?> adapterView) {
 
+    }
+
+    public String createTransactionID() throws Exception {
+        return UUID.randomUUID().toString().replaceAll("-", "").toUpperCase();
     }
 }
