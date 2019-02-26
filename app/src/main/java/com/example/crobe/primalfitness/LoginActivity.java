@@ -22,7 +22,7 @@ import java.util.concurrent.TimeUnit;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
 
-    public static String loggedInUser;
+    public static String loggedInUser, loggedInUserType;
     private Button signIn, register, test;
     public EditText passwordLogin, emailAddress;
     private MobileServiceClient mClient;
@@ -110,6 +110,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                                     if (item.getPassword().equals(AESCrypt.encrypt(passwordLogin.getText().toString()))) {
                                         number = true;
                                         loggedInUser = item.getEmail();
+                                        loggedInUserType = item.getProfileType();
                                     }
                                 } catch (Exception e) {
                                     e.printStackTrace();

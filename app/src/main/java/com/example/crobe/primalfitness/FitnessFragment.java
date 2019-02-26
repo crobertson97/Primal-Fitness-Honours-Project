@@ -35,6 +35,7 @@ public class FitnessFragment extends Fragment implements View.OnClickListener {
     private LinearLayout layoutPlans;
     private MobileServiceClient mClient;
     private MobileServiceTable<ExerciseItem> mPlanTable;
+    List<String> plans;
 
     public FitnessFragment() {
         // Required empty public constructor
@@ -79,14 +80,49 @@ public class FitnessFragment extends Fragment implements View.OnClickListener {
             createAndShowDialog(e, "Error");
         }
 
-        checkItem();
+        if (!LoginActivity.loggedInUserType.equals("Coach")) {
+            newPlan.setVisibility(View.INVISIBLE);
+            getCreatedPlans();
+        } else {
+            checkItem();
+        }
+
 
         return view;
     }
 
     private void getCreatedPlans() {
+        if (mClient == null) {
+            return;
+        }
 
+        AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... params) {
+                try {
 
+                    final List<ExerciseItem> results = mPlanTable.select("planName").execute().get();
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            for (ExerciseItem item : results) {
+                                TextView plan = new TextView(getActivity());
+                                plan.setText(item.getPlanName());
+                                plan.setTextSize(36);
+                                plan.setBackground(ContextCompat.getDrawable(getActivity(), R.drawable.border));
+                                plan.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+                                plan.setTextColor(Color.parseColor("#ff000000"));
+                                layoutPlans.addView(plan);
+                            }
+                        }
+                    });
+                } catch (final Exception e) {
+                    createAndShowDialogFromTask(e, "Error");
+                }
+                return null;
+            }
+        };
+        runAsyncTask(task);
     }
 
     @Override
@@ -109,13 +145,14 @@ public class FitnessFragment extends Fragment implements View.OnClickListener {
                 try {
 
                     final List<ExerciseItem> results = mPlanTable.where().field("createdBy").eq(LoginActivity.loggedInUser).execute().get();
+
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             for (ExerciseItem item : results) {
                                 TextView plan = new TextView(getActivity());
                                 plan.setText(item.getPlanName());
-                                plan.setTextSize(24);
+                                plan.setTextSize(36);
                                 plan.setBackground(ContextCompat.getDrawable(getActivity(), R.drawable.border));
                                 plan.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
                                 plan.setTextColor(Color.parseColor("#ff000000"));

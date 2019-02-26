@@ -29,11 +29,14 @@ public class UserItem {
     @com.google.gson.annotations.SerializedName("height")
     private String mHeight;
 
+    @com.google.gson.annotations.SerializedName("coachLink")
+    private String mCoachLink;
+
     public UserItem() {
 
     }
 
-    public UserItem(String mId, String mFirstName, String mSurname, String mEmail, String mPassword, String mProfileType, String mAge, String mWeight, String mHeight) {
+    public UserItem(String mId, String mFirstName, String mSurname, String mEmail, String mPassword, String mProfileType, String mAge, String mWeight, String mHeight, String mCoachLink) {
         this.setId(mId);
         this.setFirstName(mFirstName);
         this.setSurname(mSurname);
@@ -42,7 +45,8 @@ public class UserItem {
         this.setProfileType(mProfileType);
         this.setAge(mAge);
         this.setWeight(mWeight);
-        this.setWeight(mHeight);
+        this.setHeight(mHeight);
+        this.setCoachLink(mCoachLink);
     }
 
     public String getId() {
@@ -116,6 +120,14 @@ public class UserItem {
 
     public final void setHeight(String mHeight) {
         this.mHeight = mHeight;
+    }
+
+    public String getCoachLink() {
+        return mCoachLink;
+    }
+
+    public final void setCoachLink(String mCoachLink) {
+        this.mCoachLink = mCoachLink;
     }
 
     @Override

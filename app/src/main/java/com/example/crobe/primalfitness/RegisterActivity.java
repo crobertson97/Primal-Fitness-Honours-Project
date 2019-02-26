@@ -129,9 +129,9 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
             initLocalStore().get();
             refreshItemsFromTable();
         } catch (MalformedURLException e) {
-            createAndShowDialog(new Exception("There was an error creating the Mobile Service. Verify the URL"), "Error at 106");
+            createAndShowDialog(new Exception("There was an error creating the Mobile Service. Verify the URL"), "Error");
         } catch (Exception e) {
-            createAndShowDialog(e, "Error at 108");
+            createAndShowDialog(e, "Error");
         }
 
     }
@@ -169,9 +169,17 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
             item.setEmail(AESCrypt.encrypt(emailAddressInput.getText().toString()));
             item.setPassword(AESCrypt.encrypt(passwordInput.getText().toString()));
             item.setProfileType(type.getSelectedItem().toString());
-            item.setAge(AESCrypt.encrypt(ageInput.getText().toString()));
-            item.setHeight(AESCrypt.encrypt(heightInput.getText().toString()));
-            item.setWeight(AESCrypt.encrypt(weightInput.getText().toString()));
+            if (type.getSelectedItem().toString().equals("Standard")) {
+                item.setAge(AESCrypt.encrypt(ageInput.getText().toString()));
+                item.setHeight(AESCrypt.encrypt(heightInput.getText().toString()));
+                item.setWeight(AESCrypt.encrypt(weightInput.getText().toString()));
+            } else if (type.getSelectedItem().toString().equals("Athlete")) {
+                item.setAge(AESCrypt.encrypt(ageInput.getText().toString()));
+                item.setHeight(AESCrypt.encrypt(heightInput.getText().toString()));
+                item.setWeight(AESCrypt.encrypt(weightInput.getText().toString()));
+                item.setCoachLink(AESCrypt.encrypt(coachInput.getText().toString()));
+            }
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -182,7 +190,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                 try {
                     final UserItem entity = addItemInTable(item);
                 } catch (final Exception e) {
-                    createAndShowDialogFromTask(e, "Error at 203");
+                    createAndShowDialogFromTask(e, "Error");
                 }
                 return null;
             }
@@ -204,7 +212,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                createAndShowDialog(exception, "Error at 229");
+                createAndShowDialog(exception, "Error");
             }
         });
     }
@@ -263,7 +271,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
 
                 } catch (final Exception e) {
-                    createAndShowDialogFromTask(e, "Error at 278");
+                    createAndShowDialogFromTask(e, "Error");
                 }
 
                 return null;
@@ -285,7 +293,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                 try {
                     final List<UserItem> results = refreshItemsFromMobileServiceTable();
                 } catch (final Exception e) {
-                    createAndShowDialogFromTask(e, "Error at 314");
+                    createAndShowDialogFromTask(e, "Error");
                 }
                 return null;
             }
