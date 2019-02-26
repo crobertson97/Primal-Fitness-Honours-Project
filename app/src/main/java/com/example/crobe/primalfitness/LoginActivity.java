@@ -100,7 +100,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             protected Void doInBackground(Void... params) {
                 try {
 
-                    final List<UserItem> results = mUserTable.where().field("id").eq(emailAddress.getText().toString()).execute().get();
+                    final List<UserItem> results = mUserTable.where().field("email").eq(AESCrypt.encrypt(emailAddress.getText().toString())).execute().get();
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {

@@ -23,10 +23,10 @@ public class UserItem {
     @com.google.gson.annotations.SerializedName("age")
     private String mAge;
 
-    @com.google.gson.annotations.SerializedName("age")
+    @com.google.gson.annotations.SerializedName("weight")
     private String mWeight;
 
-    @com.google.gson.annotations.SerializedName("age")
+    @com.google.gson.annotations.SerializedName("height")
     private String mHeight;
 
     public UserItem() {

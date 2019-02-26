@@ -169,7 +169,6 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
             item.setEmail(AESCrypt.encrypt(emailAddressInput.getText().toString()));
             item.setPassword(AESCrypt.encrypt(passwordInput.getText().toString()));
             item.setProfileType(type.getSelectedItem().toString());
-
             item.setAge(AESCrypt.encrypt(ageInput.getText().toString()));
             item.setHeight(AESCrypt.encrypt(heightInput.getText().toString()));
             item.setWeight(AESCrypt.encrypt(weightInput.getText().toString()));
