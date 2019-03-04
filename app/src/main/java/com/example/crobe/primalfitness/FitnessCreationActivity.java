@@ -9,9 +9,12 @@ import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -36,13 +39,14 @@ import java.util.concurrent.TimeUnit;
 
 import static com.microsoft.windowsazure.mobileservices.table.query.QueryOperations.val;
 
-public class FitnessCreationActivity extends AppCompatActivity implements View.OnClickListener{
+public class FitnessCreationActivity extends AppCompatActivity implements View.OnClickListener, AdapterView.OnItemSelectedListener {
 
     private MobileServiceClient mClient;
     private MobileServiceTable<ExerciseItem> mExerciseTable;
     private Dialog myDialog;
     private Button submitExercise, createPlan;
-    private EditText exercise, sets, reps, rest, name, type;
+    private Spinner type;
+    private EditText exercise, sets, reps, rest, name;
     private List<String[]> array;
 
     @Override
@@ -52,9 +56,18 @@ public class FitnessCreationActivity extends AppCompatActivity implements View.O
         myDialog = new Dialog(this);
         array = new ArrayList<String[]>();
         name = (EditText) findViewById(R.id.planName);
-        type = (EditText) findViewById(R.id.planType);
+
         createPlan = (Button) findViewById(R.id.createPlan);
         createPlan.setOnClickListener(this);
+
+        Spinner spinner = (Spinner) findViewById(R.id.planType);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.plan_type_array_fitness, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
+
+        type = (Spinner) findViewById(R.id.planType);
+        type.setOnItemSelectedListener(this);
+
 
         try {
             // Create the Mobile Service Client instance, using the provided
@@ -99,7 +112,7 @@ public class FitnessCreationActivity extends AppCompatActivity implements View.O
     public void onClick(View view) {
         switch (view.getId()){
             case R.id.createPlan:
-                if (name.getText().toString().isEmpty() || type.getText().toString().isEmpty() || array.isEmpty()) {
+                if (name.getText().toString().isEmpty() || type.getSelectedItem().toString().isEmpty() || array.isEmpty()) {
                     Toast.makeText(this, "Please enter a name and type", Toast.LENGTH_LONG).show();
                 } else {
                     for (String[] arra : array) {
@@ -244,7 +257,7 @@ public class FitnessCreationActivity extends AppCompatActivity implements View.O
         final ExerciseItem item = new ExerciseItem();
         try {
             item.setPlanName(name.getText().toString());
-            item.setPlanType(type.getText().toString());
+            item.setPlanType(type.getSelectedItem().toString());
             item.setId(createTransactionID());
             item.setExerciseName(exercises[0]);
             item.setSetsSuggested(exercises[1]);
@@ -279,4 +292,13 @@ public class FitnessCreationActivity extends AppCompatActivity implements View.O
         return UUID.randomUUID().toString().replaceAll("-", "").toUpperCase();
     }
 
+    @Override
+    public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> adapterView) {
+
+    }
 }

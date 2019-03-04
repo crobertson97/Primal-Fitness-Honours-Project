@@ -13,7 +13,6 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
         <activity
             android:name=".LoginActivity"
             android:label="@string/app_name"
@@ -24,31 +23,27 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".RegisterActivity"
             android:label="Register"
             android:screenOrientation="portrait" />
-
         <activity
             android:name=".NavigationActivity"
             android:screenOrientation="portrait" />
-
         <activity
             android:name=".PlansActivity"
             android:screenOrientation="portrait" />
-
         <activity
             android:name=".NutritionActivity"
             android:screenOrientation="portrait" />
-
         <activity
             android:name=".FitnessActivity"
             android:screenOrientation="portrait" />
-
         <activity
             android:name=".FitnessCreationActivity"
             android:screenOrientation="portrait" />
+        <activity android:name=".FitnessPlans" />
+        <activity android:name=".ExerciseActivity"></activity>
     </application>
 
 </manifest>

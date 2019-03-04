@@ -24,8 +24,6 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
-        android:layout_marginLeft="1dp"
-        android:layout_marginRight="16dp"
         android:layout_marginStart="1dp"
         android:layout_marginTop="15dp"
         android:ems="10"
@@ -38,7 +36,9 @@
     <ImageView
         android:id="@+id/imageView"
         android:layout_width="0dp"
-        android:layout_height="315dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="283dp"
+        app:layout_constraintBottom_toTopOf="@+id/testStandard"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -48,7 +48,6 @@
         android:id="@+id/usernameLabel"
         android:layout_width="130dp"
         android:layout_height="58dp"
-        android:layout_marginLeft="7dp"
         android:layout_marginStart="7dp"
         android:text="@string/title_username"
         android:textSize="24sp"
@@ -60,7 +59,6 @@
         android:layout_width="172dp"
         android:layout_height="30dp"
         android:layout_marginBottom="21dp"
-        android:layout_marginLeft="7dp"
         android:layout_marginStart="7dp"
         android:layout_marginTop="15dp"
         android:text="@string/title_password"
@@ -74,7 +72,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="23dp"
-        android:layout_marginRight="23dp"
         android:layout_marginTop="21dp"
         android:text="@string/title_login"
         android:textSize="18sp"
@@ -85,7 +82,6 @@
         android:id="@+id/register"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="16dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="21dp"
         android:text="@string/title_Register"
@@ -94,14 +90,37 @@
         app:layout_constraintTop_toBottomOf="@+id/password" />
 
     <Button
-        android:id="@+id/test"
+        android:id="@+id/testCoach"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="44dp"
-        android:layout_marginEnd="35dp"
-        android:layout_marginRight="35dp"
-        android:text="test"
+        android:layout_marginBottom="48dp"
+        android:layout_marginEnd="26dp"
+        android:text="Coach"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/signIn" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/testAthlete" />
+
+    <Button
+        android:id="@+id/testAthlete"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="48dp"
+        android:text="Athlete"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/testCoach"
+        app:layout_constraintStart_toEndOf="@+id/testStandard"
+        app:layout_constraintTop_toBottomOf="@+id/testStandard" />
+
+    <Button
+        android:id="@+id/testStandard"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:text="Standard"
+        app:layout_constraintBottom_toTopOf="@+id/testAthlete"
+        app:layout_constraintEnd_toStartOf="@+id/testAthlete"
+        app:layout_constraintHorizontal_chainStyle="spread_inside"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageView" />
 
 </android.support.constraint.ConstraintLayout>

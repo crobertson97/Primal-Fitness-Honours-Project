@@ -23,7 +23,7 @@ import java.util.concurrent.TimeUnit;
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
 
     public static String loggedInUser, loggedInUserType;
-    private Button signIn, register, test;
+    private Button signIn, register, testCoach, testAthlete, testStandard;
     public EditText passwordLogin, emailAddress;
     private MobileServiceClient mClient;
     private MobileServiceTable<UserItem> mUserTable;
@@ -36,8 +36,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
         signIn = (Button) this.findViewById(R.id.signIn);
         signIn.setOnClickListener(this);
-        test = (Button) this.findViewById(R.id.test);
-        test.setOnClickListener(this);
+        testCoach = (Button) this.findViewById(R.id.testCoach);
+        testCoach.setOnClickListener(this);
+        testAthlete = (Button) this.findViewById(R.id.testAthlete);
+        testAthlete.setOnClickListener(this);
+        testStandard = (Button) this.findViewById(R.id.testStandard);
+        testStandard.setOnClickListener(this);
         register = (Button) this.findViewById(R.id.register);
         register.setOnClickListener(this);
         emailAddress = (EditText) findViewById(R.id.username);
@@ -76,7 +80,18 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.test:
+            case R.id.testCoach:
+                loggedInUserType = "Coach";
+                startActivity(new Intent(this, NavigationActivity.class));
+                break;
+
+            case R.id.testAthlete:
+                loggedInUserType = "Athlete";
+                startActivity(new Intent(this, NavigationActivity.class));
+                break;
+
+            case R.id.testStandard:
+                loggedInUserType = "Standard";
                 startActivity(new Intent(this, NavigationActivity.class));
                 break;
 
