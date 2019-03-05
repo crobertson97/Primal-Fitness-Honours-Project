@@ -5,6 +5,8 @@ import android.app.AlertDialog;
 import android.os.AsyncTask;
 import android.os.Build;
 
+import java.util.UUID;
+
 public class ServiceHandler {
 
     private final Activity mActivity;
@@ -44,6 +46,10 @@ public class ServiceHandler {
         } else {
             return task.execute();
         }
+    }
+
+    public String createTransactionID() throws Exception {
+        return UUID.randomUUID().toString().replaceAll("-", "").toUpperCase();
     }
 
 }

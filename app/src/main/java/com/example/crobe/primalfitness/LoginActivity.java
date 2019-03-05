@@ -1,8 +1,6 @@
 package com.example.crobe.primalfitness;
 
-import android.app.AlertDialog;
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -27,12 +25,13 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     public EditText passwordLogin, emailAddress;
     private MobileServiceClient mClient;
     private MobileServiceTable<UserItem> mUserTable;
+    private ServiceHandler sh;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        Configuration config = getResources().getConfiguration();
+        sh = new ServiceHandler(this);
 
         signIn = (Button) this.findViewById(R.id.signIn);
         signIn.setOnClickListener(this);
@@ -71,9 +70,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             mUserTable = mClient.getTable(UserItem.class);
 
         } catch (MalformedURLException e) {
-            createAndShowDialog(new Exception("There was an error creating the Mobile Service. Verify the URL"), "Error");
+            sh.createAndShowDialog(new Exception("There was an error creating the Mobile Service. Verify the URL"), "Error");
         } catch (Exception e) {
-            createAndShowDialog(e, "Error");
+            sh.createAndShowDialog(e, "Error");
         }
     }
 
@@ -135,12 +134,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         }
                     });
                 } catch (final Exception e) {
-                    createAndShowDialogFromTask(e, "Error");
+                    sh.createAndShowDialogFromTask(e, "Error");
                 }
                 return null;
             }
         };
-        runAsyncTask(task);
+        sh.runAsyncTask(task);
     }
 
     private void newActivity(Boolean logIn) {
@@ -150,34 +149,5 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             Toast.makeText(this, "Invalid Email/Password.", Toast.LENGTH_SHORT).show();
         }
 
-    }
-
-
-    private AsyncTask<Void, Void, Void> runAsyncTask(AsyncTask<Void, Void, Void> task) {
-        return task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-    }
-
-    private void createAndShowDialog(final String message, final String title) {
-        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage(message);
-        builder.setTitle(title);
-        builder.create().show();
-    }
-
-    private void createAndShowDialog(Exception exception, String title) {
-        Throwable ex = exception;
-        if (exception.getCause() != null) {
-            ex = exception.getCause();
-        }
-        createAndShowDialog(ex.getMessage(), title);
-    }
-
-    private void createAndShowDialogFromTask(final Exception exception, String title) {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                createAndShowDialog(exception, "Error");
-            }
-        });
     }
 }

@@ -1,9 +1,7 @@
 package com.example.crobe.primalfitness;
 
-import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
@@ -31,7 +29,6 @@ import java.net.MalformedURLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
@@ -46,6 +43,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     private MobileServiceClient mClient;
     private MobileServiceTable<UserItem> mUserTable;
     private boolean completeRegistration;
+    private ServiceHandler sh;
 
 
     private static boolean inputValid(String email) {
@@ -129,9 +127,9 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
             initLocalStore().get();
             refreshItemsFromTable();
         } catch (MalformedURLException e) {
-            createAndShowDialog(new Exception("There was an error creating the Mobile Service. Verify the URL"), "Error");
+            sh.createAndShowDialog(new Exception("There was an error creating the Mobile Service. Verify the URL"), "Error");
         } catch (Exception e) {
-            createAndShowDialog(e, "Error");
+            sh.createAndShowDialog(e, "Error");
         }
 
     }
@@ -163,7 +161,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         final UserItem item = new UserItem();
 
         try {
-            item.setId(createTransactionID());
+            item.setId(sh.createTransactionID());
             item.setFirstName(AESCrypt.encrypt(firstNameInput.getText().toString()));
             item.setSurname(AESCrypt.encrypt(surnameInput.getText().toString()));
             item.setEmail(AESCrypt.encrypt(emailAddressInput.getText().toString()));
@@ -190,47 +188,14 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                 try {
                     final UserItem entity = addItemInTable(item);
                 } catch (final Exception e) {
-                    createAndShowDialogFromTask(e, "Error");
+                    sh.createAndShowDialogFromTask(e, "Error");
                 }
                 return null;
             }
         };
 
-        runAsyncTask(task);
+        sh.runAsyncTask(task);
         completeRegistration = true;
-    }
-
-    private AsyncTask<Void, Void, Void> runAsyncTask(AsyncTask<Void, Void, Void> task) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-            return task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-        } else {
-            return task.execute();
-        }
-    }
-
-    public void createAndShowDialogFromTask(final Exception exception, String title) {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                createAndShowDialog(exception, "Error");
-            }
-        });
-    }
-
-    public void createAndShowDialog(Exception exception, String title) {
-        Throwable ex = exception;
-        if (exception.getCause() != null) {
-            ex = exception.getCause();
-        }
-        createAndShowDialog(ex.getMessage(), title);
-    }
-
-    public void createAndShowDialog(final String message, final String title) {
-        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-
-        builder.setMessage(message);
-        builder.setTitle(title);
-        builder.create().show();
     }
 
     public UserItem addItemInTable(UserItem item) throws ExecutionException, InterruptedException {
@@ -271,14 +236,14 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
 
                 } catch (final Exception e) {
-                    createAndShowDialogFromTask(e, "Error");
+                    sh.createAndShowDialogFromTask(e, "Error");
                 }
 
                 return null;
             }
         };
 
-        return runAsyncTask(task);
+        return sh.runAsyncTask(task);
     }
 
     private void refreshItemsFromTable() {
@@ -293,13 +258,13 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                 try {
                     final List<UserItem> results = refreshItemsFromMobileServiceTable();
                 } catch (final Exception e) {
-                    createAndShowDialogFromTask(e, "Error");
+                    sh.createAndShowDialogFromTask(e, "Error");
                 }
                 return null;
             }
         };
 
-        runAsyncTask(task);
+        sh.runAsyncTask(task);
     }
 
     private List<UserItem> refreshItemsFromMobileServiceTable() throws ExecutionException, InterruptedException {
@@ -344,7 +309,4 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
     }
 
-    public String createTransactionID() throws Exception {
-        return UUID.randomUUID().toString().replaceAll("-", "").toUpperCase();
-    }
 }

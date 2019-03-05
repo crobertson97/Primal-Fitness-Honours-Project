@@ -25,12 +25,15 @@ import com.microsoft.windowsazure.mobileservices.table.sync.synchandler.SimpleSy
 import com.squareup.okhttp.OkHttpClient;
 
 import java.net.MalformedURLException;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 public class FitnessPlans extends AppCompatActivity {
 
@@ -88,11 +91,18 @@ public class FitnessPlans extends AppCompatActivity {
                 try {
 
                     final List<ExerciseItem> results = mPlanTable.where().field("exercisePlanType").eq(FitnessFragment.planType).execute().get();
+                    final ArrayList<String> stuff = new ArrayList<>();
+
+
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             for (ExerciseItem item : results) {
-                                addPlanToScreen(item);
+                                stuff.add(item.getPlanName());
+                            }
+                            final Collection<String> stuff2 = stuff.stream().distinct().collect(Collectors.toCollection(LinkedList::new));
+                            for (String item5 : stuff2) {
+                                addPlanToScreen(item5);
                             }
                         }
                     });
@@ -105,9 +115,9 @@ public class FitnessPlans extends AppCompatActivity {
         sh.runAsyncTask(task);
     }
 
-    public void addPlanToScreen(ExerciseItem item) {
+    public void addPlanToScreen(String item) {
         final TextView planOnScreen = new TextView(this);
-        planOnScreen.setText(item.getPlanName());
+        planOnScreen.setText(item);
         planOnScreen.setTextSize(36);
         planOnScreen.setBackground(ContextCompat.getDrawable(this, R.drawable.border));
         planOnScreen.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
@@ -141,7 +151,6 @@ public class FitnessPlans extends AppCompatActivity {
         builder.create().show();
     }
 
-
     public void addItem() {
         if (mClient == null) {
             return;
@@ -152,7 +161,7 @@ public class FitnessPlans extends AppCompatActivity {
         try {
             item.setPlanName(plan);
             item.setPlanType(FitnessFragment.planType);
-            item.setId(createTransactionID());
+            item.setId(sh.createTransactionID());
             item.setUsername(LoginActivity.loggedInUser);
 
         } catch (Exception e) {
@@ -176,10 +185,6 @@ public class FitnessPlans extends AppCompatActivity {
     public PlanLinkItem addItemInTable(PlanLinkItem item) throws ExecutionException, InterruptedException {
         PlanLinkItem entity = mLinkTable.insert(item).get();
         return entity;
-    }
-
-    public String createTransactionID() throws Exception {
-        return UUID.randomUUID().toString().replaceAll("-", "").toUpperCase();
     }
 
     private AsyncTask<Void, Void, Void> initLocalStore() throws MobileServiceLocalStoreException, ExecutionException, InterruptedException {

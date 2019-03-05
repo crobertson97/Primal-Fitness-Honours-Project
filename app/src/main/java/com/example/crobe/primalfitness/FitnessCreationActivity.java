@@ -31,7 +31,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
@@ -225,7 +224,7 @@ public class FitnessCreationActivity extends AppCompatActivity implements View.O
         try {
             item.setPlanName(name.getText().toString());
             item.setPlanType(type.getSelectedItem().toString());
-            item.setId(createTransactionID());
+            item.setId(sh.createTransactionID());
             item.setExerciseName(exercises[0]);
             item.setSetsSuggested(exercises[1]);
             item.setRepsSuggested(exercises[2]);
@@ -253,10 +252,6 @@ public class FitnessCreationActivity extends AppCompatActivity implements View.O
     public ExerciseItem addItemInTable(ExerciseItem item) throws ExecutionException, InterruptedException {
         ExerciseItem entity = mExerciseTable.insert(item).get();
         return entity;
-    }
-
-    public String createTransactionID() throws Exception {
-        return UUID.randomUUID().toString().replaceAll("-", "").toUpperCase();
     }
 
     @Override

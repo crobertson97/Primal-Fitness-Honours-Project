@@ -11,13 +11,5 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/textView4"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Yeah. Running and that"
-            android:textSize="36sp"
-            tools:layout_editor_absoluteX="20dp"
-            tools:layout_editor_absoluteY="244dp" />
     </LinearLayout>
 </android.support.constraint.ConstraintLayout>
