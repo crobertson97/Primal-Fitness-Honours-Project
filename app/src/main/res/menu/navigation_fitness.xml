@@ -2,13 +2,13 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/navigation_fitness_plan"
+        android:id="@+id/navigation_diary"
         android:icon="@drawable/ic_home_black_24dp"
-        android:title="Fitness" />
+        android:title="Diary" />
 
     <item
-        android:id="@+id/navigation_nutrition_plan"
+        android:id="@+id/navigation_schedule"
         android:icon="@drawable/ic_dashboard_black_24dp"
-        android:title="Nutrition" />
+        android:title="Schedule" />
 
 </menu>

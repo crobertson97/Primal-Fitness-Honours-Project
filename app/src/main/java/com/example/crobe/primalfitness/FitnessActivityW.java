@@ -4,18 +4,18 @@ import android.os.Bundle;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
 
-public class PlansActivity extends AppCompatActivity {
+public class FitnessActivityW extends AppCompatActivity {
 
     android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = item -> {
         switch (item.getItemId()) {
-            case R.id.navigation_fitness_plan:
-                fragmentManager.beginTransaction().replace(R.id.content, new FitnessFragment()).commit();
+            case R.id.navigation_diary:
+                fragmentManager.beginTransaction().replace(R.id.content, new FitnessDiaryFragment()).commit();
                 return true;
-            case R.id.navigation_nutrition_plan:
-                fragmentManager.beginTransaction().replace(R.id.content, new NutritionFragment()).commit();
+            case R.id.navigation_schedule:
+                fragmentManager.beginTransaction().replace(R.id.content, new FitnessScheduleFragment()).commit();
                 return true;
         }
         return false;
@@ -24,11 +24,11 @@ public class PlansActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_plans);
+        setContentView(R.layout.activity_fitnessw);
 
         fragmentManager.beginTransaction().replace(R.id.content, new FitnessFragment()).commit();
 
-        BottomNavigationView navigation = findViewById(R.id.navigation_plans);
+        BottomNavigationView navigation = findViewById(R.id.navigation_fitness);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
     }
 
