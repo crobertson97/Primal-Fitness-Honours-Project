@@ -1,5 +1,6 @@
 package com.example.crobe.primalfitness;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -16,11 +17,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.microsoft.windowsazure.mobileservices.MobileServiceClient;
-import com.microsoft.windowsazure.mobileservices.http.OkHttpClientFactory;
+import com.microsoft.windowsazure.mobileservices.MobileServiceException;
 import com.microsoft.windowsazure.mobileservices.table.MobileServiceTable;
 import com.microsoft.windowsazure.mobileservices.table.sync.MobileServiceSyncContext;
 import com.microsoft.windowsazure.mobileservices.table.sync.localstore.ColumnDataType;
-import com.microsoft.windowsazure.mobileservices.table.sync.localstore.MobileServiceLocalStoreException;
 import com.microsoft.windowsazure.mobileservices.table.sync.localstore.SQLiteLocalStore;
 import com.microsoft.windowsazure.mobileservices.table.sync.synchandler.SimpleSyncHandler;
 import com.squareup.okhttp.OkHttpClient;
@@ -32,14 +32,12 @@ import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
-import static com.microsoft.windowsazure.mobileservices.table.query.QueryOperations.val;
 
 public class RegisterActivity extends AppCompatActivity implements View.OnClickListener, AdapterView.OnItemSelectedListener {
 
     private EditText firstNameInput, surnameInput, emailAddressInput, passwordInput, coachInput, ageInput, weightInput, heightInput;
     private TextView coachLabel, ageLabel, weightLabel, heightLabel;
-    private Spinner type;
-    private Button submit;
+    private Spinner spinner;
     private MobileServiceClient mClient;
     private MobileServiceTable<UserItem> mUserTable;
     private boolean completeRegistration;
@@ -83,44 +81,41 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
+        sh = new ServiceHandler(this);
 
-        Spinner spinner = (Spinner) findViewById(R.id.userTypeChoice);
+        spinner = findViewById(R.id.userTypeChoice);
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.user_type_array, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
 
-        firstNameInput = (EditText) findViewById(R.id.firstName);
-        surnameInput = (EditText) findViewById(R.id.surname);
-        emailAddressInput = (EditText) findViewById(R.id.emailAddress);
-        passwordInput = (EditText) findViewById(R.id.password);
-        coachInput = (EditText) findViewById(R.id.coachLink);
-        ageInput = (EditText) findViewById(R.id.age);
-        weightInput = (EditText) findViewById(R.id.weight);
-        heightInput = (EditText) findViewById(R.id.height);
+        firstNameInput = findViewById(R.id.firstName);
+        surnameInput = findViewById(R.id.surname);
+        emailAddressInput = findViewById(R.id.emailAddress);
+        passwordInput = findViewById(R.id.password);
+        coachInput = findViewById(R.id.coachLink);
+        ageInput = findViewById(R.id.age);
+        weightInput = findViewById(R.id.weight);
+        heightInput = findViewById(R.id.height);
 
-        coachLabel = (TextView) findViewById(R.id.coachIDLabel);
-        ageLabel = (TextView) findViewById(R.id.ageLabel);
-        weightLabel = (TextView) findViewById(R.id.weightLabel);
-        heightLabel = (TextView) findViewById(R.id.heightLabel);
+        coachLabel = findViewById(R.id.coachIDLabel);
+        ageLabel = findViewById(R.id.ageLabel);
+        weightLabel = findViewById(R.id.weightLabel);
+        heightLabel = findViewById(R.id.heightLabel);
 
-        type = (Spinner) findViewById(R.id.userTypeChoice);
-        type.setOnItemSelectedListener(this);
+        spinner.setOnItemSelectedListener(this);
 
-        submit = (Button) this.findViewById(R.id.submit);
+        Button submit = this.findViewById(R.id.submit);
         submit.setOnClickListener(this);
 
         try {
             mClient = new MobileServiceClient(
                     "https://primalfitnesshonours.azurewebsites.net",
                     this);
-            mClient.setAndroidHttpClientFactory(new OkHttpClientFactory() {
-                @Override
-                public OkHttpClient createOkHttpClient() {
-                    OkHttpClient client = new OkHttpClient();
-                    client.setReadTimeout(20, TimeUnit.SECONDS);
-                    client.setWriteTimeout(20, TimeUnit.SECONDS);
-                    return client;
-                }
+            mClient.setAndroidHttpClientFactory(() -> {
+                OkHttpClient client = new OkHttpClient();
+                client.setReadTimeout(20, TimeUnit.SECONDS);
+                client.setWriteTimeout(20, TimeUnit.SECONDS);
+                return client;
             });
 
             mUserTable = mClient.getTable(UserItem.class);
@@ -166,12 +161,12 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
             item.setSurname(AESCrypt.encrypt(surnameInput.getText().toString()));
             item.setEmail(AESCrypt.encrypt(emailAddressInput.getText().toString()));
             item.setPassword(AESCrypt.encrypt(passwordInput.getText().toString()));
-            item.setProfileType(type.getSelectedItem().toString());
-            if (type.getSelectedItem().toString().equals("Standard")) {
+            item.setProfileType(spinner.getSelectedItem().toString());
+            if (spinner.getSelectedItem().toString().equals("Standard")) {
                 item.setAge(AESCrypt.encrypt(ageInput.getText().toString()));
                 item.setHeight(AESCrypt.encrypt(heightInput.getText().toString()));
                 item.setWeight(AESCrypt.encrypt(weightInput.getText().toString()));
-            } else if (type.getSelectedItem().toString().equals("Athlete")) {
+            } else if (spinner.getSelectedItem().toString().equals("Athlete")) {
                 item.setAge(AESCrypt.encrypt(ageInput.getText().toString()));
                 item.setHeight(AESCrypt.encrypt(heightInput.getText().toString()));
                 item.setWeight(AESCrypt.encrypt(weightInput.getText().toString()));
@@ -182,7 +177,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
             e.printStackTrace();
         }
         // Insert the new item
-        AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
+        @SuppressLint("StaticFieldLeak") AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... params) {
                 try {
@@ -199,13 +194,12 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     }
 
     public UserItem addItemInTable(UserItem item) throws ExecutionException, InterruptedException {
-        UserItem entity = mUserTable.insert(item).get();
-        return entity;
+        return mUserTable.insert(item).get();
     }
 
-    private AsyncTask<Void, Void, Void> initLocalStore() throws MobileServiceLocalStoreException, ExecutionException, InterruptedException {
+    private AsyncTask<Void, Void, Void> initLocalStore() {
 
-        AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
+        @SuppressLint("StaticFieldLeak") AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... params) {
                 try {
@@ -217,7 +211,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
                     SQLiteLocalStore localStore = new SQLiteLocalStore(mClient.getContext(), "OfflineStore", null, 1);
 
-                    Map<String, ColumnDataType> tableDefinition = new HashMap<String, ColumnDataType>();
+                    Map<String, ColumnDataType> tableDefinition = new HashMap<>();
                     tableDefinition.put("firstName", ColumnDataType.String);
                     tableDefinition.put("surname", ColumnDataType.String);
                     tableDefinition.put("id", ColumnDataType.String);
@@ -251,7 +245,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         // Get the items that weren't marked as completed and add them in the
         // adapter
 
-        AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
+        @SuppressLint("StaticFieldLeak") AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... params) {
 
@@ -267,40 +261,43 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         sh.runAsyncTask(task);
     }
 
-    private List<UserItem> refreshItemsFromMobileServiceTable() throws ExecutionException, InterruptedException {
-        return mUserTable.where().field("complete").
-                eq(val(false)).execute().get();
+    private List<UserItem> refreshItemsFromMobileServiceTable() throws ExecutionException, InterruptedException, MobileServiceException {
+        return mUserTable.execute().get();
     }
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
-        if (parent.getItemAtPosition(pos).toString().equals("Athlete")) {
-            coachLabel.setVisibility(View.VISIBLE);
-            coachInput.setVisibility(View.VISIBLE);
-            ageLabel.setVisibility(View.VISIBLE);
-            ageInput.setVisibility(View.VISIBLE);
-            weightLabel.setVisibility(View.VISIBLE);
-            weightInput.setVisibility(View.VISIBLE);
-            heightLabel.setVisibility(View.VISIBLE);
-            heightInput.setVisibility(View.VISIBLE);
-        } else if (parent.getItemAtPosition(pos).toString().equals("Coach")) {
-            coachLabel.setVisibility(View.GONE);
-            coachInput.setVisibility(View.GONE);
-            ageLabel.setVisibility(View.GONE);
-            ageInput.setVisibility(View.GONE);
-            weightLabel.setVisibility(View.GONE);
-            weightInput.setVisibility(View.GONE);
-            heightLabel.setVisibility(View.GONE);
-            heightInput.setVisibility(View.GONE);
-        } else {
-            coachLabel.setVisibility(View.GONE);
-            coachInput.setVisibility(View.GONE);
-            ageLabel.setVisibility(View.VISIBLE);
-            ageInput.setVisibility(View.VISIBLE);
-            weightLabel.setVisibility(View.VISIBLE);
-            weightInput.setVisibility(View.VISIBLE);
-            heightLabel.setVisibility(View.VISIBLE);
-            heightInput.setVisibility(View.VISIBLE);
+        switch (parent.getItemAtPosition(pos).toString()) {
+            case "Athlete":
+                coachLabel.setVisibility(View.VISIBLE);
+                coachInput.setVisibility(View.VISIBLE);
+                ageLabel.setVisibility(View.VISIBLE);
+                ageInput.setVisibility(View.VISIBLE);
+                weightLabel.setVisibility(View.VISIBLE);
+                weightInput.setVisibility(View.VISIBLE);
+                heightLabel.setVisibility(View.VISIBLE);
+                heightInput.setVisibility(View.VISIBLE);
+                break;
+            case "Coach":
+                coachLabel.setVisibility(View.GONE);
+                coachInput.setVisibility(View.GONE);
+                ageLabel.setVisibility(View.GONE);
+                ageInput.setVisibility(View.GONE);
+                weightLabel.setVisibility(View.GONE);
+                weightInput.setVisibility(View.GONE);
+                heightLabel.setVisibility(View.GONE);
+                heightInput.setVisibility(View.GONE);
+                break;
+            default:
+                coachLabel.setVisibility(View.GONE);
+                coachInput.setVisibility(View.GONE);
+                ageLabel.setVisibility(View.VISIBLE);
+                ageInput.setVisibility(View.VISIBLE);
+                weightLabel.setVisibility(View.VISIBLE);
+                weightInput.setVisibility(View.VISIBLE);
+                heightLabel.setVisibility(View.VISIBLE);
+                heightInput.setVisibility(View.VISIBLE);
+                break;
         }
     }
 

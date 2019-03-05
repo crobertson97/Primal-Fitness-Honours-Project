@@ -1,7 +1,7 @@
 package com.example.crobe.primalfitness;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.AsyncTask;
@@ -9,17 +9,14 @@ import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.microsoft.windowsazure.mobileservices.MobileServiceClient;
 import com.microsoft.windowsazure.mobileservices.MobileServiceException;
-import com.microsoft.windowsazure.mobileservices.http.OkHttpClientFactory;
 import com.microsoft.windowsazure.mobileservices.table.MobileServiceTable;
 import com.microsoft.windowsazure.mobileservices.table.sync.MobileServiceSyncContext;
 import com.microsoft.windowsazure.mobileservices.table.sync.localstore.ColumnDataType;
-import com.microsoft.windowsazure.mobileservices.table.sync.localstore.MobileServiceLocalStoreException;
 import com.microsoft.windowsazure.mobileservices.table.sync.localstore.SQLiteLocalStore;
 import com.microsoft.windowsazure.mobileservices.table.sync.synchandler.SimpleSyncHandler;
 import com.squareup.okhttp.OkHttpClient;
@@ -34,6 +31,8 @@ import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
+
+import static android.view.View.TEXT_ALIGNMENT_CENTER;
 
 public class FitnessPlans extends AppCompatActivity {
 
@@ -51,19 +50,16 @@ public class FitnessPlans extends AppCompatActivity {
         setContentView(R.layout.activity_fitness_plans);
         sh = new ServiceHandler(this);
 
-        layoutPlans = (LinearLayout) findViewById(R.id.createdPlans);
+        layoutPlans = findViewById(R.id.createdPlans);
 
         try {
             mClient = new MobileServiceClient("https://primalfitnesshonours.azurewebsites.net", this);
 
-            mClient.setAndroidHttpClientFactory(new OkHttpClientFactory() {
-                @Override
-                public OkHttpClient createOkHttpClient() {
-                    OkHttpClient client = new OkHttpClient();
-                    client.setReadTimeout(20, TimeUnit.SECONDS);
-                    client.setWriteTimeout(20, TimeUnit.SECONDS);
-                    return client;
-                }
+            mClient.setAndroidHttpClientFactory(() -> {
+                OkHttpClient client = new OkHttpClient();
+                client.setReadTimeout(20, TimeUnit.SECONDS);
+                client.setWriteTimeout(20, TimeUnit.SECONDS);
+                return client;
             });
 
             mPlanTable = mClient.getTable(ExerciseItem.class);
@@ -85,7 +81,7 @@ public class FitnessPlans extends AppCompatActivity {
             return;
         }
 
-        AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
+        @SuppressLint("StaticFieldLeak") AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... params) {
                 try {
@@ -94,16 +90,13 @@ public class FitnessPlans extends AppCompatActivity {
                     final ArrayList<String> stuff = new ArrayList<>();
 
 
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            for (ExerciseItem item : results) {
-                                stuff.add(item.getPlanName());
-                            }
-                            final Collection<String> stuff2 = stuff.stream().distinct().collect(Collectors.toCollection(LinkedList::new));
-                            for (String item5 : stuff2) {
-                                addPlanToScreen(item5);
-                            }
+                    runOnUiThread(() -> {
+                        for (ExerciseItem item : results) {
+                            stuff.add(item.getPlanName());
+                        }
+                        final Collection<String> stuff2 = stuff.stream().distinct().collect(Collectors.toCollection(LinkedList::new));
+                        for (String item5 : stuff2) {
+                            addPlanToScreen(item5);
                         }
                     });
                 } catch (final Exception e) {
@@ -120,15 +113,12 @@ public class FitnessPlans extends AppCompatActivity {
         planOnScreen.setText(item);
         planOnScreen.setTextSize(36);
         planOnScreen.setBackground(ContextCompat.getDrawable(this, R.drawable.border));
-        planOnScreen.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+        planOnScreen.setTextAlignment(TEXT_ALIGNMENT_CENTER);
         planOnScreen.setTextColor(Color.parseColor("#ff000000"));
-        planOnScreen.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                onCreateDialog();
-                plan = planOnScreen.getText().toString();
-                Log.i("TAG", "" + plan);
-            }
+        planOnScreen.setOnClickListener(view -> {
+            onCreateDialog();
+            plan = planOnScreen.getText().toString();
+            Log.i("TAG", "" + plan);
         });
         layoutPlans.addView(planOnScreen);
     }
@@ -137,16 +127,8 @@ public class FitnessPlans extends AppCompatActivity {
         // Use the Builder class for convenient dialog construction
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage("View exercises in this plan or link it to your account?")
-                .setPositiveButton("Link", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        addItem();
-                    }
-                })
-                .setNegativeButton("View", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        startActivity(new Intent(getApplicationContext(), ExerciseActivity.class));
-                    }
-                });
+                .setPositiveButton("Link", (dialog, id) -> addItem())
+                .setNegativeButton("View", (dialog, id) -> startActivity(new Intent(getApplicationContext(), ExerciseActivity.class)));
         // Create the AlertDialog object and return it
         builder.create().show();
     }
@@ -168,7 +150,7 @@ public class FitnessPlans extends AppCompatActivity {
             e.printStackTrace();
         }
         // Insert the new item
-        AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
+        @SuppressLint("StaticFieldLeak") AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... params) {
                 try {
@@ -183,13 +165,12 @@ public class FitnessPlans extends AppCompatActivity {
     }
 
     public PlanLinkItem addItemInTable(PlanLinkItem item) throws ExecutionException, InterruptedException {
-        PlanLinkItem entity = mLinkTable.insert(item).get();
-        return entity;
+        return mLinkTable.insert(item).get();
     }
 
-    private AsyncTask<Void, Void, Void> initLocalStore() throws MobileServiceLocalStoreException, ExecutionException, InterruptedException {
+    private AsyncTask<Void, Void, Void> initLocalStore() {
 
-        AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
+        @SuppressLint("StaticFieldLeak") AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... params) {
                 try {
@@ -201,7 +182,7 @@ public class FitnessPlans extends AppCompatActivity {
 
                     SQLiteLocalStore localStore = new SQLiteLocalStore(mClient.getContext(), "OfflineStore", null, 1);
 
-                    Map<String, ColumnDataType> tableDefinition = new HashMap<String, ColumnDataType>();
+                    Map<String, ColumnDataType> tableDefinition = new HashMap<>();
                     tableDefinition.put("planName", ColumnDataType.String);
                     tableDefinition.put("planType", ColumnDataType.String);
                     tableDefinition.put("username", ColumnDataType.String);
@@ -230,7 +211,7 @@ public class FitnessPlans extends AppCompatActivity {
         // Get the items that weren't marked as completed and add them in the
         // adapter
 
-        AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
+        @SuppressLint("StaticFieldLeak") AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... params) {
 
@@ -247,8 +228,7 @@ public class FitnessPlans extends AppCompatActivity {
     }
 
     private List<PlanLinkItem> refreshItemsFromMobileServiceTable() throws ExecutionException, InterruptedException, MobileServiceException {
-        final List<PlanLinkItem> plans = mLinkTable.execute().get();
-        return plans;
+        return mLinkTable.execute().get();
     }
 
 }

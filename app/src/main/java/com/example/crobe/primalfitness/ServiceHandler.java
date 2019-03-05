@@ -1,5 +1,6 @@
 package com.example.crobe.primalfitness;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.os.AsyncTask;
@@ -32,7 +33,7 @@ public class ServiceHandler {
         createAndShowDialog(ex.getMessage(), title);
     }
 
-    public void createAndShowDialog(final String message, final String title) {
+    private void createAndShowDialog(final String message, final String title) {
         final AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
 
         builder.setMessage(message);
@@ -40,6 +41,7 @@ public class ServiceHandler {
         builder.create().show();
     }
 
+    @SuppressLint("ObsoleteSdkInt")
     public AsyncTask<Void, Void, Void> runAsyncTask(AsyncTask<Void, Void, Void> task) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
             return task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
@@ -48,7 +50,7 @@ public class ServiceHandler {
         }
     }
 
-    public String createTransactionID() throws Exception {
+    public String createTransactionID() {
         return UUID.randomUUID().toString().replaceAll("-", "").toUpperCase();
     }
 

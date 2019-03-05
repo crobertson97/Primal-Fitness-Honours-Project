@@ -1,6 +1,6 @@
 package com.example.crobe.primalfitness;
 
-import android.app.AlertDialog;
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.AsyncTask;
@@ -12,7 +12,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.microsoft.windowsazure.mobileservices.MobileServiceClient;
-import com.microsoft.windowsazure.mobileservices.http.OkHttpClientFactory;
 import com.microsoft.windowsazure.mobileservices.table.MobileServiceTable;
 import com.squareup.okhttp.OkHttpClient;
 
@@ -33,19 +32,16 @@ public class ExerciseActivity extends AppCompatActivity implements View.OnClickL
         setContentView(R.layout.activity_exercise);
         sh = new ServiceHandler(this);
 
-        layoutPlans = (LinearLayout) findViewById(R.id.planExercises);
+        layoutPlans = findViewById(R.id.planExercises);
 
         try {
             mClient = new MobileServiceClient("https://primalfitnesshonours.azurewebsites.net", this);
 
-            mClient.setAndroidHttpClientFactory(new OkHttpClientFactory() {
-                @Override
-                public OkHttpClient createOkHttpClient() {
-                    OkHttpClient client = new OkHttpClient();
-                    client.setReadTimeout(20, TimeUnit.SECONDS);
-                    client.setWriteTimeout(20, TimeUnit.SECONDS);
-                    return client;
-                }
+            mClient.setAndroidHttpClientFactory(() -> {
+                OkHttpClient client = new OkHttpClient();
+                client.setReadTimeout(20, TimeUnit.SECONDS);
+                client.setWriteTimeout(20, TimeUnit.SECONDS);
+                return client;
             });
 
             mPlanTable = mClient.getTable(ExerciseItem.class);
@@ -68,18 +64,15 @@ public class ExerciseActivity extends AppCompatActivity implements View.OnClickL
             return;
         }
 
-        AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
+        @SuppressLint("StaticFieldLeak") AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... params) {
                 try {
 
                     final List<ExerciseItem> results = mPlanTable.where().field("exercisePlanType").eq(FitnessFragment.planType).and(mPlanTable.where().field("planName").eq(FitnessPlans.plan)).execute().get();
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            for (ExerciseItem item : results) {
-                                addPlanToScreen(item);
-                            }
+                    runOnUiThread(() -> {
+                        for (ExerciseItem item : results) {
+                            addPlanToScreen(item);
                         }
                     });
                 } catch (final Exception e) {
@@ -98,22 +91,7 @@ public class ExerciseActivity extends AppCompatActivity implements View.OnClickL
         planOnScreen.setBackground(ContextCompat.getDrawable(this, R.drawable.border));
         planOnScreen.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
         planOnScreen.setTextColor(Color.parseColor("#ff000000"));
-        planOnScreen.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(new Intent(getApplicationContext(), LoginActivity.class));
-            }
-        });
+        planOnScreen.setOnClickListener(view -> startActivity(new Intent(getApplicationContext(), LoginActivity.class)));
         layoutPlans.addView(planOnScreen);
     }
-
-    public void onCreateDialog() {
-        // Use the Builder class for convenient dialog construction
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("View exercises in this plan or link it to your account?");
-        // Create the AlertDialog object and return it
-        builder.create().show();
-    }
-
-
 }

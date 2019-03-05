@@ -17,7 +17,6 @@ public class FitnessFragment extends Fragment implements View.OnClickListener {
 
 
     public static String planType;
-    private TextView calisthetics, cardio, weights, newPlan;
 
     public FitnessFragment() {
         // Required empty public constructor
@@ -28,13 +27,13 @@ public class FitnessFragment extends Fragment implements View.OnClickListener {
 
         View view = inflater.inflate(R.layout.fragment_plan_fitness, container, false);
 
-        calisthetics = (TextView) view.findViewById(R.id.calisthetics);
+        TextView calisthetics = view.findViewById(R.id.calisthetics);
         calisthetics.setOnClickListener(this);
-        cardio = (TextView) view.findViewById(R.id.cardio);
+        TextView cardio = view.findViewById(R.id.cardio);
         cardio.setOnClickListener(this);
-        weights = (TextView) view.findViewById(R.id.weights);
+        TextView weights = view.findViewById(R.id.weights);
         weights.setOnClickListener(this);
-        newPlan = (TextView) view.findViewById(R.id.createPlan);
+        TextView newPlan = view.findViewById(R.id.createPlan);
         newPlan.setOnClickListener(this);
 
         if (!LoginActivity.loggedInUserType.equals("Coach")) {

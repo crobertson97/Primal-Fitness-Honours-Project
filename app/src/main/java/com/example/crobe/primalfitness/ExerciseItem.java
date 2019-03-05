@@ -33,18 +33,6 @@ public class ExerciseItem {
 
     }
 
-    public ExerciseItem(String id, String mExerciseName, String mPlanType, String mPlanName, String mRest, String mSetsSuggested, String mRepsSuggested, String mCreatedBy, Boolean mPrivate) {
-        this.setId(id);
-        this.setCreatedBy(mCreatedBy);
-        this.setExerciseName(mExerciseName);
-        this.setPlanType(mPlanType);
-        this.setPlanName(mPlanName);
-        this.setRest(mRest);
-        this.setSetsSuggested(mSetsSuggested);
-        this.setRepsSuggested(mRepsSuggested);
-        this.setPrivate(mPrivate);
-    }
-
     public String getId() {
         return id;
     }
@@ -62,7 +50,7 @@ public class ExerciseItem {
     }
 
     public String getCreatedBy() {
-        return id;
+        return mCreatedBy;
     }
 
     public final void setCreatedBy(String mCreatedBy) {

@@ -2,7 +2,6 @@ package com.example.crobe.primalfitness;
 
 public class NutritionItem {
 
-
     @com.google.gson.annotations.SerializedName("id")
     private String id;
 
@@ -32,18 +31,6 @@ public class NutritionItem {
 
     public NutritionItem() {
 
-    }
-
-    public NutritionItem(String id, String mExerciseName, String mPlanType, String mPlanName, String mRest, String mSetsSuggested, String mRepsSuggested, String mCreatedBy, Boolean mPrivate) {
-        this.setId(id);
-        this.setCreatedBy(mCreatedBy);
-        this.setExerciseName(mExerciseName);
-        this.setPlanType(mPlanType);
-        this.setPlanName(mPlanName);
-        this.setRest(mRest);
-        this.setSetsSuggested(mSetsSuggested);
-        this.setRepsSuggested(mRepsSuggested);
-        this.setPrivate(mPrivate);
     }
 
     public String getId() {

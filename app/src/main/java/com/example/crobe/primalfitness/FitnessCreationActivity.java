@@ -1,5 +1,6 @@
 package com.example.crobe.primalfitness;
 
+import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.graphics.Color;
 import android.os.AsyncTask;
@@ -17,11 +18,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.microsoft.windowsazure.mobileservices.MobileServiceClient;
-import com.microsoft.windowsazure.mobileservices.http.OkHttpClientFactory;
 import com.microsoft.windowsazure.mobileservices.table.MobileServiceTable;
 import com.microsoft.windowsazure.mobileservices.table.sync.MobileServiceSyncContext;
 import com.microsoft.windowsazure.mobileservices.table.sync.localstore.ColumnDataType;
-import com.microsoft.windowsazure.mobileservices.table.sync.localstore.MobileServiceLocalStoreException;
 import com.microsoft.windowsazure.mobileservices.table.sync.localstore.SQLiteLocalStore;
 import com.microsoft.windowsazure.mobileservices.table.sync.synchandler.SimpleSyncHandler;
 import com.squareup.okhttp.OkHttpClient;
@@ -41,7 +40,6 @@ public class FitnessCreationActivity extends AppCompatActivity implements View.O
     private MobileServiceClient mClient;
     private MobileServiceTable<ExerciseItem> mExerciseTable;
     private Dialog myDialog;
-    private Button submitExercise, createPlan;
     private Spinner type;
     private EditText exercise, sets, reps, rest, name;
     private List<String[]> array;
@@ -53,18 +51,16 @@ public class FitnessCreationActivity extends AppCompatActivity implements View.O
         setContentView(R.layout.activity_fitness_creation);
         sh = new ServiceHandler(this);
         myDialog = new Dialog(this);
-        array = new ArrayList<String[]>();
-        name = (EditText) findViewById(R.id.planName);
+        array = new ArrayList<>();
+        name = findViewById(R.id.planName);
 
-        createPlan = (Button) findViewById(R.id.createPlan);
+        Button createPlan = findViewById(R.id.createPlan);
         createPlan.setOnClickListener(this);
 
-        Spinner spinner = (Spinner) findViewById(R.id.planType);
+        type = findViewById(R.id.planType);
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.plan_type_array_fitness, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner.setAdapter(adapter);
-
-        type = (Spinner) findViewById(R.id.planType);
+        type.setAdapter(adapter);
         type.setOnItemSelectedListener(this);
 
 
@@ -77,14 +73,11 @@ public class FitnessCreationActivity extends AppCompatActivity implements View.O
                     this);
 
             // Extend timeout from default of 10s to 20s
-            mClient.setAndroidHttpClientFactory(new OkHttpClientFactory() {
-                @Override
-                public OkHttpClient createOkHttpClient() {
-                    OkHttpClient client = new OkHttpClient();
-                    client.setReadTimeout(20, TimeUnit.SECONDS);
-                    client.setWriteTimeout(20, TimeUnit.SECONDS);
-                    return client;
-                }
+            mClient.setAndroidHttpClientFactory(() -> {
+                OkHttpClient client = new OkHttpClient();
+                client.setReadTimeout(20, TimeUnit.SECONDS);
+                client.setWriteTimeout(20, TimeUnit.SECONDS);
+                return client;
             });
             mExerciseTable = mClient.getTable(ExerciseItem.class);
             initLocalStore().get();
@@ -98,12 +91,12 @@ public class FitnessCreationActivity extends AppCompatActivity implements View.O
 
     public void ShowPopup(View v) {
         myDialog.setContentView(R.layout.pop_fitness);
-        submitExercise = (Button) myDialog.findViewById(R.id.submitExercise);
+        Button submitExercise = myDialog.findViewById(R.id.submitExercise);
         submitExercise.setOnClickListener(this);
-        exercise = (EditText) myDialog.findViewById(R.id.exerciseName);
-        sets = (EditText) myDialog.findViewById(R.id.suggestedSets);
-        reps = (EditText) myDialog.findViewById(R.id.suggestedReps);
-        rest = (EditText) myDialog.findViewById(R.id.suggestedRest);
+        exercise = myDialog.findViewById(R.id.exerciseName);
+        sets = myDialog.findViewById(R.id.suggestedSets);
+        reps = myDialog.findViewById(R.id.suggestedReps);
+        rest = myDialog.findViewById(R.id.suggestedRest);
         myDialog.show();
     }
 
@@ -134,7 +127,7 @@ public class FitnessCreationActivity extends AppCompatActivity implements View.O
             Toast.makeText(this, "Please enter values into all fields", Toast.LENGTH_LONG).show();
             return false;
         }else {
-            LinearLayout linearLayout = (LinearLayout) findViewById(R.id.exercisesLayout);
+            LinearLayout linearLayout = findViewById(R.id.exercisesLayout);
             TextView newExercise = new TextView(this);
             newExercise.setText(exercise.getText().toString());
             newExercise.setTextSize(24);
@@ -146,9 +139,9 @@ public class FitnessCreationActivity extends AppCompatActivity implements View.O
         }
     }
 
-    private AsyncTask<Void, Void, Void> initLocalStore() throws MobileServiceLocalStoreException, ExecutionException, InterruptedException {
+    private AsyncTask<Void, Void, Void> initLocalStore() {
 
-        AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
+        @SuppressLint("StaticFieldLeak") AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... params) {
                 try {
@@ -160,7 +153,7 @@ public class FitnessCreationActivity extends AppCompatActivity implements View.O
 
                     SQLiteLocalStore localStore = new SQLiteLocalStore(mClient.getContext(), "OfflineStore", null, 1);
 
-                    Map<String, ColumnDataType> tableDefinition = new HashMap<String, ColumnDataType>();
+                    Map<String, ColumnDataType> tableDefinition = new HashMap<>();
                     tableDefinition.put("planName", ColumnDataType.String);
                     tableDefinition.put("exercisePlanType", ColumnDataType.String);
                     tableDefinition.put("exerciseName", ColumnDataType.String);
@@ -193,7 +186,7 @@ public class FitnessCreationActivity extends AppCompatActivity implements View.O
         // Get the items that weren't marked as completed and add them in the
         // adapter
 
-        AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
+        @SuppressLint("StaticFieldLeak") AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... params) {
 
@@ -235,7 +228,7 @@ public class FitnessCreationActivity extends AppCompatActivity implements View.O
             e.printStackTrace();
         }
         // Insert the new item
-        AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
+        @SuppressLint("StaticFieldLeak") AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... params) {
                 try {
@@ -250,8 +243,7 @@ public class FitnessCreationActivity extends AppCompatActivity implements View.O
     }
 
     public ExerciseItem addItemInTable(ExerciseItem item) throws ExecutionException, InterruptedException {
-        ExerciseItem entity = mExerciseTable.insert(item).get();
-        return entity;
+        return mExerciseTable.insert(item).get();
     }
 
     @Override

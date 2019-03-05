@@ -1,5 +1,6 @@
 package com.example.crobe.primalfitness;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -10,7 +11,6 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.microsoft.windowsazure.mobileservices.MobileServiceClient;
-import com.microsoft.windowsazure.mobileservices.http.OkHttpClientFactory;
 import com.microsoft.windowsazure.mobileservices.table.MobileServiceTable;
 import com.squareup.okhttp.OkHttpClient;
 
@@ -21,7 +21,6 @@ import java.util.concurrent.TimeUnit;
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
 
     public static String loggedInUser, loggedInUserType;
-    private Button signIn, register, testCoach, testAthlete, testStandard;
     public EditText passwordLogin, emailAddress;
     private MobileServiceClient mClient;
     private MobileServiceTable<UserItem> mUserTable;
@@ -33,19 +32,19 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         setContentView(R.layout.activity_login);
         sh = new ServiceHandler(this);
 
-        signIn = (Button) this.findViewById(R.id.signIn);
+        Button signIn = this.findViewById(R.id.signIn);
         signIn.setOnClickListener(this);
-        testCoach = (Button) this.findViewById(R.id.testCoach);
+        Button testCoach = this.findViewById(R.id.testCoach);
         testCoach.setOnClickListener(this);
-        testAthlete = (Button) this.findViewById(R.id.testAthlete);
+        Button testAthlete = this.findViewById(R.id.testAthlete);
         testAthlete.setOnClickListener(this);
-        testStandard = (Button) this.findViewById(R.id.testStandard);
+        Button testStandard = this.findViewById(R.id.testStandard);
         testStandard.setOnClickListener(this);
-        register = (Button) this.findViewById(R.id.register);
+        Button register = this.findViewById(R.id.register);
         register.setOnClickListener(this);
-        emailAddress = (EditText) findViewById(R.id.username);
+        emailAddress = findViewById(R.id.username);
         emailAddress.setText("");
-        passwordLogin = (EditText) findViewById(R.id.password);
+        passwordLogin = findViewById(R.id.password);
         passwordLogin.setText("");
 
         try {
@@ -57,14 +56,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     this);
 
             // Extend timeout from default of 10s to 20s
-            mClient.setAndroidHttpClientFactory(new OkHttpClientFactory() {
-                @Override
-                public OkHttpClient createOkHttpClient() {
-                    OkHttpClient client = new OkHttpClient();
-                    client.setReadTimeout(20, TimeUnit.SECONDS);
-                    client.setWriteTimeout(20, TimeUnit.SECONDS);
-                    return client;
-                }
+            mClient.setAndroidHttpClientFactory(() -> {
+                OkHttpClient client = new OkHttpClient();
+                client.setReadTimeout(20, TimeUnit.SECONDS);
+                client.setWriteTimeout(20, TimeUnit.SECONDS);
+                return client;
             });
 
             mUserTable = mClient.getTable(UserItem.class);
@@ -109,29 +105,26 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             return;
         }
 
-        AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
+        @SuppressLint("StaticFieldLeak") AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... params) {
                 try {
 
                     final List<UserItem> results = mUserTable.where().field("email").eq(AESCrypt.encrypt(emailAddress.getText().toString())).execute().get();
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            Boolean number = false;
-                            for (UserItem item : results) {
-                                try {
-                                    if (item.getPassword().equals(AESCrypt.encrypt(passwordLogin.getText().toString()))) {
-                                        number = true;
-                                        loggedInUser = item.getEmail();
-                                        loggedInUserType = item.getProfileType();
-                                    }
-                                } catch (Exception e) {
-                                    e.printStackTrace();
+                    runOnUiThread(() -> {
+                        Boolean number = false;
+                        for (UserItem item : results) {
+                            try {
+                                if (item.getPassword().equals(AESCrypt.encrypt(passwordLogin.getText().toString()))) {
+                                    number = true;
+                                    loggedInUser = item.getEmail();
+                                    loggedInUserType = item.getProfileType();
                                 }
+                            } catch (Exception e) {
+                                e.printStackTrace();
                             }
-                            newActivity(number);
                         }
+                        newActivity(number);
                     });
                 } catch (final Exception e) {
                     sh.createAndShowDialogFromTask(e, "Error");

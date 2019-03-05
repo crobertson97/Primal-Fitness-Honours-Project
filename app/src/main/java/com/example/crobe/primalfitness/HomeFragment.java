@@ -28,13 +28,13 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
 
         // Inflate the layout for this fragment
 
-        Button plansButton = (Button) view.findViewById(R.id.plans);
+        Button plansButton = view.findViewById(R.id.plans);
         plansButton.setOnClickListener(this);
-        Button messageButton = (Button) view.findViewById(R.id.messages);
+        Button messageButton = view.findViewById(R.id.messages);
         messageButton.setOnClickListener(this);
-        Button nutritionButton = (Button) view.findViewById(R.id.nutritionTracking);
+        Button nutritionButton = view.findViewById(R.id.nutritionTracking);
         nutritionButton.setOnClickListener(this);
-        Button fitnessButton = (Button) view.findViewById(R.id.fitnessTracking);
+        Button fitnessButton = view.findViewById(R.id.fitnessTracking);
         fitnessButton.setOnClickListener(this);
 
         return view;
