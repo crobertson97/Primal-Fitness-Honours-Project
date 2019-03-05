@@ -2,13 +2,16 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/navigation_diary"
+        android:id="@+id/navigation_diary_fitness"
         android:icon="@drawable/ic_home_black_24dp"
+        android:state_enabled="true"
         android:title="Diary" />
 
+
     <item
-        android:id="@+id/navigation_schedule"
-        android:icon="@drawable/ic_dashboard_black_24dp"
+        android:id="@+id/navigation_schedule_fitness"
+        android:icon="@drawable/ic_notifications_black_24dp"
+        android:state_enabled="true"
         android:title="Schedule" />
 
 </menu>

@@ -46,7 +46,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
                 startActivity(new Intent(getActivity(), PlansActivity.class));
                 break;
             case R.id.fitnessTracking:
-                startActivity(new Intent(getActivity(), FitnessActivityW.class));
+                startActivity(new Intent(getActivity(), FitnessActivityNew.class));
                 break;
             case R.id.nutritionTracking:
                 startActivity(new Intent(getActivity(), NutritionActivity.class));

@@ -31,5 +31,4 @@ public class PlansActivity extends AppCompatActivity {
         BottomNavigationView navigation = findViewById(R.id.navigation_plans);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
     }
-
 }
