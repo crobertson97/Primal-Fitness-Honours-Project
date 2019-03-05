@@ -43,7 +43,10 @@
             android:name=".FitnessCreationActivity"
             android:screenOrientation="portrait" />
         <activity android:name=".FitnessPlans" />
-        <activity android:name=".ExerciseActivity"></activity>
+        <activity android:name=".ExerciseActivity" />
+        <activity
+            android:name=".FitnessActivity2"
+            android:label="@string/title_activity_fitness2"></activity>
     </application>
 
 </manifest>

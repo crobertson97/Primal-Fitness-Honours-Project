@@ -39,5 +39,6 @@
     <string name="nutrition">Nutrition</string>
     <string name="fitness">Fitness</string>
     <string name="todo">TODO</string>
+    <string name="title_activity_fitness2">FitnessActivity2</string>
 
 </resources>
