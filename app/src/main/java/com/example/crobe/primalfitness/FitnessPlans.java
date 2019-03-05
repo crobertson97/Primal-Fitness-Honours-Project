@@ -5,7 +5,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -15,12 +14,22 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.microsoft.windowsazure.mobileservices.MobileServiceClient;
+import com.microsoft.windowsazure.mobileservices.MobileServiceException;
 import com.microsoft.windowsazure.mobileservices.http.OkHttpClientFactory;
 import com.microsoft.windowsazure.mobileservices.table.MobileServiceTable;
+import com.microsoft.windowsazure.mobileservices.table.sync.MobileServiceSyncContext;
+import com.microsoft.windowsazure.mobileservices.table.sync.localstore.ColumnDataType;
+import com.microsoft.windowsazure.mobileservices.table.sync.localstore.MobileServiceLocalStoreException;
+import com.microsoft.windowsazure.mobileservices.table.sync.localstore.SQLiteLocalStore;
+import com.microsoft.windowsazure.mobileservices.table.sync.synchandler.SimpleSyncHandler;
 import com.squareup.okhttp.OkHttpClient;
 
 import java.net.MalformedURLException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 public class FitnessPlans extends AppCompatActivity {
@@ -30,11 +39,14 @@ public class FitnessPlans extends AppCompatActivity {
     private LinearLayout layoutPlans;
     private MobileServiceClient mClient;
     private MobileServiceTable<ExerciseItem> mPlanTable;
+    private MobileServiceTable<PlanLinkItem> mLinkTable;
+    private ServiceHandler sh;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_fitness_plans);
+        sh = new ServiceHandler(this);
 
         layoutPlans = (LinearLayout) findViewById(R.id.createdPlans);
 
@@ -52,11 +64,14 @@ public class FitnessPlans extends AppCompatActivity {
             });
 
             mPlanTable = mClient.getTable(ExerciseItem.class);
+            mLinkTable = mClient.getTable(PlanLinkItem.class);
+            initLocalStore().get();
+            refreshItemsFromTable();
 
         } catch (MalformedURLException e) {
-            createAndShowDialog(new Exception("There was an error creating the Mobile Service. Verify the URL"), "Error");
+            sh.createAndShowDialog(new Exception("There was an error creating the Mobile Service. Verify the URL"), "Error");
         } catch (Exception e) {
-            createAndShowDialog(e, "Error");
+            sh.createAndShowDialog(e, "Error");
         }
 
         getCreatedPlans();
@@ -82,12 +97,12 @@ public class FitnessPlans extends AppCompatActivity {
                         }
                     });
                 } catch (final Exception e) {
-                    createAndShowDialogFromTask(e, "Error");
+                    sh.createAndShowDialogFromTask(e, "Error");
                 }
                 return null;
             }
         };
-        runAsyncTask(task);
+        sh.runAsyncTask(task);
     }
 
     public void addPlanToScreen(ExerciseItem item) {
@@ -108,56 +123,127 @@ public class FitnessPlans extends AppCompatActivity {
         layoutPlans.addView(planOnScreen);
     }
 
-    public void createAndShowDialogFromTask(final Exception exception, String title) {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                createAndShowDialog(exception, "Error");
-            }
-        });
-    }
-
-    public void createAndShowDialog(Exception exception, String title) {
-        Throwable ex = exception;
-        if (exception.getCause() != null) {
-            ex = exception.getCause();
-        }
-        createAndShowDialog(ex.getMessage(), title);
-    }
-
-    public void createAndShowDialog(final String message, final String title) {
-        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-
-        builder.setMessage(message);
-        builder.setTitle(title);
-        builder.create().show();
-    }
-
-    private AsyncTask<Void, Void, Void> runAsyncTask(AsyncTask<Void, Void, Void> task) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-            return task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-        } else {
-            return task.execute();
-        }
-    }
-
     public void onCreateDialog() {
         // Use the Builder class for convenient dialog construction
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage("View exercises in this plan or link it to your account?")
                 .setPositiveButton("Link", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-
+                        addItem();
                     }
                 })
                 .setNegativeButton("View", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-
                         startActivity(new Intent(getApplicationContext(), ExerciseActivity.class));
                     }
                 });
         // Create the AlertDialog object and return it
         builder.create().show();
+    }
+
+
+    public void addItem() {
+        if (mClient == null) {
+            return;
+        }
+
+        // Create a new item
+        final PlanLinkItem item = new PlanLinkItem();
+        try {
+            item.setPlanName(plan);
+            item.setPlanType(FitnessFragment.planType);
+            item.setId(createTransactionID());
+            item.setUsername(LoginActivity.loggedInUser);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        // Insert the new item
+        AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... params) {
+                try {
+                    final PlanLinkItem entity = addItemInTable(item);
+                } catch (final Exception e) {
+                    sh.createAndShowDialogFromTask(e, "Error at 203");
+                }
+                return null;
+            }
+        };
+        sh.runAsyncTask(task);
+    }
+
+    public PlanLinkItem addItemInTable(PlanLinkItem item) throws ExecutionException, InterruptedException {
+        PlanLinkItem entity = mLinkTable.insert(item).get();
+        return entity;
+    }
+
+    public String createTransactionID() throws Exception {
+        return UUID.randomUUID().toString().replaceAll("-", "").toUpperCase();
+    }
+
+    private AsyncTask<Void, Void, Void> initLocalStore() throws MobileServiceLocalStoreException, ExecutionException, InterruptedException {
+
+        AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... params) {
+                try {
+
+                    MobileServiceSyncContext syncContext = mClient.getSyncContext();
+
+                    if (syncContext.isInitialized())
+                        return null;
+
+                    SQLiteLocalStore localStore = new SQLiteLocalStore(mClient.getContext(), "OfflineStore", null, 1);
+
+                    Map<String, ColumnDataType> tableDefinition = new HashMap<String, ColumnDataType>();
+                    tableDefinition.put("planName", ColumnDataType.String);
+                    tableDefinition.put("planType", ColumnDataType.String);
+                    tableDefinition.put("username", ColumnDataType.String);
+                    tableDefinition.put("id", ColumnDataType.String);
+
+                    localStore.defineTable("planlinkitem", tableDefinition);
+
+                    SimpleSyncHandler handler = new SimpleSyncHandler();
+
+                    syncContext.initialize(localStore, handler).get();
+
+
+                } catch (final Exception e) {
+                    sh.createAndShowDialogFromTask(e, "Error at 278");
+                }
+
+                return null;
+            }
+        };
+
+        return sh.runAsyncTask(task);
+    }
+
+    private void refreshItemsFromTable() {
+
+        // Get the items that weren't marked as completed and add them in the
+        // adapter
+
+        AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... params) {
+
+                try {
+                    final List<PlanLinkItem> results = refreshItemsFromMobileServiceTable();
+                } catch (final Exception e) {
+                    sh.createAndShowDialogFromTask(e, "Error");
+                }
+                return null;
+            }
+        };
+
+        sh.runAsyncTask(task);
+    }
+
+    private List<PlanLinkItem> refreshItemsFromMobileServiceTable() throws ExecutionException, InterruptedException, MobileServiceException {
+        final List<PlanLinkItem> plans = mLinkTable.execute().get();
+        return plans;
     }
 
 }

@@ -4,7 +4,6 @@ import android.app.AlertDialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -26,11 +25,13 @@ public class ExerciseActivity extends AppCompatActivity implements View.OnClickL
     private LinearLayout layoutPlans;
     private MobileServiceClient mClient;
     private MobileServiceTable<ExerciseItem> mPlanTable;
+    private ServiceHandler sh;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_exercise);
+        sh = new ServiceHandler(this);
 
         layoutPlans = (LinearLayout) findViewById(R.id.planExercises);
 
@@ -50,11 +51,10 @@ public class ExerciseActivity extends AppCompatActivity implements View.OnClickL
             mPlanTable = mClient.getTable(ExerciseItem.class);
 
         } catch (MalformedURLException e) {
-            createAndShowDialog(new Exception("There was an error creating the Mobile Service. Verify the URL"), "Error");
+            sh.createAndShowDialog(new Exception("There was an error creating the Mobile Service. Verify the URL"), "Error");
         } catch (Exception e) {
-            createAndShowDialog(e, "Error");
+            sh.createAndShowDialog(e, "Error");
         }
-
         getCreatedPlans();
     }
 
@@ -83,12 +83,12 @@ public class ExerciseActivity extends AppCompatActivity implements View.OnClickL
                         }
                     });
                 } catch (final Exception e) {
-                    createAndShowDialogFromTask(e, "Error");
+                    sh.createAndShowDialogFromTask(e, "Error");
                 }
                 return null;
             }
         };
-        runAsyncTask(task);
+        sh.runAsyncTask(task);
     }
 
     public void addPlanToScreen(ExerciseItem item) {
@@ -107,44 +107,10 @@ public class ExerciseActivity extends AppCompatActivity implements View.OnClickL
         layoutPlans.addView(planOnScreen);
     }
 
-    public void createAndShowDialogFromTask(final Exception exception, String title) {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                createAndShowDialog(exception, "Error");
-            }
-        });
-    }
-
-    public void createAndShowDialog(Exception exception, String title) {
-        Throwable ex = exception;
-        if (exception.getCause() != null) {
-            ex = exception.getCause();
-        }
-        createAndShowDialog(ex.getMessage(), title);
-    }
-
-    public void createAndShowDialog(final String message, final String title) {
-        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-
-        builder.setMessage(message);
-        builder.setTitle(title);
-        builder.create().show();
-    }
-
-    private AsyncTask<Void, Void, Void> runAsyncTask(AsyncTask<Void, Void, Void> task) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-            return task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-        } else {
-            return task.execute();
-        }
-    }
-
     public void onCreateDialog() {
         // Use the Builder class for convenient dialog construction
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("View exercises in this plan or link it to your account?")
-                .setItems();
+        builder.setTitle("View exercises in this plan or link it to your account?");
         // Create the AlertDialog object and return it
         builder.create().show();
     }

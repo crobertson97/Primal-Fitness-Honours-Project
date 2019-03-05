@@ -1,10 +1,8 @@
 package com.example.crobe.primalfitness;
 
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.graphics.Color;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -48,11 +46,13 @@ public class FitnessCreationActivity extends AppCompatActivity implements View.O
     private Spinner type;
     private EditText exercise, sets, reps, rest, name;
     private List<String[]> array;
+    private ServiceHandler sh;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_fitness_creation);
+        sh = new ServiceHandler(this);
         myDialog = new Dialog(this);
         array = new ArrayList<String[]>();
         name = (EditText) findViewById(R.id.planName);
@@ -91,9 +91,9 @@ public class FitnessCreationActivity extends AppCompatActivity implements View.O
             initLocalStore().get();
             refreshItemsFromTable();
         } catch (MalformedURLException e) {
-            createAndShowDialog(new Exception("There was an error creating the Mobile Service. Verify the URL"), "Error");
+            sh.createAndShowDialog(new Exception("There was an error creating the Mobile Service. Verify the URL"), "Error");
         } catch (Exception e) {
-            createAndShowDialog(e, "Error");
+            sh.createAndShowDialog(e, "Error");
         }
     }
 
@@ -147,31 +147,6 @@ public class FitnessCreationActivity extends AppCompatActivity implements View.O
         }
     }
 
-    public void createAndShowDialogFromTask(final Exception exception, String title) {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                createAndShowDialog(exception, "Error at 229");
-            }
-        });
-    }
-
-    public void createAndShowDialog(Exception exception, String title) {
-        Throwable ex = exception;
-        if (exception.getCause() != null) {
-            ex = exception.getCause();
-        }
-        createAndShowDialog(ex.getMessage(), title);
-    }
-
-    public void createAndShowDialog(final String message, final String title) {
-        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-
-        builder.setMessage(message);
-        builder.setTitle(title);
-        builder.create().show();
-    }
-
     private AsyncTask<Void, Void, Void> initLocalStore() throws MobileServiceLocalStoreException, ExecutionException, InterruptedException {
 
         AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
@@ -204,22 +179,14 @@ public class FitnessCreationActivity extends AppCompatActivity implements View.O
 
 
                 } catch (final Exception e) {
-                    createAndShowDialogFromTask(e, "Error at 278");
+                    sh.createAndShowDialogFromTask(e, "Error at 278");
                 }
 
                 return null;
             }
         };
 
-        return runAsyncTask(task);
-    }
-
-    private AsyncTask<Void, Void, Void> runAsyncTask(AsyncTask<Void, Void, Void> task) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-            return task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-        } else {
-            return task.execute();
-        }
+        return sh.runAsyncTask(task);
     }
 
     private void refreshItemsFromTable() {
@@ -234,13 +201,13 @@ public class FitnessCreationActivity extends AppCompatActivity implements View.O
                 try {
                     final List<ExerciseItem> results = refreshItemsFromMobileServiceTable();
                 } catch (final Exception e) {
-                    createAndShowDialogFromTask(e, "Error at 314");
+                    sh.createAndShowDialogFromTask(e, "Error at 314");
                 }
                 return null;
             }
         };
 
-        runAsyncTask(task);
+        sh.runAsyncTask(task);
     }
 
     private List<ExerciseItem> refreshItemsFromMobileServiceTable() throws ExecutionException, InterruptedException {
@@ -275,12 +242,12 @@ public class FitnessCreationActivity extends AppCompatActivity implements View.O
                 try {
                     final ExerciseItem entity = addItemInTable(item);
                 } catch (final Exception e) {
-                    createAndShowDialogFromTask(e, "Error at 203");
+                    sh.createAndShowDialogFromTask(e, "Error");
                 }
                 return null;
             }
         };
-        runAsyncTask(task);
+        sh.runAsyncTask(task);
     }
 
     public ExerciseItem addItemInTable(ExerciseItem item) throws ExecutionException, InterruptedException {
