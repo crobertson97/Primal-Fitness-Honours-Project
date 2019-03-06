@@ -1,7 +1,7 @@
 package com.example.crobe.primalfitness;
 
 import android.annotation.SuppressLint;
-import android.content.Intent;
+import android.app.AlertDialog;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -25,6 +25,7 @@ public class ExerciseActivity extends AppCompatActivity implements View.OnClickL
     private MobileServiceClient mClient;
     private MobileServiceTable<ExerciseItem> mPlanTable;
     private ServiceHandler sh;
+    private String exercise;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,7 +92,21 @@ public class ExerciseActivity extends AppCompatActivity implements View.OnClickL
         planOnScreen.setBackground(ContextCompat.getDrawable(this, R.drawable.border));
         planOnScreen.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
         planOnScreen.setTextColor(Color.parseColor("#ff000000"));
-        planOnScreen.setOnClickListener(view -> startActivity(new Intent(getApplicationContext(), LoginActivity.class)));
+        planOnScreen.setOnClickListener(view -> {
+            exercise = "Exercise: " + planOnScreen.getText().toString();
+            String[] meh = new String[3];
+            meh[0] = "Sets: " + item.getSetsSuggested();
+            meh[1] = "Reps: " + item.getRepsSuggested();
+            meh[2] = "Rest: " + item.getRest() + "(mm:ss)";
+            onCreateDialog(meh);
+        });
         layoutPlans.addView(planOnScreen);
+    }
+
+    public void onCreateDialog(String[] stuff) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        // Set the dialog title
+        builder.setTitle(exercise).setItems(stuff, null).setPositiveButton("Ok", null);
+        builder.create().show();
     }
 }

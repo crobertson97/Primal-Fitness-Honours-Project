@@ -8,7 +8,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -118,7 +117,6 @@ public class FitnessPlans extends AppCompatActivity {
         planOnScreen.setOnClickListener(view -> {
             onCreateDialog();
             plan = planOnScreen.getText().toString();
-            Log.i("TAG", "" + plan);
         });
         layoutPlans.addView(planOnScreen);
     }

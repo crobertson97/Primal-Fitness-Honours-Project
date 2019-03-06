@@ -48,6 +48,7 @@
         <activity
             android:name=".FitnessActivity"
             android:screenOrientation="portrait" />
+        <activity android:name=".FitnessExerciseActivity"></activity>
     </application>
 
 </manifest>

@@ -41,5 +41,6 @@
     <string name="todo">TODO</string>
     <string name="title_activity_fitness2">FitnessActivity2</string>
     <string name="title_activity_mad_testing">MadTesting</string>
+    <string name="title_activity_fitness_exercise">FitnessExerciseActivity</string>
 
 </resources>
