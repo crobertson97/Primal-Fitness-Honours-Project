@@ -37,9 +37,6 @@
             android:name=".NutritionActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".FitnessActivity"
-            android:screenOrientation="portrait" />
-        <activity
             android:name=".FitnessCreationActivity"
             android:screenOrientation="portrait" />
         <activity
@@ -49,7 +46,7 @@
             android:name=".ExerciseActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".FitnessActivityNew"
+            android:name=".FitnessActivity"
             android:screenOrientation="portrait" />
     </application>
 
