@@ -31,14 +31,15 @@ import java.util.concurrent.TimeUnit;
 
 import static com.microsoft.windowsazure.mobileservices.table.query.QueryOperations.val;
 
-public class ExerciseActivity extends AppCompatActivity implements View.OnClickListener {
+public class PlanItemActivity extends AppCompatActivity implements View.OnClickListener {
 
     private LinearLayout layoutPlans;
     private MobileServiceClient mClient;
-    private MobileServiceTable<ExerciseItem> mPlanTable;
+    private MobileServiceTable<ExerciseItem> mFitnessTable;
+    private MobileServiceTable<NutritionItem> mNutritionTable;
     private MobileServiceTable<PlanLinkItem> mLinkTable;
     private ServiceHandler sh;
-    private String exercise;
+    private String title;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,8 +62,8 @@ public class ExerciseActivity extends AppCompatActivity implements View.OnClickL
             this.setTitle(DiaryFragment.planSchedule);
             addToSchedule.setVisibility(View.GONE);
             completePlan.setVisibility(View.GONE);
-        } else if (FitnessPlans.plans) {
-            this.setTitle(FitnessPlans.plan);
+        } else if (PlansToScreen.plans) {
+            this.setTitle(PlansToScreen.plan);
             completePlan.setVisibility(View.GONE);
         }
 
@@ -76,7 +77,8 @@ public class ExerciseActivity extends AppCompatActivity implements View.OnClickL
                 return client;
             });
 
-            mPlanTable = mClient.getTable(ExerciseItem.class);
+            mFitnessTable = mClient.getTable(ExerciseItem.class);
+            mNutritionTable = mClient.getTable(NutritionItem.class);
             mLinkTable = mClient.getTable(PlanLinkItem.class);
             initLocalStore().get();
             refreshItemsFromTable();
@@ -86,7 +88,12 @@ public class ExerciseActivity extends AppCompatActivity implements View.OnClickL
         } catch (Exception e) {
             sh.createAndShowDialog(e, "Error");
         }
-        getCreatedPlans();
+
+        if (FitnessFragment.fitness) {
+            getFitnessPlans();
+        } else if (NutritionFragment.nutrition) {
+            getNutritionPlans();
+        }
     }
 
     private AsyncTask<Void, Void, Void> initLocalStore() {
@@ -138,7 +145,7 @@ public class ExerciseActivity extends AppCompatActivity implements View.OnClickL
         }
     }
 
-    private void getCreatedPlans() {
+    private void getFitnessPlans() {
         if (mClient == null) {
             return;
         }
@@ -149,14 +156,14 @@ public class ExerciseActivity extends AppCompatActivity implements View.OnClickL
                 try {
                     final List<ExerciseItem> results;
                     if (ScheduleFragment.schedule || DiaryFragment.diary) {
-                        results = mPlanTable.where().field("planName").eq(ScheduleFragment.planSchedule).or(mPlanTable.where().field("planName").eq(DiaryFragment.planSchedule)).execute().get();
+                        results = mFitnessTable.where().field("planName").eq(ScheduleFragment.planSchedule).or(mFitnessTable.where().field("planName").eq(DiaryFragment.planSchedule)).execute().get();
                     } else {
-                        results = mPlanTable.where().field("exercisePlanType").eq(FitnessFragment.planType).and(mPlanTable.where().field("planName").eq(FitnessPlans.plan)).execute().get();
+                        results = mFitnessTable.where().field("exercisePlanType").eq(FitnessFragment.planType).and(mFitnessTable.where().field("planName").eq(PlansToScreen.plan)).execute().get();
                     }
 
                     runOnUiThread(() -> {
                         for (ExerciseItem item : results) {
-                            addPlanToScreen(item);
+                            addFitnessPlanToScreen(item);
                         }
                     });
                 } catch (final Exception e) {
@@ -168,7 +175,53 @@ public class ExerciseActivity extends AppCompatActivity implements View.OnClickL
         sh.runAsyncTask(task);
     }
 
-    public void addPlanToScreen(ExerciseItem item) {
+    private void getNutritionPlans() {
+        if (mClient == null) {
+            return;
+        }
+
+        @SuppressLint("StaticFieldLeak") AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... params) {
+                try {
+                    final List<NutritionItem> results;
+                    //if (ScheduleFragment.schedule || DiaryFragment.diary) {
+                    //results = mNutritionTable.where().field("recipeType").eq(ScheduleFragment.planSchedule).or(mNutritionTable.where().field("recipeName").eq(DiaryFragment.planSchedule)).execute().get();
+                    //} else {
+                    results = mNutritionTable.where().field("recipeType").eq(NutritionFragment.planType).and(mNutritionTable.where().field("recipeName").eq(PlansToScreen.plan)).execute().get();
+                    //}
+
+                    runOnUiThread(() -> {
+                        for (NutritionItem item : results) {
+                            addNutritionPlanToScreen(item);
+                        }
+                    });
+                } catch (final Exception e) {
+                    sh.createAndShowDialogFromTask(e);
+                }
+                return null;
+            }
+        };
+        sh.runAsyncTask(task);
+    }
+
+    public void addNutritionPlanToScreen(NutritionItem item) {
+        final TextView planOnScreen = new TextView(this);
+        planOnScreen.setText(item.getFoodName());
+        planOnScreen.setTextSize(36);
+        planOnScreen.setBackground(ContextCompat.getDrawable(this, R.drawable.border));
+        planOnScreen.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+        planOnScreen.setTextColor(Color.parseColor("#ff000000"));
+        planOnScreen.setOnClickListener(view -> {
+            title = "Ingredient: " + planOnScreen.getText().toString();
+            String[] meh = new String[1];
+            meh[0] = "Calories: " + item.getCalories();
+            onCreateDialog(meh);
+        });
+        layoutPlans.addView(planOnScreen);
+    }
+
+    public void addFitnessPlanToScreen(ExerciseItem item) {
         final TextView planOnScreen = new TextView(this);
         planOnScreen.setText(item.getExerciseName());
         planOnScreen.setTextSize(36);
@@ -176,7 +229,7 @@ public class ExerciseActivity extends AppCompatActivity implements View.OnClickL
         planOnScreen.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
         planOnScreen.setTextColor(Color.parseColor("#ff000000"));
         planOnScreen.setOnClickListener(view -> {
-            exercise = "Exercise: " + planOnScreen.getText().toString();
+            title = "Exercise: " + planOnScreen.getText().toString();
             String[] meh = new String[3];
             meh[0] = "Sets: " + item.getSetsSuggested();
             meh[1] = "Reps: " + item.getRepsSuggested();
@@ -188,7 +241,7 @@ public class ExerciseActivity extends AppCompatActivity implements View.OnClickL
 
     public void onCreateDialog(String[] stuff) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle(exercise).setItems(stuff, null).setPositiveButton("Ok", null);
+        builder.setTitle(title).setItems(stuff, null).setPositiveButton("Ok", null);
         builder.create().show();
     }
 
@@ -199,11 +252,15 @@ public class ExerciseActivity extends AppCompatActivity implements View.OnClickL
 
         final PlanLinkItem item = new PlanLinkItem();
         try {
-            item.setPlanName(FitnessPlans.plan);
-            item.setPlanType(FitnessFragment.planType);
+            item.setPlanName(PlansToScreen.plan);
             item.setId(sh.createTransactionID());
             item.setUsername(LoginActivity.loggedInUser);
             item.setComplete(false);
+            if (FitnessFragment.fitness) {
+                item.setPlanType(FitnessFragment.planType);
+            } else if (NutritionFragment.nutrition) {
+                item.setPlanType(NutritionFragment.planType);
+            }
 
         } catch (Exception e) {
             e.printStackTrace();

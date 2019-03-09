@@ -54,7 +54,7 @@ public class NutritionItem {
         this.mCreatedBy = mCreatedBy;
     }
 
-    public String getFoodname() {
+    public String getFoodName() {
         return mFoodName;
     }
 

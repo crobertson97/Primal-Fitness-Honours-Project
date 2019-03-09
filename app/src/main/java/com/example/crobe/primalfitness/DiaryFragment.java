@@ -110,8 +110,8 @@ public class DiaryFragment extends Fragment {
             planSchedule = planOnScreen.getText().toString();
             diary = true;
             ScheduleFragment.schedule = false;
-            FitnessPlans.plans = false;
-            startActivity(new Intent(getActivity(), ExerciseActivity.class));
+            PlansToScreen.plans = false;
+            startActivity(new Intent(getActivity(), PlanItemActivity.class));
         });
         layoutPlans.addView(planOnScreen);
     }

@@ -7,6 +7,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -36,10 +37,10 @@ import java.util.concurrent.TimeUnit;
 public class NutritionCreationActivity extends AppCompatActivity implements View.OnClickListener, AdapterView.OnItemSelectedListener {
 
     private MobileServiceClient mClient;
-    private MobileServiceTable<NutritionItem> mExerciseTable;
+    private MobileServiceTable<NutritionItem> mNutritionTable;
     private Dialog myDialog;
     private Spinner type;
-    private EditText exercise, sets, reps, rest, name;
+    private EditText ingredient, calories, name;
     private List<String[]> array;
     private ServiceHandler sh;
 
@@ -77,7 +78,7 @@ public class NutritionCreationActivity extends AppCompatActivity implements View
                 client.setWriteTimeout(20, TimeUnit.SECONDS);
                 return client;
             });
-            mExerciseTable = mClient.getTable(NutritionItem.class);
+            mNutritionTable = mClient.getTable(NutritionItem.class);
             initLocalStore().get();
             refreshItemsFromTable();
         } catch (MalformedURLException e) {
@@ -88,13 +89,11 @@ public class NutritionCreationActivity extends AppCompatActivity implements View
     }
 
     public void ShowPopup(View v) {
-        myDialog.setContentView(R.layout.pop_fitness);
-        Button submitExercise = myDialog.findViewById(R.id.submitExercise);
-        submitExercise.setOnClickListener(this);
-        exercise = myDialog.findViewById(R.id.exerciseName);
-        sets = myDialog.findViewById(R.id.suggestedSets);
-        reps = myDialog.findViewById(R.id.suggestedReps);
-        rest = myDialog.findViewById(R.id.suggestedRest);
+        myDialog.setContentView(R.layout.pop_nutrition);
+        Button submitRecipe = myDialog.findViewById(R.id.submitRecipe);
+        submitRecipe.setOnClickListener(this);
+        ingredient = myDialog.findViewById(R.id.ingredientName);
+        calories = myDialog.findViewById(R.id.calories);
         myDialog.show();
     }
 
@@ -109,32 +108,34 @@ public class NutritionCreationActivity extends AppCompatActivity implements View
                 } else {
                     for (String[] arra : array) {
                         addItem(arra);
+                        Toast.makeText(this, "Recipe Added", Toast.LENGTH_LONG).show();
+                        this.finish();
                     }
                 }
                 break;
 
-//            case R.id.submitExercise:
-//                if(checkInputs()){
-//                    array.add(new String[]{exercise.getText().toString(), sets.getText().toString(), reps.getText().toString(), rest.getText().toString()});
-//                    myDialog.dismiss();
-//                }
-//                break;
+            case R.id.submitRecipe:
+                if (checkInputs()) {
+                    array.add(new String[]{ingredient.getText().toString(), calories.getText().toString()});
+                    myDialog.dismiss();
+                }
+                break;
         }
     }
 
     private boolean checkInputs() {
-        if (exercise.getText().toString().isEmpty() || sets.getText().toString().isEmpty() || reps.getText().toString().isEmpty() || rest.getText().toString().isEmpty()) {
+        if (ingredient.getText().toString().isEmpty() || calories.getText().toString().isEmpty()) {
             Toast.makeText(this, "Please enter values into all fields", Toast.LENGTH_LONG).show();
             return false;
         } else {
-            LinearLayout linearLayout = findViewById(R.id.exercisesLayout);
-            TextView newExercise = new TextView(this);
-            newExercise.setText(exercise.getText().toString());
-            newExercise.setTextSize(24);
-            newExercise.setBackground(ContextCompat.getDrawable(this, R.drawable.border));
-            newExercise.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
-            newExercise.setTextColor(Color.parseColor("#ff000000"));
-            linearLayout.addView(newExercise);
+            LinearLayout linearLayout = findViewById(R.id.ingredientsLayout);
+            TextView newIngredient = new TextView(this);
+            newIngredient.setText(ingredient.getText().toString());
+            newIngredient.setTextSize(24);
+            newIngredient.setBackground(ContextCompat.getDrawable(this, R.drawable.border));
+            newIngredient.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+            newIngredient.setTextColor(Color.parseColor("#ff000000"));
+            linearLayout.addView(newIngredient);
             return true;
         }
     }
@@ -203,18 +204,33 @@ public class NutritionCreationActivity extends AppCompatActivity implements View
     }
 
     private void refreshItemsFromMobileServiceTable() throws ExecutionException, InterruptedException {
-        mExerciseTable.where().execute().get();
+        mNutritionTable.where().execute().get();
     }
 
-    public void addItem(String[] exercises) {
+    public void addItem(String[] ingredients) {
         if (mClient == null) {
             return;
         }
 
-        // Create a new item
         final NutritionItem item = new NutritionItem();
         try {
+            item.setRecipeName(name.getText().toString());
+            Log.i("TAG", "NAME: " + name.getText().toString());
 
+            item.setRecipeType(type.getSelectedItem().toString());
+            Log.i("TAG", "NAME: " + type.getSelectedItem().toString());
+
+            item.setId(sh.createTransactionID());
+            item.setFoodName(ingredients[0]);
+            Log.i("TAG", "NAME: " + ingredients[0]);
+
+            item.setCalories(ingredients[1]);
+            Log.i("TAG", "NAME: " + ingredients[1]);
+
+            item.setCreatedBy(LoginActivity.loggedInUser);
+            Log.i("TAG", "NAME: " + LoginActivity.loggedInUser);
+
+            item.setPrivate(true);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -234,7 +250,7 @@ public class NutritionCreationActivity extends AppCompatActivity implements View
     }
 
     public void addItemInTable(NutritionItem item) throws ExecutionException, InterruptedException {
-        mExerciseTable.insert(item).get();
+        mNutritionTable.insert(item).get();
     }
 
     @Override

@@ -109,6 +109,8 @@ public class FitnessCreationActivity extends AppCompatActivity implements View.O
                 } else {
                     for (String[] arra : array) {
                         addItem(arra);
+                        Toast.makeText(this, "Plan Added", Toast.LENGTH_LONG).show();
+                        this.finish();
                     }
                 }
                 break;

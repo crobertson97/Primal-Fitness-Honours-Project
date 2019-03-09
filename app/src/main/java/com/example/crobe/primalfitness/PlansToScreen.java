@@ -24,13 +24,14 @@ import java.util.stream.Collectors;
 
 import static android.view.View.TEXT_ALIGNMENT_CENTER;
 
-public class FitnessPlans extends AppCompatActivity {
+public class PlansToScreen extends AppCompatActivity {
 
     public static String plan;
     public static Boolean plans;
     private LinearLayout layoutPlans;
     private MobileServiceClient mClient;
-    private MobileServiceTable<ExerciseItem> mPlanTable;
+    private MobileServiceTable<ExerciseItem> mFitnessTable;
+    private MobileServiceTable<NutritionItem> mNutritionTable;
 
     private ServiceHandler sh;
 
@@ -52,18 +53,23 @@ public class FitnessPlans extends AppCompatActivity {
                 return client;
             });
 
-            mPlanTable = mClient.getTable(ExerciseItem.class);
+            mFitnessTable = mClient.getTable(ExerciseItem.class);
+            mNutritionTable = mClient.getTable(NutritionItem.class);
 
         } catch (MalformedURLException e) {
             sh.createAndShowDialog(new Exception("There was an error creating the Mobile Service. Verify the URL"), "Error");
         } catch (Exception e) {
             sh.createAndShowDialog(e, "Error");
         }
+        if (FitnessFragment.fitness) {
+            getFitnessPlans();
+        } else if (NutritionFragment.nutrition) {
+            getNutritionPlans();
+        }
 
-        getCreatedPlans();
     }
 
-    private void getCreatedPlans() {
+    private void getFitnessPlans() {
         if (mClient == null) {
             return;
         }
@@ -73,13 +79,45 @@ public class FitnessPlans extends AppCompatActivity {
             protected Void doInBackground(Void... params) {
                 try {
 
-                    final List<ExerciseItem> results = mPlanTable.where().field("exercisePlanType").eq(FitnessFragment.planType).execute().get();
+                    final List<ExerciseItem> results = mFitnessTable.where().field("exercisePlanType").eq(FitnessFragment.planType).execute().get();
                     final ArrayList<String> stuff = new ArrayList<>();
 
 
                     runOnUiThread(() -> {
                         for (ExerciseItem item : results) {
                             stuff.add(item.getPlanName());
+                        }
+                        final Collection<String> stuff2 = stuff.stream().distinct().collect(Collectors.toCollection(LinkedList::new));
+                        for (String item : stuff2) {
+                            addPlanToScreen(item);
+                        }
+                    });
+                } catch (final Exception e) {
+                    sh.createAndShowDialogFromTask(e);
+                }
+                return null;
+            }
+        };
+        sh.runAsyncTask(task);
+    }
+
+    private void getNutritionPlans() {
+        if (mClient == null) {
+            return;
+        }
+
+        @SuppressLint("StaticFieldLeak") AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... params) {
+                try {
+
+                    final List<NutritionItem> results = mNutritionTable.where().field("recipeType").eq(NutritionFragment.planType).execute().get();
+                    final ArrayList<String> stuff = new ArrayList<>();
+
+
+                    runOnUiThread(() -> {
+                        for (NutritionItem item : results) {
+                            stuff.add(item.getRecipeName());
                         }
                         final Collection<String> stuff2 = stuff.stream().distinct().collect(Collectors.toCollection(LinkedList::new));
                         for (String item : stuff2) {
@@ -107,7 +145,7 @@ public class FitnessPlans extends AppCompatActivity {
             ScheduleFragment.schedule = false;
             DiaryFragment.diary = false;
             plans = true;
-            startActivity(new Intent(getApplicationContext(), ExerciseActivity.class));
+            startActivity(new Intent(getApplicationContext(), PlanItemActivity.class));
         });
         layoutPlans.addView(planOnScreen);
     }

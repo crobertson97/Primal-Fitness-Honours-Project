@@ -17,6 +17,7 @@ public class FitnessFragment extends Fragment implements View.OnClickListener {
 
 
     public static String planType;
+    public static Boolean fitness;
 
     public FitnessFragment() {
         // Required empty public constructor
@@ -48,15 +49,21 @@ public class FitnessFragment extends Fragment implements View.OnClickListener {
         switch (view.getId()) {
             case R.id.calisthetics:
                 planType = "Calisthetics";
-                startActivity(new Intent(getActivity(), FitnessPlans.class));
+                fitness = true;
+                NutritionFragment.nutrition = false;
+                startActivity(new Intent(getActivity(), PlansToScreen.class));
                 break;
             case R.id.cardio:
                 planType = "Cardio";
-                startActivity(new Intent(getActivity(), FitnessPlans.class));
+                fitness = true;
+                NutritionFragment.nutrition = false;
+                startActivity(new Intent(getActivity(), PlansToScreen.class));
                 break;
             case R.id.weights:
                 planType = "Weights";
-                startActivity(new Intent(getActivity(), FitnessPlans.class));
+                fitness = true;
+                NutritionFragment.nutrition = false;
+                startActivity(new Intent(getActivity(), PlansToScreen.class));
                 break;
             case R.id.createPlan:
                 startActivity(new Intent(getActivity(), FitnessCreationActivity.class));

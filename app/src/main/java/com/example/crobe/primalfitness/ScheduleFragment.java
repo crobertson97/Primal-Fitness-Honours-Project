@@ -105,7 +105,7 @@ public class ScheduleFragment extends Fragment {
         planOnScreen.setOnClickListener(view -> {
             planSchedule = planOnScreen.getText().toString();
             schedule = true;
-            startActivity(new Intent(getActivity(), ExerciseActivity.class));
+            startActivity(new Intent(getActivity(), PlanItemActivity.class));
         });
         layoutPlans.addView(planOnScreen);
     }

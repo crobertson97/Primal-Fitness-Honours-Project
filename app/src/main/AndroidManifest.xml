@@ -40,10 +40,10 @@
             android:name=".FitnessCreationActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".FitnessPlans"
+            android:name=".PlansToScreen"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ExerciseActivity"
+            android:name=".PlanItemActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".FitnessActivity"

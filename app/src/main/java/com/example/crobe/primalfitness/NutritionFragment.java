@@ -16,6 +16,7 @@ import android.widget.TextView;
 public class NutritionFragment extends Fragment implements View.OnClickListener {
 
     public static String planType;
+    public static Boolean nutrition;
 
     public NutritionFragment() {
         // Required empty public constructor
@@ -47,15 +48,21 @@ public class NutritionFragment extends Fragment implements View.OnClickListener 
         switch (view.getId()) {
             case R.id.breakfast:
                 planType = "Breakfast";
-                //startActivity(new Intent(getActivity(), FitnessPlans.class));
+                nutrition = true;
+                FitnessFragment.fitness = false;
+                startActivity(new Intent(getActivity(), PlansToScreen.class));
                 break;
             case R.id.lunch:
                 planType = "Lunch";
-                //startActivity(new Intent(getActivity(), FitnessPlans.class));
+                nutrition = true;
+                FitnessFragment.fitness = false;
+                startActivity(new Intent(getActivity(), PlansToScreen.class));
                 break;
             case R.id.dinner:
                 planType = "Dinner";
-                //startActivity(new Intent(getActivity(), FitnessPlans.class));
+                nutrition = true;
+                FitnessFragment.fitness = false;
+                startActivity(new Intent(getActivity(), PlansToScreen.class));
                 break;
             case R.id.createPlanFood:
                 startActivity(new Intent(getActivity(), NutritionCreationActivity.class));
