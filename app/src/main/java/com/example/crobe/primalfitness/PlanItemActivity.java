@@ -153,11 +153,12 @@ public class PlanItemActivity extends AppCompatActivity implements View.OnClickL
             case R.id.addToSchedule:
                 addItem();
                 Toast.makeText(this, "Plan Added to your Schedule", Toast.LENGTH_SHORT).show();
+                this.finish();
                 break;
             case R.id.completePlan:
                 checkItem();
                 Toast.makeText(this, "Plan Completed", Toast.LENGTH_SHORT).show();
-                this.finish();
+                //this.finish();
                 break;
         }
     }
@@ -351,7 +352,6 @@ public class PlanItemActivity extends AppCompatActivity implements View.OnClickL
                                         checkItemInTable(item);
                                     }
                                 }
-
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
