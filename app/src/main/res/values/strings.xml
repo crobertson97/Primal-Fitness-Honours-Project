@@ -32,7 +32,6 @@
     <string name="title_activity_navigation">NavigationActivity</string>
 
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_plans">PlansActivity</string>
     <string name="plans">Plans</string>
     <string name="messenger">Messenger</string>
@@ -42,5 +41,27 @@
     <string name="title_activity_fitness2">FitnessActivity2</string>
     <string name="title_activity_mad_testing">MadTesting</string>
     <string name="title_activity_fitness_exercise">FitnessExerciseActivity</string>
+    <string name="add_plan_to_your_schedule">Add Plan To Your Schedule</string>
+    <string name="exercise">Exercise</string>
+    <string name="sets">Sets</string>
+    <string name="reps">Reps</string>
+    <string name="rest_mm_ss">Rest (mm:ss)</string>
+    <string name="submit">Submit</string>
+    <string name="create_new_plan">Create New Plan</string>
+    <string name="calisthetics">Calisthetics</string>
+    <string name="cardio">Cardio</string>
+    <string name="weights">Weights</string>
+    <string name="notification">Notification</string>
+    <string name="home">Home</string>
+    <string name="fitness_tracking">Fitness Tracking</string>
+    <string name="nutrition_tracking">Nutrition Tracking</string>
+    <string name="messaging">Messaging</string>
+    <string name="exercise_name">Exercise Name</string>
+    <string name="coaches_id">Coaches ID:</string>
+    <string name="logo">Primal Fitness Logo</string>
+    <string name="plan_type">Plan Type</string>
+    <string name="create_plan">Create Plan</string>
+    <string name="new_exercise">New exercise</string>
+    <string name="plan_name">Plan Name</string>
 
 </resources>

@@ -46,7 +46,8 @@
                 android:inputType="textPersonName"
                 android:text=""
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                tools:ignore="LabelFor" />
 
             <TextView
                 android:id="@+id/surnameLabel"
@@ -67,9 +68,9 @@
                 android:layout_marginTop="11dp"
                 android:ems="10"
                 android:inputType="textPersonName"
-                android:text=""
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/firstName" />
+                app:layout_constraintTop_toBottomOf="@+id/firstName"
+                tools:ignore="LabelFor" />
 
             <TextView
                 android:id="@+id/emailAddressLabel"
@@ -90,7 +91,8 @@
                 android:ems="10"
                 android:inputType="textEmailAddress"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/surname" />
+                app:layout_constraintTop_toBottomOf="@+id/surname"
+                tools:ignore="LabelFor" />
 
             <TextView
                 android:id="@+id/passwordLabel"
@@ -112,7 +114,8 @@
                 android:ems="10"
                 android:inputType="textPassword"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/emailAddress" />
+                app:layout_constraintTop_toBottomOf="@+id/emailAddress"
+                tools:ignore="LabelFor" />
 
             <TextView
                 android:id="@+id/userTypeLabel"
@@ -156,7 +159,8 @@
                 android:ems="10"
                 android:inputType="number"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/userTypeChoice" />
+                app:layout_constraintTop_toBottomOf="@+id/userTypeChoice"
+                tools:ignore="LabelFor" />
 
             <TextView
                 android:id="@+id/heightLabel"
@@ -178,7 +182,8 @@
                 android:ems="10"
                 android:inputType="number"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/age" />
+                app:layout_constraintTop_toBottomOf="@+id/age"
+                tools:ignore="LabelFor" />
 
             <TextView
                 android:id="@+id/weightLabel"
@@ -200,7 +205,8 @@
                 android:ems="10"
                 android:inputType="number"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/height" />
+                app:layout_constraintTop_toBottomOf="@+id/height"
+                tools:ignore="LabelFor" />
 
             <TextView
                 android:id="@+id/coachIDLabel"
@@ -208,7 +214,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="6dp"
                 android:layout_marginStart="16dp"
-                android:text="Coaches ID:"
+                android:text="@string/coaches_id"
                 android:textSize="20sp"
                 app:layout_constraintBottom_toTopOf="@+id/submit"
                 app:layout_constraintStart_toStartOf="parent"
@@ -224,7 +230,8 @@
                 android:ems="10"
                 android:inputType="textEmailAddress"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/weight" />
+                app:layout_constraintTop_toBottomOf="@+id/weight"
+                tools:ignore="LabelFor" />
 
             <Button
                 android:id="@+id/submit"

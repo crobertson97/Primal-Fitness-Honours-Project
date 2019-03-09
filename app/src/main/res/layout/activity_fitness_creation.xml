@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="94dp"
-        android:text="Plan Type"
+        android:text="@string/plan_type"
         android:textColor="@android:color/background_dark"
         android:textSize="24sp"
         app:layout_constraintStart_toStartOf="parent"
@@ -23,7 +23,7 @@
         android:id="@+id/createPlan"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="Create Plan"
+        android:text="@string/create_plan"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
@@ -50,7 +50,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:onClick="ShowPopup"
-                android:text="New exercise" />
+                android:text="@string/new_exercise" />
 
         </LinearLayout>
     </ScrollView>
@@ -64,7 +64,8 @@
         android:ems="10"
         android:inputType="textPersonName"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="LabelFor" />
 
     <TextView
         android:id="@+id/planNameLabel"
@@ -72,7 +73,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="29dp"
-        android:text="Plan Name"
+        android:text="@string/plan_name"
         android:textColor="@android:color/background_dark"
         android:textSize="24sp"
         app:layout_constraintStart_toStartOf="parent"

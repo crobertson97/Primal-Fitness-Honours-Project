@@ -26,6 +26,7 @@ public class FitnessActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_fitness);
+        this.setTitle("Fitness Tracking");
 
         fragmentManager.beginTransaction().replace(android.R.id.content, new DiaryFragment()).commit();
 

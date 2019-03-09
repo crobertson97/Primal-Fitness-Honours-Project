@@ -24,10 +24,11 @@ import java.util.concurrent.TimeUnit;
 
 public class ScheduleFragment extends Fragment {
 
+    public static String planSchedule;
+    public static Boolean schedule;
+
     private LinearLayout layoutPlans;
     private MobileServiceClient mClient;
-    public static String planSchedule;
-
     private MobileServiceTable<PlanLinkItem> mLinkTable;
     private ServiceHandler sh;
 
@@ -35,10 +36,8 @@ public class ScheduleFragment extends Fragment {
         // Required empty public constructor
     }
 
-
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
 
         View view = inflater.inflate(R.layout.fragment_schedule, container, false);
@@ -104,7 +103,8 @@ public class ScheduleFragment extends Fragment {
         planOnScreen.setTextColor(Color.parseColor("#ff000000"));
         planOnScreen.setOnClickListener(view -> {
             planSchedule = planOnScreen.getText().toString();
-            startActivity(new Intent(getActivity(), FitnessExerciseActivity.class));
+            schedule = true;
+            startActivity(new Intent(getActivity(), ExerciseActivity.class));
         });
         layoutPlans.addView(planOnScreen);
     }

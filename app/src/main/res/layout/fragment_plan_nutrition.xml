@@ -19,7 +19,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/border"
-            android:text="Create New Plan"
+            android:text="@string/create_new_plan"
             android:textAlignment="center"
             android:textSize="36sp"
             app:layout_constraintBottom_toBottomOf="parent"

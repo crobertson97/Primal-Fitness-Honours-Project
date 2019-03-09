@@ -22,7 +22,7 @@
                 android:id="@+id/exerciseNameLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Exercise"
+                android:text="@string/exercise"
                 android:textColor="@android:color/background_dark"
                 android:textSize="24sp" />
 
@@ -47,7 +47,7 @@
                 android:id="@+id/suggestedSetsLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Sets"
+                android:text="@string/sets"
                 android:textSize="24sp"
                 android:textColor="@android:color/background_dark"/>
 
@@ -73,7 +73,7 @@
                 android:id="@+id/suggestedRepsLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Reps"
+                android:text="@string/reps"
                 android:textSize="24sp"
                 android:textColor="@android:color/background_dark"/>
 
@@ -98,7 +98,7 @@
                 android:id="@+id/suggestedRestLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Rest (mm:ss)"
+                android:text="@string/rest_mm_ss"
                 android:textColor="@android:color/background_dark"
                 android:textSize="24sp" />
 
@@ -119,7 +119,7 @@
             android:layout_marginTop="20dp"
             android:layout_weight="1"
             android:onClick="ShowPopup"
-            android:text="Submit" />
+            android:text="@string/submit" />
 
     </LinearLayout>
 

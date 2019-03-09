@@ -14,6 +14,9 @@ public class PlanLinkItem {
     @com.google.gson.annotations.SerializedName("planType")
     private String mPlanType;
 
+    @com.google.gson.annotations.SerializedName("complete")
+    private Boolean mComplete;
+
 
     public PlanLinkItem() {
 
@@ -56,6 +59,14 @@ public class PlanLinkItem {
 
     public final void setPlanName(String mPlanName) {
         this.mPlanName = mPlanName;
+    }
+
+    public Boolean getComplete() {
+        return mComplete;
+    }
+
+    public final void setComplete(Boolean mComplete) {
+        this.mComplete = mComplete;
     }
 
 }

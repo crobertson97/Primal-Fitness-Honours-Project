@@ -1,7 +1,6 @@
 package com.example.crobe.primalfitness;
 
 import android.annotation.SuppressLint;
-import android.app.AlertDialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.AsyncTask;
@@ -12,22 +11,14 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.microsoft.windowsazure.mobileservices.MobileServiceClient;
-import com.microsoft.windowsazure.mobileservices.MobileServiceException;
 import com.microsoft.windowsazure.mobileservices.table.MobileServiceTable;
-import com.microsoft.windowsazure.mobileservices.table.sync.MobileServiceSyncContext;
-import com.microsoft.windowsazure.mobileservices.table.sync.localstore.ColumnDataType;
-import com.microsoft.windowsazure.mobileservices.table.sync.localstore.SQLiteLocalStore;
-import com.microsoft.windowsazure.mobileservices.table.sync.synchandler.SimpleSyncHandler;
 import com.squareup.okhttp.OkHttpClient;
 
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -40,7 +31,7 @@ public class FitnessPlans extends AppCompatActivity {
     private LinearLayout layoutPlans;
     private MobileServiceClient mClient;
     private MobileServiceTable<ExerciseItem> mPlanTable;
-    private MobileServiceTable<PlanLinkItem> mLinkTable;
+
     private ServiceHandler sh;
 
     @Override
@@ -62,9 +53,6 @@ public class FitnessPlans extends AppCompatActivity {
             });
 
             mPlanTable = mClient.getTable(ExerciseItem.class);
-            mLinkTable = mClient.getTable(PlanLinkItem.class);
-            initLocalStore().get();
-            refreshItemsFromTable();
 
         } catch (MalformedURLException e) {
             sh.createAndShowDialog(new Exception("There was an error creating the Mobile Service. Verify the URL"), "Error");
@@ -115,119 +103,13 @@ public class FitnessPlans extends AppCompatActivity {
         planOnScreen.setTextAlignment(TEXT_ALIGNMENT_CENTER);
         planOnScreen.setTextColor(Color.parseColor("#ff000000"));
         planOnScreen.setOnClickListener(view -> {
-            onCreateDialog();
             plan = planOnScreen.getText().toString();
+            ScheduleFragment.schedule = false;
+            startActivity(new Intent(getApplicationContext(), ExerciseActivity.class));
         });
         layoutPlans.addView(planOnScreen);
     }
 
-    public void onCreateDialog() {
-        // Use the Builder class for convenient dialog construction
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage("View exercises in this plan or link it to your account?")
-                .setPositiveButton("Link", (dialog, id) -> addItem())
-                .setNegativeButton("View", (dialog, id) -> startActivity(new Intent(getApplicationContext(), ExerciseActivity.class)));
-        // Create the AlertDialog object and return it
-        builder.create().show();
-    }
-
-    public void addItem() {
-        if (mClient == null) {
-            return;
-        }
-
-        // Create a new item
-        final PlanLinkItem item = new PlanLinkItem();
-        try {
-            item.setPlanName(plan);
-            item.setPlanType(FitnessFragment.planType);
-            item.setId(sh.createTransactionID());
-            item.setUsername(LoginActivity.loggedInUser);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        // Insert the new item
-        @SuppressLint("StaticFieldLeak") AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
-            @Override
-            protected Void doInBackground(Void... params) {
-                try {
-                    final PlanLinkItem entity = addItemInTable(item);
-                } catch (final Exception e) {
-                    sh.createAndShowDialogFromTask(e, "Error at 203");
-                }
-                return null;
-            }
-        };
-        sh.runAsyncTask(task);
-    }
-
-    public PlanLinkItem addItemInTable(PlanLinkItem item) throws ExecutionException, InterruptedException {
-        return mLinkTable.insert(item).get();
-    }
-
-    private AsyncTask<Void, Void, Void> initLocalStore() {
-
-        @SuppressLint("StaticFieldLeak") AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
-            @Override
-            protected Void doInBackground(Void... params) {
-                try {
-
-                    MobileServiceSyncContext syncContext = mClient.getSyncContext();
-
-                    if (syncContext.isInitialized())
-                        return null;
-
-                    SQLiteLocalStore localStore = new SQLiteLocalStore(mClient.getContext(), "OfflineStore", null, 1);
-
-                    Map<String, ColumnDataType> tableDefinition = new HashMap<>();
-                    tableDefinition.put("planName", ColumnDataType.String);
-                    tableDefinition.put("planType", ColumnDataType.String);
-                    tableDefinition.put("username", ColumnDataType.String);
-                    tableDefinition.put("id", ColumnDataType.String);
-
-                    localStore.defineTable("planlinkitem", tableDefinition);
-
-                    SimpleSyncHandler handler = new SimpleSyncHandler();
-
-                    syncContext.initialize(localStore, handler).get();
-
-
-                } catch (final Exception e) {
-                    sh.createAndShowDialogFromTask(e, "Error at 278");
-                }
-
-                return null;
-            }
-        };
-
-        return sh.runAsyncTask(task);
-    }
-
-    private void refreshItemsFromTable() {
-
-        // Get the items that weren't marked as completed and add them in the
-        // adapter
-
-        @SuppressLint("StaticFieldLeak") AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
-            @Override
-            protected Void doInBackground(Void... params) {
-
-                try {
-                    final List<PlanLinkItem> results = refreshItemsFromMobileServiceTable();
-                } catch (final Exception e) {
-                    sh.createAndShowDialogFromTask(e, "Error");
-                }
-                return null;
-            }
-        };
-
-        sh.runAsyncTask(task);
-    }
-
-    private List<PlanLinkItem> refreshItemsFromMobileServiceTable() throws ExecutionException, InterruptedException, MobileServiceException {
-        return mLinkTable.execute().get();
-    }
 
 }
 
