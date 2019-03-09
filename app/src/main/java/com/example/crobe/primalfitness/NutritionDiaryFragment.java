@@ -24,7 +24,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class DiaryFragment extends Fragment {
+public class NutritionDiaryFragment extends Fragment {
 
     public static Boolean diary;
     public static String planSchedule;
@@ -34,7 +34,7 @@ public class DiaryFragment extends Fragment {
     private MobileServiceTable<PlanLinkItem> mLinkTable;
     private ServiceHandler sh;
 
-    public DiaryFragment() {
+    public NutritionDiaryFragment() {
         // Required empty public constructor
     }
 
@@ -44,9 +44,9 @@ public class DiaryFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
 
-        View view = inflater.inflate(R.layout.fragment_diary, container, false);
+        View view = inflater.inflate(R.layout.fragment_nutrition_diary, container, false);
 
-        getActivity().setTitle("Fitness Tracking - Diary");
+        getActivity().setTitle("Nutrition Tracking - Diary");
         sh = new ServiceHandler(getActivity());
 
         layoutPlans = view.findViewById(R.id.scheduledPlans);
@@ -84,7 +84,7 @@ public class DiaryFragment extends Fragment {
             protected Void doInBackground(Void... params) {
                 try {
 
-                    final List<PlanLinkItem> links = mLinkTable.where().field("username").eq(LoginActivity.loggedInUser).and(mLinkTable.where().field("complete").eq(true)).and(mLinkTable.where().field("type").eq("Fitness")).execute().get();
+                    final List<PlanLinkItem> links = mLinkTable.where().field("username").eq(LoginActivity.loggedInUser).and(mLinkTable.where().field("complete").eq(true)).and(mLinkTable.where().field("type").eq("Nutrition")).execute().get();
                     getActivity().runOnUiThread(() -> {
                         for (PlanLinkItem itemLinks : links) {
                             addPlanToScreen(itemLinks);
@@ -108,7 +108,7 @@ public class DiaryFragment extends Fragment {
         planOnScreen.setTextColor(Color.parseColor("#ff000000"));
         planOnScreen.setOnClickListener(view -> {
             planSchedule = planOnScreen.getText().toString();
-            PlanItemActivity.planView = "Fitness Diary";
+            PlanItemActivity.planView = "Nutrition Diary";
             startActivity(new Intent(getActivity(), PlanItemActivity.class));
         });
         layoutPlans.addView(planOnScreen);

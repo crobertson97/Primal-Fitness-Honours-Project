@@ -36,19 +36,6 @@ public class UserItem {
 
     }
 
-    public UserItem(String mId, String mFirstName, String mSurname, String mEmail, String mPassword, String mProfileType, String mAge, String mWeight, String mHeight, String mCoachLink) {
-        this.setId(mId);
-        this.setFirstName(mFirstName);
-        this.setSurname(mSurname);
-        this.setEmail(mEmail);
-        this.setPassword(mPassword);
-        this.setProfileType(mProfileType);
-        this.setAge(mAge);
-        this.setWeight(mWeight);
-        this.setHeight(mHeight);
-        this.setCoachLink(mCoachLink);
-    }
-
     public String getId() {
         return mId;
     }

@@ -17,16 +17,12 @@ public class PlanLinkItem {
     @com.google.gson.annotations.SerializedName("complete")
     private Boolean mComplete;
 
+    @com.google.gson.annotations.SerializedName("type")
+    private String mType;
+
 
     public PlanLinkItem() {
 
-    }
-
-    public PlanLinkItem(String id, String mUsername, String mPlanName, String mPlanType) {
-        this.setId(id);
-        this.setUsername(mUsername);
-        this.setPlanType(mPlanType);
-        this.setPlanName(mPlanName);
     }
 
     public String getId() {
@@ -67,6 +63,14 @@ public class PlanLinkItem {
 
     public final void setComplete(Boolean mComplete) {
         this.mComplete = mComplete;
+    }
+
+    public String getType() {
+        return mType;
+    }
+
+    public final void setType(String mType) {
+        this.mType = mType;
     }
 
 }

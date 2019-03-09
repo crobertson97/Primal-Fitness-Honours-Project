@@ -63,8 +63,10 @@ public class PlansToScreen extends AppCompatActivity {
         }
         if (FitnessFragment.fitness) {
             getFitnessPlans();
+            PlanItemActivity.planView = "Fitness View";
         } else if (NutritionFragment.nutrition) {
             getNutritionPlans();
+            PlanItemActivity.planView = "Nutrition View";
         }
 
     }
@@ -142,9 +144,6 @@ public class PlansToScreen extends AppCompatActivity {
         planOnScreen.setTextColor(Color.parseColor("#ff000000"));
         planOnScreen.setOnClickListener(view -> {
             plan = planOnScreen.getText().toString();
-            ScheduleFragment.schedule = false;
-            DiaryFragment.diary = false;
-            plans = true;
             startActivity(new Intent(getApplicationContext(), PlanItemActivity.class));
         });
         layoutPlans.addView(planOnScreen);

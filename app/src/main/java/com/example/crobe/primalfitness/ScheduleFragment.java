@@ -80,7 +80,7 @@ public class ScheduleFragment extends Fragment {
             protected Void doInBackground(Void... params) {
                 try {
 
-                    final List<PlanLinkItem> links = mLinkTable.where().field("username").eq(LoginActivity.loggedInUser).and(mLinkTable.where().field("complete").eq(false)).execute().get();
+                    final List<PlanLinkItem> links = mLinkTable.where().field("username").eq(LoginActivity.loggedInUser).and(mLinkTable.where().field("complete").eq(false)).and(mLinkTable.where().field("type").eq("Fitness")).execute().get();
                     getActivity().runOnUiThread(() -> {
                         for (PlanLinkItem itemLinks : links) {
                             addPlanToScreen(itemLinks);
@@ -104,7 +104,7 @@ public class ScheduleFragment extends Fragment {
         planOnScreen.setTextColor(Color.parseColor("#ff000000"));
         planOnScreen.setOnClickListener(view -> {
             planSchedule = planOnScreen.getText().toString();
-            schedule = true;
+            PlanItemActivity.planView = "Fitness Schedule";
             startActivity(new Intent(getActivity(), PlanItemActivity.class));
         });
         layoutPlans.addView(planOnScreen);

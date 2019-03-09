@@ -40,6 +40,7 @@ public class PlanItemActivity extends AppCompatActivity implements View.OnClickL
     private MobileServiceTable<PlanLinkItem> mLinkTable;
     private ServiceHandler sh;
     private String title;
+    public static String planView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,18 +55,7 @@ public class PlanItemActivity extends AppCompatActivity implements View.OnClickL
         completePlan.setOnClickListener(this);
 
         layoutPlans = findViewById(R.id.planExercises);
-
-        if (ScheduleFragment.schedule) {
-            this.setTitle(ScheduleFragment.planSchedule);
-            addToSchedule.setVisibility(View.GONE);
-        } else if (DiaryFragment.diary) {
-            this.setTitle(DiaryFragment.planSchedule);
-            addToSchedule.setVisibility(View.GONE);
-            completePlan.setVisibility(View.GONE);
-        } else if (PlansToScreen.plans) {
-            this.setTitle(PlansToScreen.plan);
-            completePlan.setVisibility(View.GONE);
-        }
+        this.setTitle(planView);
 
         try {
             mClient = new MobileServiceClient("https://primalfitnesshonours.azurewebsites.net", this);
@@ -89,11 +79,37 @@ public class PlanItemActivity extends AppCompatActivity implements View.OnClickL
             sh.createAndShowDialog(e, "Error");
         }
 
-        if (FitnessFragment.fitness) {
-            getFitnessPlans();
-        } else if (NutritionFragment.nutrition) {
-            getNutritionPlans();
+        switch (planView) {
+            case "Fitness Schedule":
+                addToSchedule.setVisibility(View.GONE);
+                getFitnessPlans();
+                break;
+            case "Nutrition Schedule":
+                addToSchedule.setVisibility(View.GONE);
+                getNutritionPlans();
+                break;
+            case "Fitness Diary":
+                addToSchedule.setVisibility(View.GONE);
+                completePlan.setVisibility(View.GONE);
+                getFitnessPlans();
+                break;
+            case "Nutrition Diary":
+                addToSchedule.setVisibility(View.GONE);
+                completePlan.setVisibility(View.GONE);
+                getNutritionPlans();
+                break;
+            case "Fitness View":
+                this.setTitle(PlansToScreen.plan);
+                completePlan.setVisibility(View.GONE);
+                getFitnessPlans();
+                break;
+            case "Nutrition View":
+                this.setTitle(PlansToScreen.plan);
+                completePlan.setVisibility(View.GONE);
+                getNutritionPlans();
+                break;
         }
+
     }
 
     private AsyncTask<Void, Void, Void> initLocalStore() {
@@ -155,7 +171,7 @@ public class PlanItemActivity extends AppCompatActivity implements View.OnClickL
             protected Void doInBackground(Void... params) {
                 try {
                     final List<ExerciseItem> results;
-                    if (ScheduleFragment.schedule || DiaryFragment.diary) {
+                    if (planView.equals("Fitness Schedule") || planView.equals("Fitness Diary")) {
                         results = mFitnessTable.where().field("planName").eq(ScheduleFragment.planSchedule).or(mFitnessTable.where().field("planName").eq(DiaryFragment.planSchedule)).execute().get();
                     } else {
                         results = mFitnessTable.where().field("exercisePlanType").eq(FitnessFragment.planType).and(mFitnessTable.where().field("planName").eq(PlansToScreen.plan)).execute().get();
@@ -185,11 +201,11 @@ public class PlanItemActivity extends AppCompatActivity implements View.OnClickL
             protected Void doInBackground(Void... params) {
                 try {
                     final List<NutritionItem> results;
-                    //if (ScheduleFragment.schedule || DiaryFragment.diary) {
-                    //results = mNutritionTable.where().field("recipeType").eq(ScheduleFragment.planSchedule).or(mNutritionTable.where().field("recipeName").eq(DiaryFragment.planSchedule)).execute().get();
-                    //} else {
+                    if (planView.equals("Nutrition Schedule") || planView.equals("Nutrition Diary")) {
+                        results = mNutritionTable.where().field("recipeName").eq(NutritionScheduleFragment.planSchedule).or(mNutritionTable.where().field("recipeName").eq(NutritionDiaryFragment.planSchedule)).execute().get();
+                    } else {
                     results = mNutritionTable.where().field("recipeType").eq(NutritionFragment.planType).and(mNutritionTable.where().field("recipeName").eq(PlansToScreen.plan)).execute().get();
-                    //}
+                    }
 
                     runOnUiThread(() -> {
                         for (NutritionItem item : results) {
@@ -258,8 +274,10 @@ public class PlanItemActivity extends AppCompatActivity implements View.OnClickL
             item.setComplete(false);
             if (FitnessFragment.fitness) {
                 item.setPlanType(FitnessFragment.planType);
+                item.setType("Fitness");
             } else if (NutritionFragment.nutrition) {
                 item.setPlanType(NutritionFragment.planType);
+                item.setType("Nutrition");
             }
 
         } catch (Exception e) {
