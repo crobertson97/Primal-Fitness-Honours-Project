@@ -11,23 +11,20 @@ public class NutritionItem {
     @com.google.gson.annotations.SerializedName("private")
     private Boolean mPrivate;
 
-    @com.google.gson.annotations.SerializedName("exerciseName")
-    private String mExerciseName;
+    @com.google.gson.annotations.SerializedName("foodName")
+    private String mFoodName;
 
-    @com.google.gson.annotations.SerializedName("exercisePlanType")
-    private String mPlanType;
+    @com.google.gson.annotations.SerializedName("recipeType")
+    private String mRecipeType;
 
-    @com.google.gson.annotations.SerializedName("planName")
-    private String mPlanName;
+    @com.google.gson.annotations.SerializedName("recipeName")
+    private String mRecipeName;
 
-    @com.google.gson.annotations.SerializedName("rest")
-    private String mRest;
+    @com.google.gson.annotations.SerializedName("portions")
+    private String mPortions;
 
-    @com.google.gson.annotations.SerializedName("setsSuggested")
-    private String mSetsSuggested;
-
-    @com.google.gson.annotations.SerializedName("repsSuggested")
-    private String mRepsSuggested;
+    @com.google.gson.annotations.SerializedName("calories")
+    private String mCalories;
 
     public NutritionItem() {
 
@@ -50,58 +47,50 @@ public class NutritionItem {
     }
 
     public String getCreatedBy() {
-        return id;
+        return mCreatedBy;
     }
 
     public final void setCreatedBy(String mCreatedBy) {
         this.mCreatedBy = mCreatedBy;
     }
 
-    public String getExerciseName() {
-        return mExerciseName;
+    public String getFoodname() {
+        return mFoodName;
     }
 
-    public final void setExerciseName(String mExerciseName) {
-        this.mExerciseName = mExerciseName;
+    public final void setFoodName(String mFoodName) {
+        this.mFoodName = mFoodName;
     }
 
-    public String getPlanType() {
-        return mPlanType;
+    public String getRecipeType() {
+        return mRecipeType;
     }
 
-    public final void setPlanType(String mPlanType) {
-        this.mPlanType = mPlanType;
+    public final void setRecipeType(String mRecipeType) {
+        this.mRecipeType = mRecipeType;
     }
 
-    public String getPlanName() {
-        return mPlanName;
+    public String getRecipeName() {
+        return mRecipeName;
     }
 
-    public final void setPlanName(String mPlanName) {
-        this.mPlanName = mPlanName;
+    public final void setRecipeName(String mRecipeName) {
+        this.mRecipeName = mRecipeName;
     }
 
-    public String getRest() {
-        return mRest;
+    public String getPortions() {
+        return mPortions;
     }
 
-    public final void setRest(String mRest) {
-        this.mRest = mRest;
+    public final void setPortions(String mPortions) {
+        this.mPortions = mPortions;
     }
 
-    public String getSetsSuggested() {
-        return mSetsSuggested;
+    public String getCalories() {
+        return mCalories;
     }
 
-    public final void setSetsSuggested(String mSetsSuggested) {
-        this.mSetsSuggested = mSetsSuggested;
-    }
-
-    public String getRepsSuggested() {
-        return mRepsSuggested;
-    }
-
-    public final void setRepsSuggested(String mRepsSuggested) {
-        this.mRepsSuggested = mRepsSuggested;
+    public final void setCalories(String mCalories) {
+        this.mCalories = mCalories;
     }
 }

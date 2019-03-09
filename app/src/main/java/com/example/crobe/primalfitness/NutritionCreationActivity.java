@@ -33,10 +33,10 @@ import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
-public class FitnessCreationActivity extends AppCompatActivity implements View.OnClickListener, AdapterView.OnItemSelectedListener {
+public class NutritionCreationActivity extends AppCompatActivity implements View.OnClickListener, AdapterView.OnItemSelectedListener {
 
     private MobileServiceClient mClient;
-    private MobileServiceTable<ExerciseItem> mExerciseTable;
+    private MobileServiceTable<NutritionItem> mExerciseTable;
     private Dialog myDialog;
     private Spinner type;
     private EditText exercise, sets, reps, rest, name;
@@ -46,17 +46,17 @@ public class FitnessCreationActivity extends AppCompatActivity implements View.O
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_fitness_creation);
+        setContentView(R.layout.activity_nutrition_creation);
         sh = new ServiceHandler(this);
         myDialog = new Dialog(this);
         array = new ArrayList<>();
-        name = findViewById(R.id.planName);
+        name = findViewById(R.id.recipeName);
 
-        Button createPlan = findViewById(R.id.createPlan);
+        Button createPlan = findViewById(R.id.createRecipe);
         createPlan.setOnClickListener(this);
 
-        type = findViewById(R.id.planType);
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.plan_type_array_fitness, android.R.layout.simple_spinner_item);
+        type = findViewById(R.id.recipeType);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.plan_type_array_nutrition, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         type.setAdapter(adapter);
         type.setOnItemSelectedListener(this);
@@ -77,7 +77,7 @@ public class FitnessCreationActivity extends AppCompatActivity implements View.O
                 client.setWriteTimeout(20, TimeUnit.SECONDS);
                 return client;
             });
-            mExerciseTable = mClient.getTable(ExerciseItem.class);
+            mExerciseTable = mClient.getTable(NutritionItem.class);
             initLocalStore().get();
             refreshItemsFromTable();
         } catch (MalformedURLException e) {
@@ -100,12 +100,12 @@ public class FitnessCreationActivity extends AppCompatActivity implements View.O
 
     @Override
     public void onClick(View view) {
-        switch (view.getId()){
-            case R.id.createPlan:
+        switch (view.getId()) {
+            case R.id.createRecipe:
                 if (name.getText().toString().isEmpty() || type.getSelectedItem().toString().isEmpty()) {
                     Toast.makeText(this, "Please enter a name and type", Toast.LENGTH_LONG).show();
                 } else if (array.isEmpty()) {
-                    Toast.makeText(this, "Please add exercises", Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, "Please add ingredients", Toast.LENGTH_LONG).show();
                 } else {
                     for (String[] arra : array) {
                         addItem(arra);
@@ -113,20 +113,20 @@ public class FitnessCreationActivity extends AppCompatActivity implements View.O
                 }
                 break;
 
-            case R.id.submitExercise:
-                if(checkInputs()){
-                    array.add(new String[]{exercise.getText().toString(), sets.getText().toString(), reps.getText().toString(), rest.getText().toString()});
-                    myDialog.dismiss();
-                }
-                break;
+//            case R.id.submitExercise:
+//                if(checkInputs()){
+//                    array.add(new String[]{exercise.getText().toString(), sets.getText().toString(), reps.getText().toString(), rest.getText().toString()});
+//                    myDialog.dismiss();
+//                }
+//                break;
         }
     }
 
     private boolean checkInputs() {
-        if(exercise.getText().toString().isEmpty() || sets.getText().toString().isEmpty() || reps.getText().toString().isEmpty() || rest.getText().toString().isEmpty()){
+        if (exercise.getText().toString().isEmpty() || sets.getText().toString().isEmpty() || reps.getText().toString().isEmpty() || rest.getText().toString().isEmpty()) {
             Toast.makeText(this, "Please enter values into all fields", Toast.LENGTH_LONG).show();
             return false;
-        }else {
+        } else {
             LinearLayout linearLayout = findViewById(R.id.exercisesLayout);
             TextView newExercise = new TextView(this);
             newExercise.setText(exercise.getText().toString());
@@ -154,16 +154,16 @@ public class FitnessCreationActivity extends AppCompatActivity implements View.O
                     SQLiteLocalStore localStore = new SQLiteLocalStore(mClient.getContext(), "OfflineStore", null, 1);
 
                     Map<String, ColumnDataType> tableDefinition = new HashMap<>();
-                    tableDefinition.put("planName", ColumnDataType.String);
-                    tableDefinition.put("exercisePlanType", ColumnDataType.String);
-                    tableDefinition.put("exerciseName", ColumnDataType.String);
+                    tableDefinition.put("foodName", ColumnDataType.String);
+                    tableDefinition.put("recipeType", ColumnDataType.String);
+                    tableDefinition.put("recipeName", ColumnDataType.String);
                     tableDefinition.put("id", ColumnDataType.String);
-                    tableDefinition.put("setsSuggested", ColumnDataType.String);
-                    tableDefinition.put("repsSuggested", ColumnDataType.String);
+                    tableDefinition.put("portions", ColumnDataType.String);
+                    tableDefinition.put("calories", ColumnDataType.String);
                     tableDefinition.put("rest", ColumnDataType.String);
-                    tableDefinition.put("createdBy", ColumnDataType.String);
+                    tableDefinition.put("private", ColumnDataType.String);
 
-                    localStore.defineTable("exerciseitem", tableDefinition);
+                    localStore.defineTable("nutritionitem", tableDefinition);
 
                     SimpleSyncHandler handler = new SimpleSyncHandler();
 
@@ -212,17 +212,9 @@ public class FitnessCreationActivity extends AppCompatActivity implements View.O
         }
 
         // Create a new item
-        final ExerciseItem item = new ExerciseItem();
+        final NutritionItem item = new NutritionItem();
         try {
-            item.setPlanName(name.getText().toString());
-            item.setPlanType(type.getSelectedItem().toString());
-            item.setId(sh.createTransactionID());
-            item.setExerciseName(exercises[0]);
-            item.setSetsSuggested(exercises[1]);
-            item.setRepsSuggested(exercises[2]);
-            item.setRest(exercises[3]);
-            item.setCreatedBy(LoginActivity.loggedInUser);
-            item.setPrivate(true);
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -241,7 +233,7 @@ public class FitnessCreationActivity extends AppCompatActivity implements View.O
         sh.runAsyncTask(task);
     }
 
-    public void addItemInTable(ExerciseItem item) throws ExecutionException, InterruptedException {
+    public void addItemInTable(NutritionItem item) throws ExecutionException, InterruptedException {
         mExerciseTable.insert(item).get();
     }
 
@@ -255,3 +247,4 @@ public class FitnessCreationActivity extends AppCompatActivity implements View.O
 
     }
 }
+

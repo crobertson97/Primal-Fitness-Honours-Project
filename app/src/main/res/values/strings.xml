@@ -29,6 +29,13 @@
         <item>Cardio</item>
         <item>Weights</item>
     </string-array>
+
+    <string-array name="plan_type_array_nutrition">
+        <item>Breakfast</item>
+        <item>Lunch</item>
+        <item>Dinner</item>
+    </string-array>
+
     <string name="title_activity_navigation">NavigationActivity</string>
 
     <!-- TODO: Remove or change this placeholder text -->
@@ -64,5 +71,9 @@
     <string name="new_exercise">New exercise</string>
     <string name="plan_name">Plan Name</string>
     <string name="mark_plan_as_complete">Mark Plan as Complete</string>
+    <string name="recipe_type">Recipe Type</string>
+    <string name="create_recipe">Create Recipe</string>
+    <string name="add_ingredient">Add Ingredient</string>
+    <string name="recipe_name">Recipe Name</string>
 
 </resources>

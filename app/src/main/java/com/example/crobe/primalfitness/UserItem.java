@@ -57,7 +57,6 @@ public class UserItem {
         this.mId = mId;
     }
 
-
     public String getFirstName() {
         return mFirstName;
     }
