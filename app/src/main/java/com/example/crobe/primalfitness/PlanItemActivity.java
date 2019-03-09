@@ -7,6 +7,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -204,11 +205,12 @@ public class PlanItemActivity extends AppCompatActivity implements View.OnClickL
                     if (planView.equals("Nutrition Schedule") || planView.equals("Nutrition Diary")) {
                         results = mNutritionTable.where().field("recipeName").eq(NutritionScheduleFragment.planSchedule).or(mNutritionTable.where().field("recipeName").eq(NutritionDiaryFragment.planSchedule)).execute().get();
                     } else {
-                    results = mNutritionTable.where().field("recipeType").eq(NutritionFragment.planType).and(mNutritionTable.where().field("recipeName").eq(PlansToScreen.plan)).execute().get();
+                        results = mNutritionTable.where().field("recipeType").eq(NutritionFragment.planType).and(mNutritionTable.where().field("recipeName").eq(PlansToScreen.plan)).execute().get();
                     }
 
                     runOnUiThread(() -> {
                         for (NutritionItem item : results) {
+                            Log.i("TAG", "HELLLLLLp: " + item.getFoodName());
                             addNutritionPlanToScreen(item);
                         }
                     });
@@ -338,10 +340,18 @@ public class PlanItemActivity extends AppCompatActivity implements View.OnClickL
                     runOnUiThread(() -> {
                         for (PlanLinkItem item : results) {
                             try {
-                                if (item.getPlanName().equals(ScheduleFragment.planSchedule)) {
-                                    item.setComplete(true);
-                                    checkItemInTable(item);
+                                if (planView.equals("Fitness Schedule")) {
+                                    if (item.getPlanName().equals(ScheduleFragment.planSchedule)) {
+                                        item.setComplete(true);
+                                        checkItemInTable(item);
+                                    }
+                                } else {
+                                    if (item.getPlanName().equals(NutritionScheduleFragment.planSchedule)) {
+                                        item.setComplete(true);
+                                        checkItemInTable(item);
+                                    }
                                 }
+
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
