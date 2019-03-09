@@ -33,8 +33,6 @@ import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
-import static com.microsoft.windowsazure.mobileservices.table.query.QueryOperations.val;
-
 public class FitnessCreationActivity extends AppCompatActivity implements View.OnClickListener, AdapterView.OnItemSelectedListener {
 
     private MobileServiceClient mClient;
@@ -171,7 +169,7 @@ public class FitnessCreationActivity extends AppCompatActivity implements View.O
 
 
                 } catch (final Exception e) {
-                    sh.createAndShowDialogFromTask(e, "Error at 278");
+                    sh.createAndShowDialogFromTask(e);
                 }
 
                 return null;
@@ -191,9 +189,9 @@ public class FitnessCreationActivity extends AppCompatActivity implements View.O
             protected Void doInBackground(Void... params) {
 
                 try {
-                    final List<ExerciseItem> results = refreshItemsFromMobileServiceTable();
+                    refreshItemsFromMobileServiceTable();
                 } catch (final Exception e) {
-                    sh.createAndShowDialogFromTask(e, "Error at 314");
+                    sh.createAndShowDialogFromTask(e);
                 }
                 return null;
             }
@@ -202,9 +200,8 @@ public class FitnessCreationActivity extends AppCompatActivity implements View.O
         sh.runAsyncTask(task);
     }
 
-    private List<ExerciseItem> refreshItemsFromMobileServiceTable() throws ExecutionException, InterruptedException {
-        return mExerciseTable.where().field("complete").
-                eq(val(false)).execute().get();
+    private void refreshItemsFromMobileServiceTable() throws ExecutionException, InterruptedException {
+        mExerciseTable.where().execute().get();
     }
 
     public void addItem(String[] exercises) {
@@ -232,9 +229,9 @@ public class FitnessCreationActivity extends AppCompatActivity implements View.O
             @Override
             protected Void doInBackground(Void... params) {
                 try {
-                    final ExerciseItem entity = addItemInTable(item);
+                    addItemInTable(item);
                 } catch (final Exception e) {
-                    sh.createAndShowDialogFromTask(e, "Error");
+                    sh.createAndShowDialogFromTask(e);
                 }
                 return null;
             }
@@ -242,8 +239,8 @@ public class FitnessCreationActivity extends AppCompatActivity implements View.O
         sh.runAsyncTask(task);
     }
 
-    public ExerciseItem addItemInTable(ExerciseItem item) throws ExecutionException, InterruptedException {
-        return mExerciseTable.insert(item).get();
+    public void addItemInTable(ExerciseItem item) throws ExecutionException, InterruptedException {
+        mExerciseTable.insert(item).get();
     }
 
     @Override

@@ -127,7 +127,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         newActivity(number);
                     });
                 } catch (final Exception e) {
-                    sh.createAndShowDialogFromTask(e, "Error");
+                    sh.createAndShowDialogFromTask(e);
                 }
                 return null;
             }

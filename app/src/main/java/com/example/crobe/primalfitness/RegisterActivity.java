@@ -27,7 +27,6 @@ import com.squareup.okhttp.OkHttpClient;
 
 import java.net.MalformedURLException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -181,9 +180,9 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
             @Override
             protected Void doInBackground(Void... params) {
                 try {
-                    final UserItem entity = addItemInTable(item);
+                    addItemInTable(item);
                 } catch (final Exception e) {
-                    sh.createAndShowDialogFromTask(e, "Error");
+                    sh.createAndShowDialogFromTask(e);
                 }
                 return null;
             }
@@ -193,8 +192,8 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         completeRegistration = true;
     }
 
-    public UserItem addItemInTable(UserItem item) throws ExecutionException, InterruptedException {
-        return mUserTable.insert(item).get();
+    public void addItemInTable(UserItem item) throws ExecutionException, InterruptedException {
+        mUserTable.insert(item).get();
     }
 
     private AsyncTask<Void, Void, Void> initLocalStore() {
@@ -230,7 +229,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
 
                 } catch (final Exception e) {
-                    sh.createAndShowDialogFromTask(e, "Error");
+                    sh.createAndShowDialogFromTask(e);
                 }
 
                 return null;
@@ -250,9 +249,9 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
             protected Void doInBackground(Void... params) {
 
                 try {
-                    final List<UserItem> results = refreshItemsFromMobileServiceTable();
+                    refreshItemsFromMobileServiceTable();
                 } catch (final Exception e) {
-                    sh.createAndShowDialogFromTask(e, "Error");
+                    sh.createAndShowDialogFromTask(e);
                 }
                 return null;
             }
@@ -261,8 +260,8 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         sh.runAsyncTask(task);
     }
 
-    private List<UserItem> refreshItemsFromMobileServiceTable() throws ExecutionException, InterruptedException, MobileServiceException {
-        return mUserTable.execute().get();
+    private void refreshItemsFromMobileServiceTable() throws ExecutionException, InterruptedException, MobileServiceException {
+        mUserTable.execute().get();
     }
 
     @Override

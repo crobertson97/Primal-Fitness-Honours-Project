@@ -63,5 +63,6 @@
     <string name="create_plan">Create Plan</string>
     <string name="new_exercise">New exercise</string>
     <string name="plan_name">Plan Name</string>
+    <string name="mark_plan_as_complete">Mark Plan as Complete</string>
 
 </resources>

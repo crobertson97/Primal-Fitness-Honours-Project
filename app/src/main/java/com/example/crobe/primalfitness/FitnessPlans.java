@@ -27,7 +27,7 @@ import static android.view.View.TEXT_ALIGNMENT_CENTER;
 public class FitnessPlans extends AppCompatActivity {
 
     public static String plan;
-    List<String> plans;
+    public static Boolean plans;
     private LinearLayout layoutPlans;
     private MobileServiceClient mClient;
     private MobileServiceTable<ExerciseItem> mPlanTable;
@@ -82,12 +82,12 @@ public class FitnessPlans extends AppCompatActivity {
                             stuff.add(item.getPlanName());
                         }
                         final Collection<String> stuff2 = stuff.stream().distinct().collect(Collectors.toCollection(LinkedList::new));
-                        for (String item5 : stuff2) {
-                            addPlanToScreen(item5);
+                        for (String item : stuff2) {
+                            addPlanToScreen(item);
                         }
                     });
                 } catch (final Exception e) {
-                    sh.createAndShowDialogFromTask(e, "Error");
+                    sh.createAndShowDialogFromTask(e);
                 }
                 return null;
             }
@@ -105,6 +105,8 @@ public class FitnessPlans extends AppCompatActivity {
         planOnScreen.setOnClickListener(view -> {
             plan = planOnScreen.getText().toString();
             ScheduleFragment.schedule = false;
+            DiaryFragment.diary = false;
+            plans = true;
             startActivity(new Intent(getApplicationContext(), ExerciseActivity.class));
         });
         layoutPlans.addView(planOnScreen);

@@ -16,13 +16,8 @@ public class ServiceHandler {
         mActivity = activity;
     }
 
-    public void createAndShowDialogFromTask(final Exception exception, String title) {
-        mActivity.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                createAndShowDialog(exception, "Error");
-            }
-        });
+    public void createAndShowDialogFromTask(final Exception exception) {
+        mActivity.runOnUiThread(() -> createAndShowDialog(exception, "Error"));
     }
 
     public void createAndShowDialog(Exception exception, String title) {

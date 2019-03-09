@@ -29,6 +29,8 @@ import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
+import static com.microsoft.windowsazure.mobileservices.table.query.QueryOperations.val;
+
 public class ExerciseActivity extends AppCompatActivity implements View.OnClickListener {
 
     private LinearLayout layoutPlans;
@@ -47,13 +49,21 @@ public class ExerciseActivity extends AppCompatActivity implements View.OnClickL
         Button addToSchedule = findViewById(R.id.addToSchedule);
         addToSchedule.setOnClickListener(this);
 
+        Button completePlan = findViewById(R.id.completePlan);
+        completePlan.setOnClickListener(this);
 
         layoutPlans = findViewById(R.id.planExercises);
+
         if (ScheduleFragment.schedule) {
             this.setTitle(ScheduleFragment.planSchedule);
             addToSchedule.setVisibility(View.GONE);
-        } else {
-
+        } else if (DiaryFragment.diary) {
+            this.setTitle(DiaryFragment.planSchedule);
+            addToSchedule.setVisibility(View.GONE);
+            completePlan.setVisibility(View.GONE);
+        } else if (FitnessPlans.plans) {
+            this.setTitle(FitnessPlans.plan);
+            completePlan.setVisibility(View.GONE);
         }
 
         try {
@@ -105,7 +115,7 @@ public class ExerciseActivity extends AppCompatActivity implements View.OnClickL
 
                     syncContext.initialize(localStore, handler).get();
                 } catch (final Exception e) {
-                    sh.createAndShowDialogFromTask(e, "Error at 278");
+                    sh.createAndShowDialogFromTask(e);
                 }
                 return null;
             }
@@ -120,8 +130,12 @@ public class ExerciseActivity extends AppCompatActivity implements View.OnClickL
                 addItem();
                 Toast.makeText(this, "Plan Added to your Schedule", Toast.LENGTH_SHORT).show();
                 break;
+            case R.id.completePlan:
+                checkItem();
+                Toast.makeText(this, "Plan Completed", Toast.LENGTH_SHORT).show();
+                this.finish();
+                break;
         }
-
     }
 
     private void getCreatedPlans() {
@@ -134,8 +148,8 @@ public class ExerciseActivity extends AppCompatActivity implements View.OnClickL
             protected Void doInBackground(Void... params) {
                 try {
                     final List<ExerciseItem> results;
-                    if (ScheduleFragment.schedule) {
-                        results = mPlanTable.where().field("planName").eq(ScheduleFragment.planSchedule).and(mLinkTable.where().field("complete").eq(false)).execute().get();
+                    if (ScheduleFragment.schedule || DiaryFragment.diary) {
+                        results = mPlanTable.where().field("planName").eq(ScheduleFragment.planSchedule).or(mPlanTable.where().field("planName").eq(DiaryFragment.planSchedule)).execute().get();
                     } else {
                         results = mPlanTable.where().field("exercisePlanType").eq(FitnessFragment.planType).and(mPlanTable.where().field("planName").eq(FitnessPlans.plan)).execute().get();
                     }
@@ -146,7 +160,7 @@ public class ExerciseActivity extends AppCompatActivity implements View.OnClickL
                         }
                     });
                 } catch (final Exception e) {
-                    sh.createAndShowDialogFromTask(e, "Error");
+                    sh.createAndShowDialogFromTask(e);
                 }
                 return null;
             }
@@ -174,7 +188,6 @@ public class ExerciseActivity extends AppCompatActivity implements View.OnClickL
 
     public void onCreateDialog(String[] stuff) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        // Set the dialog title
         builder.setTitle(exercise).setItems(stuff, null).setPositiveButton("Ok", null);
         builder.create().show();
     }
@@ -184,7 +197,6 @@ public class ExerciseActivity extends AppCompatActivity implements View.OnClickL
             return;
         }
 
-        // Create a new item
         final PlanLinkItem item = new PlanLinkItem();
         try {
             item.setPlanName(FitnessPlans.plan);
@@ -196,21 +208,20 @@ public class ExerciseActivity extends AppCompatActivity implements View.OnClickL
         } catch (Exception e) {
             e.printStackTrace();
         }
-        // Insert the new item
+
         @SuppressLint("StaticFieldLeak") AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... params) {
                 try {
                     addItemInTable(item);
                 } catch (final Exception e) {
-                    sh.createAndShowDialogFromTask(e, "Error at 203");
+                    sh.createAndShowDialogFromTask(e);
                 }
                 return null;
             }
         };
         sh.runAsyncTask(task);
     }
-
 
     public void addItemInTable(PlanLinkItem item) throws ExecutionException, InterruptedException {
         mLinkTable.insert(item).get();
@@ -225,7 +236,7 @@ public class ExerciseActivity extends AppCompatActivity implements View.OnClickL
                 try {
                     refreshItemsFromMobileServiceTable();
                 } catch (final Exception e) {
-                    sh.createAndShowDialogFromTask(e, "Error");
+                    sh.createAndShowDialogFromTask(e);
                 }
                 return null;
             }
@@ -236,5 +247,43 @@ public class ExerciseActivity extends AppCompatActivity implements View.OnClickL
 
     private void refreshItemsFromMobileServiceTable() throws ExecutionException, InterruptedException, MobileServiceException {
         mLinkTable.execute().get();
+    }
+
+    public void checkItem() {
+        if (mClient == null) {
+            return;
+        }
+
+        @SuppressLint("StaticFieldLeak") AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... params) {
+                try {
+                    final List<PlanLinkItem> results = mLinkTable.where().field("complete").eq(val(false)).execute().get();
+
+                    runOnUiThread(() -> {
+                        for (PlanLinkItem item : results) {
+                            try {
+                                if (item.getPlanName().equals(ScheduleFragment.planSchedule)) {
+                                    item.setComplete(true);
+                                    checkItemInTable(item);
+                                }
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
+                } catch (final Exception e) {
+                    sh.createAndShowDialogFromTask(e);
+                }
+                return null;
+            }
+        };
+
+        sh.runAsyncTask(task);
+
+    }
+
+    public void checkItemInTable(PlanLinkItem item) throws ExecutionException, InterruptedException {
+        mLinkTable.update(item).get();
     }
 }

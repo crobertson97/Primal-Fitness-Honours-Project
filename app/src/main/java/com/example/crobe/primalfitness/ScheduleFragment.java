@@ -42,6 +42,7 @@ public class ScheduleFragment extends Fragment {
 
         View view = inflater.inflate(R.layout.fragment_schedule, container, false);
 
+        getActivity().setTitle("Fitness Tracking - Schedule");
         sh = new ServiceHandler(getActivity());
 
         layoutPlans = view.findViewById(R.id.scheduledPlans);
@@ -79,14 +80,14 @@ public class ScheduleFragment extends Fragment {
             protected Void doInBackground(Void... params) {
                 try {
 
-                    final List<PlanLinkItem> links = mLinkTable.where().field("username").eq(LoginActivity.loggedInUser).execute().get();
+                    final List<PlanLinkItem> links = mLinkTable.where().field("username").eq(LoginActivity.loggedInUser).and(mLinkTable.where().field("complete").eq(false)).execute().get();
                     getActivity().runOnUiThread(() -> {
                         for (PlanLinkItem itemLinks : links) {
                             addPlanToScreen(itemLinks);
                         }
                     });
                 } catch (final Exception e) {
-                    sh.createAndShowDialogFromTask(e, "Error");
+                    sh.createAndShowDialogFromTask(e);
                 }
                 return null;
             }
