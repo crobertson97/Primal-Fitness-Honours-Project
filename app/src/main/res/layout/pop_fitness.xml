@@ -5,17 +5,13 @@
     android:layout_height="match_parent"
     android:padding="5dp"
     android:layout_gravity="center">
-    <LinearLayout
-        android:layout_marginTop="15dp"
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:gravity="center"
+            android:gravity="left"
             android:orientation="horizontal">
 
             <TextView
@@ -24,7 +20,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/exercise"
                 android:textColor="@android:color/background_dark"
-                android:textSize="24sp" />
+                android:textSize="20sp" />
 
             <EditText
                 android:id="@+id/exerciseName"
@@ -37,7 +33,7 @@
         </LinearLayout>
 
         <LinearLayout
-            android:gravity="center"
+            android:gravity="left"
             android:orientation="horizontal"
             android:layout_weight="1"
             android:layout_width="match_parent"
@@ -48,7 +44,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/sets"
-                android:textSize="24sp"
+                android:textSize="20sp"
                 android:textColor="@android:color/background_dark"/>
 
             <EditText
@@ -63,7 +59,7 @@
         </LinearLayout>
 
         <LinearLayout
-            android:gravity="center"
+            android:gravity="left"
             android:orientation="horizontal"
             android:layout_weight="1"
             android:layout_width="match_parent"
@@ -74,7 +70,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/reps"
-                android:textSize="24sp"
+                android:textSize="20sp"
                 android:textColor="@android:color/background_dark"/>
 
             <EditText
@@ -92,18 +88,19 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:gravity="center">
+            android:gravity="left">
 
             <TextView
-                android:id="@+id/suggestedRestLabel"
+                android:id="@+id/suggestedRestLabelSets"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/rest_mm_ss"
+                android:text="Rest Between Set
+                    (mm:ss)"
                 android:textColor="@android:color/background_dark"
-                android:textSize="24sp" />
+                android:textSize="20sp" />
 
             <EditText
-                android:id="@+id/suggestedRest"
+                android:id="@+id/suggestedRestSets"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:ems="10"
@@ -112,6 +109,32 @@
                 android:textSize="24sp" />
 
         </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="left">
+
+            <TextView
+                android:id="@+id/suggestedRestRepsLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Rest Between Reps
+                    (mm:ss)"
+                android:textColor="@android:color/background_dark"
+                android:textSize="20sp" />
+
+            <EditText
+                android:id="@+id/suggestedRestReps"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:textColor="@android:color/background_dark"
+                android:textSize="24sp" />
+
+        </LinearLayout>
+
         <Button
             android:id="@+id/submitExercise"
             android:layout_width="match_parent"
@@ -120,8 +143,5 @@
             android:layout_weight="1"
             android:onClick="ShowPopup"
             android:text="@string/submit" />
-
-    </LinearLayout>
-
 
 </LinearLayout>

@@ -20,8 +20,11 @@ public class ExerciseItem {
     @com.google.gson.annotations.SerializedName("planName")
     private String mPlanName;
 
-    @com.google.gson.annotations.SerializedName("rest")
-    private String mRest;
+    @com.google.gson.annotations.SerializedName("restSets")
+    private String mRestSets;
+
+    @com.google.gson.annotations.SerializedName("restReps")
+    private String mRestReps;
 
     @com.google.gson.annotations.SerializedName("setsSuggested")
     private String mSetsSuggested;
@@ -81,12 +84,20 @@ public class ExerciseItem {
         this.mPlanName = mPlanName;
     }
 
-    public String getRest() {
-        return mRest;
+    public String getRestSets() {
+        return mRestSets;
     }
 
-    public final void setRest(String mRest) {
-        this.mRest = mRest;
+    public final void setRestSets(String mRestSets) {
+        this.mRestSets = mRestSets;
+    }
+
+    public String getRestReps() {
+        return mRestReps;
+    }
+
+    public final void setRestReps(String mRestReps) {
+        this.mRestReps = mRestReps;
     }
 
     public String getSetsSuggested() {

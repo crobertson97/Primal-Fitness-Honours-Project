@@ -156,7 +156,7 @@ public class PlanItemActivity extends AppCompatActivity implements View.OnClickL
                 this.finish();
                 break;
             case R.id.completePlan:
-                checkItem();
+                //checkItem();
                 Toast.makeText(this, "Plan Completed", Toast.LENGTH_SHORT).show();
                 //this.finish();
                 break;
@@ -249,10 +249,11 @@ public class PlanItemActivity extends AppCompatActivity implements View.OnClickL
         planOnScreen.setTextColor(Color.parseColor("#ff000000"));
         planOnScreen.setOnClickListener(view -> {
             title = "Exercise: " + planOnScreen.getText().toString();
-            String[] meh = new String[3];
+            String[] meh = new String[4];
             meh[0] = "Sets: " + item.getSetsSuggested();
             meh[1] = "Reps: " + item.getRepsSuggested();
-            meh[2] = "Rest: " + item.getRest() + "(mm:ss)";
+            meh[2] = "Rest Sets: " + item.getRestSets() + "(mm:ss)";
+            meh[3] = "Rest Reps: " + item.getRestReps() + "(mm:ss)";
             onCreateDialog(meh);
         });
         layoutPlans.addView(planOnScreen);

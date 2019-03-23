@@ -39,9 +39,10 @@ public class FitnessCreationActivity extends AppCompatActivity implements View.O
     private MobileServiceTable<ExerciseItem> mExerciseTable;
     private Dialog myDialog;
     private Spinner type;
-    private EditText exercise, sets, reps, rest, name;
+    private EditText exercise, sets, reps, restSets, restReps, name;
     private List<String[]> array;
     private ServiceHandler sh;
+    private String planName, planType;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,7 +95,9 @@ public class FitnessCreationActivity extends AppCompatActivity implements View.O
         exercise = myDialog.findViewById(R.id.exerciseName);
         sets = myDialog.findViewById(R.id.suggestedSets);
         reps = myDialog.findViewById(R.id.suggestedReps);
-        rest = myDialog.findViewById(R.id.suggestedRest);
+        restSets = myDialog.findViewById(R.id.suggestedRestSets);
+        restReps = myDialog.findViewById(R.id.suggestedRestReps);
+
         myDialog.show();
     }
 
@@ -108,6 +111,8 @@ public class FitnessCreationActivity extends AppCompatActivity implements View.O
                     Toast.makeText(this, "Please add exercises", Toast.LENGTH_LONG).show();
                 } else {
                     for (String[] arra : array) {
+                        planName = name.getText().toString();
+                        planType = type.getSelectedItem().toString();
                         addItem(arra);
                         Toast.makeText(this, "Plan Added", Toast.LENGTH_LONG).show();
                         this.finish();
@@ -117,7 +122,7 @@ public class FitnessCreationActivity extends AppCompatActivity implements View.O
 
             case R.id.submitExercise:
                 if(checkInputs()){
-                    array.add(new String[]{exercise.getText().toString(), sets.getText().toString(), reps.getText().toString(), rest.getText().toString()});
+                    array.add(new String[]{exercise.getText().toString(), sets.getText().toString(), reps.getText().toString(), restSets.getText().toString(),  restReps.getText().toString()});
                     myDialog.dismiss();
                 }
                 break;
@@ -125,7 +130,7 @@ public class FitnessCreationActivity extends AppCompatActivity implements View.O
     }
 
     private boolean checkInputs() {
-        if(exercise.getText().toString().isEmpty() || sets.getText().toString().isEmpty() || reps.getText().toString().isEmpty() || rest.getText().toString().isEmpty()){
+        if(exercise.getText().toString().isEmpty() || sets.getText().toString().isEmpty() || reps.getText().toString().isEmpty() || restSets.getText().toString().isEmpty() || restReps.getText().toString().isEmpty()){
             Toast.makeText(this, "Please enter values into all fields", Toast.LENGTH_LONG).show();
             return false;
         }else {
@@ -162,7 +167,8 @@ public class FitnessCreationActivity extends AppCompatActivity implements View.O
                     tableDefinition.put("id", ColumnDataType.String);
                     tableDefinition.put("setsSuggested", ColumnDataType.String);
                     tableDefinition.put("repsSuggested", ColumnDataType.String);
-                    tableDefinition.put("rest", ColumnDataType.String);
+                    tableDefinition.put("restSets", ColumnDataType.String);
+                    tableDefinition.put("restReps", ColumnDataType.String);
                     tableDefinition.put("createdBy", ColumnDataType.String);
 
                     localStore.defineTable("exerciseitem", tableDefinition);
@@ -216,13 +222,14 @@ public class FitnessCreationActivity extends AppCompatActivity implements View.O
         // Create a new item
         final ExerciseItem item = new ExerciseItem();
         try {
-            item.setPlanName(name.getText().toString());
-            item.setPlanType(type.getSelectedItem().toString());
+            item.setPlanName(planName);
+            item.setPlanType(planType);
             item.setId(sh.createTransactionID());
             item.setExerciseName(exercises[0]);
             item.setSetsSuggested(exercises[1]);
             item.setRepsSuggested(exercises[2]);
-            item.setRest(exercises[3]);
+            item.setRestSets(exercises[3]);
+            item.setRestReps(exercises[4]);
             item.setCreatedBy(LoginActivity.loggedInUser);
             item.setPrivate(true);
         } catch (Exception e) {

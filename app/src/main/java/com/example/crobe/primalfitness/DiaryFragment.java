@@ -26,7 +26,6 @@ import java.util.concurrent.TimeUnit;
  */
 public class DiaryFragment extends Fragment {
 
-    public static Boolean diary;
     public static String planSchedule;
 
     private LinearLayout layoutPlans;
@@ -83,8 +82,12 @@ public class DiaryFragment extends Fragment {
             @Override
             protected Void doInBackground(Void... params) {
                 try {
-
-                    final List<PlanLinkItem> links = mLinkTable.where().field("username").eq(LoginActivity.loggedInUser).and(mLinkTable.where().field("complete").eq(true)).and(mLinkTable.where().field("type").eq("Fitness")).execute().get();
+                    final List<PlanLinkItem> links;
+                    if(LoginActivity.loggedInUserType.equals("Coach")){
+                        links = mLinkTable.where().field("username").eq(HomeFragment.coachingUserLinkEmail).and(mLinkTable.where().field("complete").eq(true)).and(mLinkTable.where().field("type").eq("Fitness")).execute().get();
+                    }else {
+                        links = mLinkTable.where().field("username").eq(LoginActivity.loggedInUser).and(mLinkTable.where().field("complete").eq(true)).and(mLinkTable.where().field("type").eq("Fitness")).execute().get();
+                    }
                     getActivity().runOnUiThread(() -> {
                         for (PlanLinkItem itemLinks : links) {
                             addPlanToScreen(itemLinks);

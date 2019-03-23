@@ -83,8 +83,13 @@ public class NutritionDiaryFragment extends Fragment {
             @Override
             protected Void doInBackground(Void... params) {
                 try {
+                    final List<PlanLinkItem> links;
+                    if(LoginActivity.loggedInUserType.equals("Coach")){
+                        links = mLinkTable.where().field("username").eq(HomeFragment.coachingUserLinkEmail).and(mLinkTable.where().field("complete").eq(true)).and(mLinkTable.where().field("type").eq("Nutrition")).execute().get();
+                    }else {
+                        links = mLinkTable.where().field("username").eq(LoginActivity.loggedInUser).and(mLinkTable.where().field("complete").eq(true)).and(mLinkTable.where().field("type").eq("Nutrition")).execute().get();
+                    }
 
-                    final List<PlanLinkItem> links = mLinkTable.where().field("username").eq(LoginActivity.loggedInUser).and(mLinkTable.where().field("complete").eq(true)).and(mLinkTable.where().field("type").eq("Nutrition")).execute().get();
                     getActivity().runOnUiThread(() -> {
                         for (PlanLinkItem itemLinks : links) {
                             addPlanToScreen(itemLinks);
