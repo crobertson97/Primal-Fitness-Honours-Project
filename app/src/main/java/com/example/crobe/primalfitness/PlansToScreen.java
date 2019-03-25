@@ -7,6 +7,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -24,7 +25,7 @@ import java.util.stream.Collectors;
 
 import static android.view.View.TEXT_ALIGNMENT_CENTER;
 
-public class PlansToScreen extends AppCompatActivity {
+public class PlansToScreen extends AppCompatActivity implements View.OnClickListener {
 
     public static String plan;
     public static Boolean plans;
@@ -42,6 +43,9 @@ public class PlansToScreen extends AppCompatActivity {
         sh = new ServiceHandler(this);
 
         layoutPlans = findViewById(R.id.createdPlans);
+
+        TextView newPlan = findViewById(R.id.createPlan);
+        newPlan.setOnClickListener(this);
 
         try {
             mClient = new MobileServiceClient("https://primalfitnesshonours.azurewebsites.net", this);
@@ -68,7 +72,21 @@ public class PlansToScreen extends AppCompatActivity {
             getNutritionPlans();
             PlanItemActivity.planView = "Nutrition View";
         }
+        if (!LoginActivity.loggedInUserType.equals("Coach")) {
+            newPlan.setVisibility(View.GONE);
+        }
+    }
 
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.createPlan:
+                if(FitnessFragment.fitness){
+                    startActivity(new Intent(this, FitnessCreationActivity.class));
+                }else if (NutritionFragment.nutrition) {
+                    startActivity(new Intent(this, NutritionCreationActivity.class));
+                }
+                break;
+        }
     }
 
     private void getFitnessPlans() {

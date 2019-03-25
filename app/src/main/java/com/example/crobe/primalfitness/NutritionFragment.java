@@ -34,12 +34,7 @@ public class NutritionFragment extends Fragment implements View.OnClickListener 
         cardio.setOnClickListener(this);
         TextView weights = view.findViewById(R.id.dinner);
         weights.setOnClickListener(this);
-        TextView newPlan = view.findViewById(R.id.createPlanFood);
-        newPlan.setOnClickListener(this);
 
-        if (!LoginActivity.loggedInUserType.equals("Coach")) {
-            newPlan.setVisibility(View.GONE);
-        }
 
         return view;
     }
@@ -63,9 +58,6 @@ public class NutritionFragment extends Fragment implements View.OnClickListener 
                 nutrition = true;
                 FitnessFragment.fitness = false;
                 startActivity(new Intent(getActivity(), PlansToScreen.class));
-                break;
-            case R.id.createPlanFood:
-                startActivity(new Intent(getActivity(), NutritionCreationActivity.class));
                 break;
         }
     }

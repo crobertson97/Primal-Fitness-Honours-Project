@@ -87,19 +87,18 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
                 if(LoginActivity.loggedInUserType.equals("Coach")){
                     buttonType = "Fitness";
                     getCoachLinks();
-                    break;
-                }else{
+                    }else{
                     startActivity(new Intent(getActivity(), FitnessActivity.class));
                 }
+                break;
             case R.id.nutritionTracking:
                 if(LoginActivity.loggedInUserType.equals("Coach")){
                     buttonType = "Nutrition";
                     getCoachLinks();
-                    break;
                 }else{
                     startActivity(new Intent(getActivity(), NutritionActivity.class));
                 }
-
+                break;
             case R.id.messages:
                 Toast.makeText(getActivity(), "Yeah! Messages my dude!", Toast.LENGTH_LONG).show();
                 break;
@@ -120,8 +119,6 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
                     }else{
                         startActivity(new Intent(getActivity(), NutritionActivity.class));
                     }
-
-
                 });
         builder.setNegativeButton("cancel", (dialog, which) ->
                 dialog.dismiss()

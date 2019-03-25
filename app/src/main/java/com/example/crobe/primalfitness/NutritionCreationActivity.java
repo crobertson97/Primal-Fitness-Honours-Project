@@ -7,14 +7,10 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -34,15 +30,15 @@ import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
-public class NutritionCreationActivity extends AppCompatActivity implements View.OnClickListener, AdapterView.OnItemSelectedListener {
+public class NutritionCreationActivity extends AppCompatActivity implements View.OnClickListener {
 
     private MobileServiceClient mClient;
     private MobileServiceTable<NutritionItem> mNutritionTable;
     private Dialog myDialog;
-    private Spinner type;
     private EditText ingredient, calories, name;
     private List<String[]> array;
     private ServiceHandler sh;
+    private String planName, planType;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,22 +52,8 @@ public class NutritionCreationActivity extends AppCompatActivity implements View
         Button createPlan = findViewById(R.id.createRecipe);
         createPlan.setOnClickListener(this);
 
-        type = findViewById(R.id.recipeType);
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.plan_type_array_nutrition, android.R.layout.simple_spinner_item);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        type.setAdapter(adapter);
-        type.setOnItemSelectedListener(this);
-
-
         try {
-            // Create the Mobile Service Client instance, using the provided
-
-            // Mobile Service URL and key
-            mClient = new MobileServiceClient(
-                    "https://primalfitnesshonours.azurewebsites.net",
-                    this);
-
-            // Extend timeout from default of 10s to 20s
+            mClient = new MobileServiceClient("https://primalfitnesshonours.azurewebsites.net",this);
             mClient.setAndroidHttpClientFactory(() -> {
                 OkHttpClient client = new OkHttpClient();
                 client.setReadTimeout(20, TimeUnit.SECONDS);
@@ -101,12 +83,14 @@ public class NutritionCreationActivity extends AppCompatActivity implements View
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.createRecipe:
-                if (name.getText().toString().isEmpty() || type.getSelectedItem().toString().isEmpty()) {
+                if (name.getText().toString().isEmpty()) {
                     Toast.makeText(this, "Please enter a name and type", Toast.LENGTH_LONG).show();
                 } else if (array.isEmpty()) {
                     Toast.makeText(this, "Please add ingredients", Toast.LENGTH_LONG).show();
                 } else {
                     for (String[] arra : array) {
+                        planName = name.getText().toString();
+                        planType = NutritionFragment.planType;
                         addItem(arra);
                         Toast.makeText(this, "Recipe Added", Toast.LENGTH_LONG).show();
                         this.finish();
@@ -183,10 +167,6 @@ public class NutritionCreationActivity extends AppCompatActivity implements View
     }
 
     private void refreshItemsFromTable() {
-
-        // Get the items that weren't marked as completed and add them in the
-        // adapter
-
         @SuppressLint("StaticFieldLeak") AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... params) {
@@ -214,21 +194,11 @@ public class NutritionCreationActivity extends AppCompatActivity implements View
 
         final NutritionItem item = new NutritionItem();
         try {
-            item.setRecipeName(name.getText().toString());
-            Log.i("TAG", "NAME: " + name.getText().toString());
-
-            item.setRecipeType(type.getSelectedItem().toString());
-            Log.i("TAG", "NAME: " + type.getSelectedItem().toString());
-
+            item.setRecipeName(planName);
+            item.setRecipeType(planType);
             item.setId(sh.createTransactionID());
-            item.setFoodName(ingredients[0]);
-            Log.i("TAG", "NAME: " + ingredients[0]);
-
             item.setCalories(ingredients[1]);
-            Log.i("TAG", "NAME: " + ingredients[1]);
-
             item.setCreatedBy(LoginActivity.loggedInUser);
-            Log.i("TAG", "NAME: " + LoginActivity.loggedInUser);
 
             item.setPrivate(true);
         } catch (Exception e) {
@@ -251,16 +221,6 @@ public class NutritionCreationActivity extends AppCompatActivity implements View
 
     public void addItemInTable(NutritionItem item) throws ExecutionException, InterruptedException {
         mNutritionTable.insert(item).get();
-    }
-
-    @Override
-    public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-
-    }
-
-    @Override
-    public void onNothingSelected(AdapterView<?> adapterView) {
-
     }
 }
 

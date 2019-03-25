@@ -111,6 +111,10 @@ public class PlanItemActivity extends AppCompatActivity implements View.OnClickL
                 break;
         }
 
+        if (LoginActivity.loggedInUserType.equals("Coach")){
+            completePlan.setVisibility(View.GONE);
+        }
+
     }
 
     private AsyncTask<Void, Void, Void> initLocalStore() {

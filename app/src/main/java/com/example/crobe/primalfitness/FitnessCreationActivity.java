@@ -33,7 +33,7 @@ import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
-public class FitnessCreationActivity extends AppCompatActivity implements View.OnClickListener, AdapterView.OnItemSelectedListener {
+public class FitnessCreationActivity extends AppCompatActivity implements View.OnClickListener {
 
     private MobileServiceClient mClient;
     private MobileServiceTable<ExerciseItem> mExerciseTable;
@@ -56,20 +56,12 @@ public class FitnessCreationActivity extends AppCompatActivity implements View.O
         Button createPlan = findViewById(R.id.createPlan);
         createPlan.setOnClickListener(this);
 
-        type = findViewById(R.id.planType);
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.plan_type_array_fitness, android.R.layout.simple_spinner_item);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        type.setAdapter(adapter);
-        type.setOnItemSelectedListener(this);
-
-
         try {
             // Create the Mobile Service Client instance, using the provided
 
             // Mobile Service URL and key
             mClient = new MobileServiceClient(
-                    "https://primalfitnesshonours.azurewebsites.net",
-                    this);
+                    "https://primalfitnesshonours.azurewebsites.net",this);
 
             // Extend timeout from default of 10s to 20s
             mClient.setAndroidHttpClientFactory(() -> {
@@ -105,14 +97,14 @@ public class FitnessCreationActivity extends AppCompatActivity implements View.O
     public void onClick(View view) {
         switch (view.getId()){
             case R.id.createPlan:
-                if (name.getText().toString().isEmpty() || type.getSelectedItem().toString().isEmpty()) {
+                if (name.getText().toString().isEmpty()) {
                     Toast.makeText(this, "Please enter a name and type", Toast.LENGTH_LONG).show();
                 } else if (array.isEmpty()) {
                     Toast.makeText(this, "Please add exercises", Toast.LENGTH_LONG).show();
                 } else {
                     for (String[] arra : array) {
                         planName = name.getText().toString();
-                        planType = type.getSelectedItem().toString();
+                        planType = FitnessFragment.planType;
                         addItem(arra);
                         Toast.makeText(this, "Plan Added", Toast.LENGTH_LONG).show();
                         this.finish();
@@ -252,15 +244,5 @@ public class FitnessCreationActivity extends AppCompatActivity implements View.O
 
     public void addItemInTable(ExerciseItem item) throws ExecutionException, InterruptedException {
         mExerciseTable.insert(item).get();
-    }
-
-    @Override
-    public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-
-    }
-
-    @Override
-    public void onNothingSelected(AdapterView<?> adapterView) {
-
     }
 }

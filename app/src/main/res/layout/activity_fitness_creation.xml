@@ -7,18 +7,6 @@
     tools:context=".FitnessCreationActivity"
     tools:layout_editor_absoluteY="81dp">
 
-    <TextView
-        android:id="@+id/planTypeLabel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="94dp"
-        android:text="@string/plan_type"
-        android:textColor="@android:color/background_dark"
-        android:textSize="24sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
     <Button
         android:id="@+id/createPlan"
         android:layout_width="0dp"
@@ -33,11 +21,10 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginBottom="47dp"
-        android:layout_marginTop="51dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/planTypeLabel">
+        app:layout_constraintTop_toBottomOf="@+id/planNameLabel">
 
         <LinearLayout
             android:id="@+id/exercisesLayout"
@@ -59,11 +46,12 @@
         android:id="@+id/planName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="17dp"
+        android:layout_marginEnd="1dp"
         android:layout_marginTop="16dp"
         android:ems="10"
         android:inputType="textPersonName"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/planNameLabel"
         app:layout_constraintTop_toTopOf="parent"
         tools:ignore="LabelFor" />
 
@@ -71,20 +59,15 @@
         android:id="@+id/planNameLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
+        android:layout_marginBottom="15dp"
+        android:layout_marginEnd="2dp"
         android:layout_marginTop="29dp"
         android:text="@string/plan_name"
         android:textColor="@android:color/background_dark"
         android:textSize="24sp"
+        app:layout_constraintBottom_toTopOf="@+id/exercisesScroll"
+        app:layout_constraintEnd_toStartOf="@+id/planName"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <Spinner
-        android:id="@+id/planType"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="27dp"
-        android:layout_marginEnd="16dp"
-        app:layout_constraintBottom_toTopOf="@+id/exercisesScroll"
-        app:layout_constraintEnd_toEndOf="parent" />
 </android.support.constraint.ConstraintLayout>
