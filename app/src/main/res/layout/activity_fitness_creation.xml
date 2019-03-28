@@ -36,7 +36,6 @@
                 android:id="@+id/addExercise"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:onClick="ShowPopup"
                 android:text="@string/new_exercise" />
 
         </LinearLayout>

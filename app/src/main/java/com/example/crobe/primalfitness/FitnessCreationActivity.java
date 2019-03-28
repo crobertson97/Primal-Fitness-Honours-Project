@@ -1,19 +1,19 @@
 package com.example.crobe.primalfitness;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -33,13 +33,13 @@ import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
+
 public class FitnessCreationActivity extends AppCompatActivity implements View.OnClickListener {
 
     private MobileServiceClient mClient;
     private MobileServiceTable<ExerciseItem> mExerciseTable;
     private Dialog myDialog;
-    private Spinner type;
-    private EditText exercise, sets, reps, restSets, restReps, name;
+    private EditText exercise, sets, reps, restSets, restReps, name, weight;
     private List<String[]> array;
     private ServiceHandler sh;
     private String planName, planType;
@@ -50,11 +50,16 @@ public class FitnessCreationActivity extends AppCompatActivity implements View.O
         setContentView(R.layout.activity_fitness_creation);
         sh = new ServiceHandler(this);
         myDialog = new Dialog(this);
+        myDialog.setContentView(R.layout.pop_fitness);
         array = new ArrayList<>();
         name = findViewById(R.id.planName);
 
+
         Button createPlan = findViewById(R.id.createPlan);
         createPlan.setOnClickListener(this);
+
+        Button addExercise = findViewById(R.id.addExercise);
+        addExercise.setOnClickListener(this);
 
         try {
             // Create the Mobile Service Client instance, using the provided
@@ -82,8 +87,6 @@ public class FitnessCreationActivity extends AppCompatActivity implements View.O
 
     public void ShowPopup(View v) {
         myDialog.setContentView(R.layout.pop_fitness);
-        Button submitExercise = myDialog.findViewById(R.id.submitExercise);
-        submitExercise.setOnClickListener(this);
         exercise = myDialog.findViewById(R.id.exerciseName);
         sets = myDialog.findViewById(R.id.suggestedSets);
         reps = myDialog.findViewById(R.id.suggestedReps);
@@ -92,6 +95,56 @@ public class FitnessCreationActivity extends AppCompatActivity implements View.O
 
         myDialog.show();
     }
+
+    @SuppressLint({"SetTextI18n", "InflateParams"})
+    public Dialog onCreateDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        // Get the layout inflater
+        LayoutInflater inflater = getLayoutInflater();
+
+        // Inflate and set the layout for the dialog
+        // Pass null as the parent view because its going in the dialog layout
+
+        builder.setView(inflater.inflate(R.layout.pop_fitness, null));
+        exercise = myDialog.findViewById(R.id.exerciseName);
+        weight = myDialog.findViewById(R.id.weightInput);
+        Log.i("TAG", "" + FitnessFragment.planType);
+        TextView test = myDialog.findViewById(R.id.exerciseNameLabel);
+        if (FitnessFragment.planType.equals("Cardio")) {
+            Log.i("TAG", "" + test.getText().toString());
+            exercise.setText("Distance");
+            myDialog.findViewById(R.id.weightInput).setVisibility(View.GONE);
+            myDialog.findViewById(R.id.weightInputLabel).setVisibility(View.GONE);
+        } else if (FitnessFragment.planType.equals("Weights")) {
+            exercise.setText("Exercise");
+        }
+
+
+        sets = myDialog.findViewById(R.id.suggestedSets);
+        reps = myDialog.findViewById(R.id.suggestedReps);
+        restSets = myDialog.findViewById(R.id.suggestedRestSets);
+        restReps = myDialog.findViewById(R.id.suggestedRestReps);
+
+        builder.setPositiveButton("Add", (dialog, id) -> {
+
+            if (checkInputs()) {
+                switch (FitnessFragment.planType) {
+                    case "Cardio":
+                        array.add(new String[]{exercise.getText().toString(), sets.getText().toString(), reps.getText().toString(), restSets.getText().toString(), restReps.getText().toString()});
+                        break;
+                    case "Weights":
+                        array.add(new String[]{exercise.getText().toString(), weight.getText().toString(), sets.getText().toString(), reps.getText().toString(), restSets.getText().toString(), restReps.getText().toString()});
+                        break;
+                }
+                array.add(new String[]{exercise.getText().toString(), sets.getText().toString(), reps.getText().toString(), restSets.getText().toString(), restReps.getText().toString()});
+            }
+        });
+        builder.setNegativeButton("Cancel", (dialog, which) ->
+                dialog.dismiss()
+        );
+        return builder.create();
+    }
+
 
     @Override
     public void onClick(View view) {
@@ -112,12 +165,10 @@ public class FitnessCreationActivity extends AppCompatActivity implements View.O
                 }
                 break;
 
-            case R.id.submitExercise:
-                if(checkInputs()){
-                    array.add(new String[]{exercise.getText().toString(), sets.getText().toString(), reps.getText().toString(), restSets.getText().toString(),  restReps.getText().toString()});
-                    myDialog.dismiss();
-                }
+            case R.id.addExercise:
+                onCreateDialog().show();
                 break;
+
         }
     }
 

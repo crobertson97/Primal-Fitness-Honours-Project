@@ -1,147 +1,169 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_gravity="center"
+    android:orientation="vertical"
     android:padding="5dp"
-    android:layout_gravity="center">
+    tools:layout_editor_absoluteY="81dp">
 
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="left"
-            android:orientation="horizontal">
+    <TextView
+        android:id="@+id/weightInputLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="28dp"
+        android:layout_marginBottom="8dp"
+        android:text="Weight"
+        android:textColor="@android:color/background_dark"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="@+id/weightInput"
+        app:layout_constraintEnd_toStartOf="@+id/weightInput" />
 
-            <TextView
-                android:id="@+id/exerciseNameLabel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/exercise"
-                android:textColor="@android:color/background_dark"
-                android:textSize="20sp" />
+    <EditText
+        android:id="@+id/weightInput"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:ems="10"
+        android:inputType="number"
+        android:textColor="@android:color/background_dark"
+        android:textSize="24sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/exerciseName" />
 
-            <EditText
-                android:id="@+id/exerciseName"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:ems="10"
-                android:textColor="@android:color/background_dark"
-                android:textSize="24sp" />
+    <TextView
+        android:id="@+id/exerciseNameLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:text="@string/exercise"
+        android:textColor="@android:color/background_dark"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toStartOf="@+id/exerciseName"
+        app:layout_constraintTop_toTopOf="parent" />
 
-        </LinearLayout>
+    <EditText
+        android:id="@+id/exerciseName"
+        android:layout_width="265dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="4dp"
+        android:ems="10"
+        android:textColor="@android:color/background_dark"
+        android:textSize="24sp"
+        app:layout_constraintBaseline_toBaselineOf="@+id/exerciseNameLabel"
+        app:layout_constraintEnd_toEndOf="parent" />
 
-        <LinearLayout
-            android:gravity="left"
-            android:orientation="horizontal"
-            android:layout_weight="1"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
 
-            <TextView
-                android:id="@+id/suggestedSetsLabel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/sets"
-                android:textSize="20sp"
-                android:textColor="@android:color/background_dark"/>
+    <TextView
+        android:id="@+id/suggestedSetsLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="35dp"
+        android:layout_marginStart="26dp"
+        android:text="@string/sets"
+        android:textColor="@android:color/background_dark"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toTopOf="@+id/suggestedRepsLabel"
+        app:layout_constraintStart_toStartOf="parent" />
 
-            <EditText
-                android:id="@+id/suggestedSets"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="24sp"
-                android:ems="10"
-                android:inputType="number"
-                android:textColor="@android:color/background_dark"/>
+    <EditText
+        android:id="@+id/suggestedSets"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="number"
+        android:textColor="@android:color/background_dark"
+        android:textSize="24sp"
+        app:layout_constraintBottom_toTopOf="@+id/suggestedSetsLabel"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/suggestedSetsLabel" />
 
-        </LinearLayout>
 
-        <LinearLayout
-            android:gravity="left"
-            android:orientation="horizontal"
-            android:layout_weight="1"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+    <TextView
+        android:id="@+id/suggestedRepsLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="26dp"
+        android:text="@string/reps"
+        android:textColor="@android:color/background_dark"
+        android:textSize="20sp"
+        app:layout_constraintBaseline_toBaselineOf="@+id/suggestedReps"
+        app:layout_constraintStart_toStartOf="parent" />
 
-            <TextView
-                android:id="@+id/suggestedRepsLabel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/reps"
-                android:textSize="20sp"
-                android:textColor="@android:color/background_dark"/>
+    <EditText
+        android:id="@+id/suggestedReps"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="15dp"
+        android:layout_marginEnd="4dp"
+        android:layout_marginStart="4dp"
+        android:ems="10"
+        android:inputType="number"
+        android:textColor="@android:color/background_dark"
+        android:textSize="24sp"
+        app:layout_constraintBottom_toTopOf="@+id/suggestedRestSets"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/exerciseName" />
 
-            <EditText
-                android:id="@+id/suggestedReps"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="24sp"
-                android:ems="10"
-                android:inputType="number"
-                android:textColor="@android:color/background_dark"/>
 
-        </LinearLayout>
+    <TextView
+        android:id="@+id/suggestedRestLabelSets"
+        android:layout_width="0dp"
+        android:layout_height="60dp"
+        android:layout_marginBottom="162dp"
+        android:layout_marginEnd="5dp"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="161dp"
+        android:text="Rest Between Set (mm:ss)"
+        android:textColor="@android:color/background_dark"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/suggestedRestRepsLabel"
+        app:layout_constraintStart_toStartOf="@+id/suggestedRestRepsLabel"
+        app:layout_constraintTop_toBottomOf="@+id/weightInputLabel" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="left">
+    <EditText
+        android:id="@+id/suggestedRestSets"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="6dp"
+        android:ems="10"
+        android:inputType="time"
+        android:textColor="@android:color/background_dark"
+        android:textSize="24sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/suggestedRestRepsLabel"
+        app:layout_constraintTop_toTopOf="@+id/suggestedRestLabelSets" />
 
-            <TextView
-                android:id="@+id/suggestedRestLabelSets"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Rest Between Set
-                    (mm:ss)"
-                android:textColor="@android:color/background_dark"
-                android:textSize="20sp" />
 
-            <EditText
-                android:id="@+id/suggestedRestSets"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:ems="10"
-                android:inputType="time"
-                android:textColor="@android:color/background_dark"
-                android:textSize="24sp" />
+    <TextView
+        android:id="@+id/suggestedRestRepsLabel"
+        android:layout_width="0dp"
+        android:layout_height="75dp"
+        android:layout_marginBottom="69dp"
+        android:layout_marginStart="21dp"
+        android:layout_marginTop="78dp"
+        android:text="Rest Between Reps"
+        android:textColor="@android:color/background_dark"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/suggestedRestLabelSets" />
 
-        </LinearLayout>
+    <EditText
+        android:id="@+id/suggestedRestReps"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="6dp"
+        android:layout_marginTop="1dp"
+        android:ems="10"
+        android:textColor="@android:color/background_dark"
+        android:textSize="24sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/suggestedRestSets"
+        app:layout_constraintTop_toTopOf="@+id/suggestedRestRepsLabel" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="left">
 
-            <TextView
-                android:id="@+id/suggestedRestRepsLabel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Rest Between Reps
-                    (mm:ss)"
-                android:textColor="@android:color/background_dark"
-                android:textSize="20sp" />
-
-            <EditText
-                android:id="@+id/suggestedRestReps"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:ems="10"
-                android:textColor="@android:color/background_dark"
-                android:textSize="24sp" />
-
-        </LinearLayout>
-
-        <Button
-            android:id="@+id/submitExercise"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:layout_weight="1"
-            android:onClick="ShowPopup"
-            android:text="@string/submit" />
-
-</LinearLayout>
+</android.support.constraint.ConstraintLayout>
