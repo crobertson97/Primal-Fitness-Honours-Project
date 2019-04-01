@@ -1,14 +1,8 @@
 package com.example.crobe.primalfitness;
 
 import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
-import android.app.AlertDialog;
-import android.app.Dialog;
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.graphics.Color;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -38,14 +32,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
-import java.util.jar.Attributes;
 
 
 public class FitnessCreationActivity extends AppCompatActivity implements View.OnClickListener {
 
     private MobileServiceClient mClient;
     private MobileServiceTable<ExerciseItem> mExerciseTable;
-    private Dialog myDialog;
     private EditText exercise, sets, reps, restSets, restReps, name, weight;
     private List<String[]> array;
     private ServiceHandler sh;
@@ -60,8 +52,6 @@ public class FitnessCreationActivity extends AppCompatActivity implements View.O
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_fitness_creation);
         sh = new ServiceHandler(this);
-        myDialog = new Dialog(this);
-        myDialog.setContentView(R.layout.pop_fitness);
         array = new ArrayList<>();
         name = findViewById(R.id.planName);
 
@@ -188,25 +178,20 @@ public class FitnessCreationActivity extends AppCompatActivity implements View.O
     }
 
     public void onCreateDialog(String [] names, String [] email) {
-        ArrayList selectedItems = new ArrayList();  // Where we track the selected items
-        ArrayList selectedItem = new ArrayList();  // Where we track the selected items
+        ArrayList<Integer> selectedItems = new ArrayList<>();  // Where we track the selected items
         android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(this);
         // Set the dialog title
         builder.setTitle("Select Athletes")
                 // Specify the list array, the items to be selected by default (null for none),
                 // and the listener through which to receive callbacks when items are selected
                 .setMultiChoiceItems(names, null,
-                        new DialogInterface.OnMultiChoiceClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which,
-                                                boolean isChecked) {
-                                if (isChecked) {
-                                    //addPlan();
-                                    selectedItems.add(which);
-                                } else{// if (selectedItems.contains(which)) {
-                                    // Else, if the item is already in the array, remove it
-                                    selectedItems.remove(Integer.valueOf(which));
-                                }
+                        (dialog, which, isChecked) -> {
+                            if (isChecked) {
+                                //addPlan();
+                                selectedItems.add(which);
+                            } else{// if (selectedItems.contains(which)) {
+                                // Else, if the item is already in the array, remove it
+                                selectedItems.remove(Integer.valueOf(which));
                             }
                         })
                 // Set the action buttons
@@ -225,7 +210,7 @@ public class FitnessCreationActivity extends AppCompatActivity implements View.O
             builder.create().show();
     }
 
-    public void addItemLinks(ArrayList links, String [] names, String [] email) {
+    public void addItemLinks(ArrayList<Integer> links, String [] names, String [] email) {
         if (mClient == null) {
             return;
         }

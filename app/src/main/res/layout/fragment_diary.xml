@@ -20,5 +20,5 @@
         android:id="@+id/addToDiary"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/add_item_to_diary"/>
+        android:text="@string/add_item_to_diary" />
 </LinearLayout>
