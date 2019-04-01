@@ -32,6 +32,9 @@ public class ExerciseItem {
     @com.google.gson.annotations.SerializedName("repsSuggested")
     private String mRepsSuggested;
 
+    @com.google.gson.annotations.SerializedName("weight")
+    private String mWeight;
+
     public ExerciseItem() {
 
     }
@@ -114,5 +117,13 @@ public class ExerciseItem {
 
     public final void setRepsSuggested(String mRepsSuggested) {
         this.mRepsSuggested = mRepsSuggested;
+    }
+
+    public String getWeight() {
+        return mWeight;
+    }
+
+    public final void setWeight(String mWeight) {
+        this.mWeight = mWeight;
     }
 }

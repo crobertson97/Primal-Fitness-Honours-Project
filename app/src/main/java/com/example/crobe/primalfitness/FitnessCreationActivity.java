@@ -1,19 +1,25 @@
 package com.example.crobe.primalfitness;
 
 import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -32,6 +38,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
+import java.util.jar.Attributes;
 
 
 public class FitnessCreationActivity extends AppCompatActivity implements View.OnClickListener {
@@ -43,6 +50,10 @@ public class FitnessCreationActivity extends AppCompatActivity implements View.O
     private List<String[]> array;
     private ServiceHandler sh;
     private String planName, planType;
+    private boolean planPrivate;
+    private String [] coachingLinks, emailLinks;
+    private MobileServiceTable<UserItem> mUserTable;
+    private MobileServiceTable<PlanLinkItem> mLinkTable;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,6 +87,8 @@ public class FitnessCreationActivity extends AppCompatActivity implements View.O
                 return client;
             });
             mExerciseTable = mClient.getTable(ExerciseItem.class);
+            mUserTable = mClient.getTable(UserItem.class);
+            mLinkTable = mClient.getTable(PlanLinkItem.class);
             initLocalStore().get();
             refreshItemsFromTable();
         } catch (MalformedURLException e) {
@@ -85,66 +98,209 @@ public class FitnessCreationActivity extends AppCompatActivity implements View.O
         }
     }
 
-    public void ShowPopup(View v) {
-        myDialog.setContentView(R.layout.pop_fitness);
-        exercise = myDialog.findViewById(R.id.exerciseName);
-        sets = myDialog.findViewById(R.id.suggestedSets);
-        reps = myDialog.findViewById(R.id.suggestedReps);
-        restSets = myDialog.findViewById(R.id.suggestedRestSets);
-        restReps = myDialog.findViewById(R.id.suggestedRestReps);
+    @SuppressLint("SetTextI18n")
+    private void callPopup() {
 
-        myDialog.show();
+        LayoutInflater layoutInflater = (LayoutInflater) getBaseContext()
+                .getSystemService(LAYOUT_INFLATER_SERVICE);
+
+        @SuppressLint("InflateParams") View popupView = layoutInflater.inflate(R.layout.popup, null);
+
+        PopupWindow popupWindow = new PopupWindow(popupView,
+                LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT,
+                true);
+
+        popupWindow.setTouchable(true);
+        popupWindow.setFocusable(true);
+        popupView.setBackgroundColor(Color.parseColor("#ffffff"));
+
+        popupWindow.showAtLocation(popupView, Gravity.CENTER, 0, 0);
+        exercise = popupView.findViewById(R.id.exerciseName);
+        sets = popupView.findViewById(R.id.suggestedSets);
+        reps = popupView.findViewById(R.id.suggestedReps);
+        restSets = popupView.findViewById(R.id.suggestedRestSets);
+        restReps = popupView.findViewById(R.id.suggestedRestReps);
+        weight =  popupView.findViewById(R.id.weightInput);
+
+        TextView exerciseLabel = popupView.findViewById(R.id.exerciseNameLabel);
+
+        if (FitnessFragment.planType.equals("Cardio")) {
+            exerciseLabel.setText("Distance");
+            weight.setVisibility(View.GONE);
+            popupView.findViewById(R.id.weightInputLabel).setVisibility(View.GONE);
+        } else if (FitnessFragment.planType.equals("Weights")) {
+
+        }
+        (popupView.findViewById(R.id.add))
+                .setOnClickListener(arg0 -> {
+                    if (checkInputs()) {
+                        switch (FitnessFragment.planType) {
+                            case "Cardio":
+                                array.add(new String[]{exercise.getText().toString(), sets.getText().toString(), reps.getText().toString(), restSets.getText().toString(), restReps.getText().toString()});
+                                break;
+                            case "Weights":
+                                array.add(new String[]{exercise.getText().toString(), sets.getText().toString(), reps.getText().toString(), restSets.getText().toString(), restReps.getText().toString(), weight.getText().toString()});
+                                break;
+                        }
+                    }
+
+                    popupWindow.dismiss();
+                });
+        (popupView.findViewById(R.id.cancel))
+                .setOnClickListener(arg0 -> popupWindow.dismiss());
     }
 
-    @SuppressLint({"SetTextI18n", "InflateParams"})
-    public Dialog onCreateDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        // Get the layout inflater
-        LayoutInflater inflater = getLayoutInflater();
-
-        // Inflate and set the layout for the dialog
-        // Pass null as the parent view because its going in the dialog layout
-
-        builder.setView(inflater.inflate(R.layout.pop_fitness, null));
-        exercise = myDialog.findViewById(R.id.exerciseName);
-        weight = myDialog.findViewById(R.id.weightInput);
-        Log.i("TAG", "" + FitnessFragment.planType);
-        TextView test = myDialog.findViewById(R.id.exerciseNameLabel);
-        if (FitnessFragment.planType.equals("Cardio")) {
-            Log.i("TAG", "" + test.getText().toString());
-            exercise.setText("Distance");
-            myDialog.findViewById(R.id.weightInput).setVisibility(View.GONE);
-            myDialog.findViewById(R.id.weightInputLabel).setVisibility(View.GONE);
-        } else if (FitnessFragment.planType.equals("Weights")) {
-            exercise.setText("Exercise");
+    private void getCoachLinks() {
+        if (mClient == null) {
+            return;
         }
 
+        @SuppressLint("StaticFieldLeak") AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... params) {
+                try {
 
-        sets = myDialog.findViewById(R.id.suggestedSets);
-        reps = myDialog.findViewById(R.id.suggestedReps);
-        restSets = myDialog.findViewById(R.id.suggestedRestSets);
-        restReps = myDialog.findViewById(R.id.suggestedRestReps);
+                    final List<UserItem> links = mUserTable.where().field("coachLink").eq(LoginActivity.loggedInUser).execute().get();
+                    coachingLinks = new String[links.size()];
+                    emailLinks = new String[links.size()];
+                    runOnUiThread(() -> {
+                        int i = 0;
+                        for (UserItem coachLinks : links) {
+                            try {
+                                coachingLinks[i] = AESCrypt.decrypt(coachLinks.getFirstName()) + " " + AESCrypt.decrypt(coachLinks.getSurname());
+                                emailLinks[i] = coachLinks.getEmail();
+                                i++;
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
 
-        builder.setPositiveButton("Add", (dialog, id) -> {
-
-            if (checkInputs()) {
-                switch (FitnessFragment.planType) {
-                    case "Cardio":
-                        array.add(new String[]{exercise.getText().toString(), sets.getText().toString(), reps.getText().toString(), restSets.getText().toString(), restReps.getText().toString()});
-                        break;
-                    case "Weights":
-                        array.add(new String[]{exercise.getText().toString(), weight.getText().toString(), sets.getText().toString(), reps.getText().toString(), restSets.getText().toString(), restReps.getText().toString()});
-                        break;
+                        onCreateDialog(coachingLinks, emailLinks);
+                    });
+                } catch (final Exception e) {
+                    sh.createAndShowDialogFromTask(e);
                 }
-                array.add(new String[]{exercise.getText().toString(), sets.getText().toString(), reps.getText().toString(), restSets.getText().toString(), restReps.getText().toString()});
+                return null;
             }
-        });
-        builder.setNegativeButton("Cancel", (dialog, which) ->
-                dialog.dismiss()
-        );
-        return builder.create();
+        };
+        sh.runAsyncTask(task);
+
     }
 
+    public void onCreateDialog(String [] names, String [] email) {
+        ArrayList selectedItems = new ArrayList();  // Where we track the selected items
+        ArrayList selectedItem = new ArrayList();  // Where we track the selected items
+        android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(this);
+        // Set the dialog title
+        builder.setTitle("Select Athletes")
+                // Specify the list array, the items to be selected by default (null for none),
+                // and the listener through which to receive callbacks when items are selected
+                .setMultiChoiceItems(names, null,
+                        new DialogInterface.OnMultiChoiceClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which,
+                                                boolean isChecked) {
+                                if (isChecked) {
+                                    //addPlan();
+                                    selectedItems.add(which);
+                                } else{// if (selectedItems.contains(which)) {
+                                    // Else, if the item is already in the array, remove it
+                                    selectedItems.remove(Integer.valueOf(which));
+                                }
+                            }
+                        })
+                // Set the action buttons
+                .setPositiveButton("Link", (dialog, id) -> {
+                    // User clicked OK, so save the selectedItems results somewhere
+                    // or return them to the component that opened the dialog
+                    addItemLinks(selectedItems, names, email);
+                    planPrivate = true;
+                    addPlan();
+                })
+                .setNegativeButton("Make public", (dialog, id) -> {
+                    planPrivate = false;
+                    addPlan();
+                });
+
+            builder.create().show();
+    }
+
+    public void addItemLinks(ArrayList links, String [] names, String [] email) {
+        if (mClient == null) {
+            return;
+        }
+        PlanLinkItem item;// = new PlanLinkItem();
+int i= 0;
+
+        for(Object arrad: links) {
+
+            item = new PlanLinkItem();
+            //test(arrad, names, email, item);
+            Log.i("TAG", "" + i);
+            i++;
+            try {
+                Log.i("TAG", "" + names[(int) arrad] + " NEW:" + arrad.toString());
+                Log.i("TAG", "" + email[(int) arrad] + " NEW:" + arrad.toString());
+                item.setPlanName(name.getText().toString());
+                item.setId(sh.createTransactionID());
+                item.setUsername(email[(int) arrad]);
+                item.setComplete(planPrivate);
+                item.setPlanType(FitnessFragment.planType);
+                item.setType("Fitness");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            test(item);
+        }
+//
+//
+//            PlanLinkItem finalItem = item;
+//            @SuppressLint("StaticFieldLeak") AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
+//            @Override
+//            protected Void doInBackground(Void... params) {
+//                try {
+//                    addLinkItemInTable(finalItem);
+//                } catch (final Exception e) {
+//                    sh.createAndShowDialogFromTask(e);
+//                }
+//                return null;
+//            }
+//        };
+//        sh.runAsyncTask(task);
+
+    }
+
+    private void test(PlanLinkItem item){
+
+        @SuppressLint("StaticFieldLeak") AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... params) {
+                try {
+                    addLinkItemInTable(item);
+                } catch (final Exception e) {
+                    sh.createAndShowDialogFromTask(e);
+                }
+                return null;
+            }
+        };
+        sh.runAsyncTask(task);
+
+    }
+
+    public void addLinkItemInTable(PlanLinkItem item) throws ExecutionException, InterruptedException {
+        mLinkTable.insert(item).get();
+    }
+
+    private void addPlan(){
+        for (String[] arra : array) {
+            planName = name.getText().toString();
+            planType = FitnessFragment.planType;
+            addItem(arra);
+            Toast.makeText(this, "Plan Added", Toast.LENGTH_LONG).show();
+            this.finish();
+        }
+    }
 
     @Override
     public void onClick(View view) {
@@ -155,37 +311,51 @@ public class FitnessCreationActivity extends AppCompatActivity implements View.O
                 } else if (array.isEmpty()) {
                     Toast.makeText(this, "Please add exercises", Toast.LENGTH_LONG).show();
                 } else {
-                    for (String[] arra : array) {
-                        planName = name.getText().toString();
-                        planType = FitnessFragment.planType;
-                        addItem(arra);
-                        Toast.makeText(this, "Plan Added", Toast.LENGTH_LONG).show();
-                        this.finish();
-                    }
+                    getCoachLinks();
                 }
                 break;
 
             case R.id.addExercise:
-                onCreateDialog().show();
+                callPopup();
                 break;
 
         }
     }
 
     private boolean checkInputs() {
-        if(exercise.getText().toString().isEmpty() || sets.getText().toString().isEmpty() || reps.getText().toString().isEmpty() || restSets.getText().toString().isEmpty() || restReps.getText().toString().isEmpty()){
-            Toast.makeText(this, "Please enter values into all fields", Toast.LENGTH_LONG).show();
-            return false;
-        }else {
-            LinearLayout linearLayout = findViewById(R.id.exercisesLayout);
-            TextView newExercise = new TextView(this);
-            newExercise.setText(exercise.getText().toString());
-            newExercise.setTextSize(24);
-            newExercise.setBackground(ContextCompat.getDrawable(this, R.drawable.border));
-            newExercise.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
-            newExercise.setTextColor(Color.parseColor("#ff000000"));
-            linearLayout.addView(newExercise);
-            return true;
+        switch (FitnessFragment.planType) {
+            case "Cardio":
+                if(exercise.getText().toString().isEmpty() || sets.getText().toString().isEmpty() || reps.getText().toString().isEmpty() || restSets.getText().toString().isEmpty() || restReps.getText().toString().isEmpty()){
+                    Toast.makeText(this, "Please enter values into all fields", Toast.LENGTH_LONG).show();
+                    return false;
+                }else {
+                    LinearLayout linearLayout = findViewById(R.id.exercisesLayout);
+                    TextView newExercise = new TextView(this);
+                    newExercise.setText(exercise.getText().toString());
+                    newExercise.setTextSize(24);
+                    newExercise.setBackground(ContextCompat.getDrawable(this, R.drawable.border));
+                    newExercise.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+                    newExercise.setTextColor(Color.parseColor("#ff000000"));
+                    linearLayout.addView(newExercise);
+                    return true;
+                }
+            case "Weights":
+                if(exercise.getText().toString().isEmpty() || exercise.getText().toString().isEmpty() || sets.getText().toString().isEmpty() || reps.getText().toString().isEmpty() || restSets.getText().toString().isEmpty() || restReps.getText().toString().isEmpty()){
+                    Toast.makeText(this, "Please enter values into all fields", Toast.LENGTH_LONG).show();
+                    return false;
+                }else {
+                    LinearLayout linearLayout = findViewById(R.id.exercisesLayout);
+                    TextView newExercise = new TextView(this);
+                    newExercise.setText(exercise.getText().toString());
+                    newExercise.setTextSize(24);
+                    newExercise.setBackground(ContextCompat.getDrawable(this, R.drawable.border));
+                    newExercise.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+                    newExercise.setTextColor(Color.parseColor("#ff000000"));
+                    linearLayout.addView(newExercise);
+                    return true;
+                }
+            default:
+                return false;
         }
     }
 
@@ -213,6 +383,7 @@ public class FitnessCreationActivity extends AppCompatActivity implements View.O
                     tableDefinition.put("restSets", ColumnDataType.String);
                     tableDefinition.put("restReps", ColumnDataType.String);
                     tableDefinition.put("createdBy", ColumnDataType.String);
+                    tableDefinition.put("weight", ColumnDataType.String);
 
                     localStore.defineTable("exerciseitem", tableDefinition);
 
@@ -273,8 +444,11 @@ public class FitnessCreationActivity extends AppCompatActivity implements View.O
             item.setRepsSuggested(exercises[2]);
             item.setRestSets(exercises[3]);
             item.setRestReps(exercises[4]);
+            if(FitnessFragment.planType.equals("Weights")){
+                item.setWeight(exercises[5]);
+            }
             item.setCreatedBy(LoginActivity.loggedInUser);
-            item.setPrivate(true);
+            item.setPrivate(planPrivate);
         } catch (Exception e) {
             e.printStackTrace();
         }
