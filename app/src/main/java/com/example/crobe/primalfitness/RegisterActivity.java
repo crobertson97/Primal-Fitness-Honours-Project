@@ -28,7 +28,6 @@ import com.squareup.okhttp.OkHttpClient;
 import java.net.MalformedURLException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 
@@ -192,8 +191,8 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         completeRegistration = true;
     }
 
-    public void addItemInTable(UserItem item) throws ExecutionException, InterruptedException {
-        mUserTable.insert(item).get();
+    public void addItemInTable(UserItem item) {
+        mUserTable.insert(item);
     }
 
     private AsyncTask<Void, Void, Void> initLocalStore() {
@@ -260,8 +259,8 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         sh.runAsyncTask(task);
     }
 
-    private void refreshItemsFromMobileServiceTable() throws ExecutionException, InterruptedException, MobileServiceException {
-        mUserTable.execute().get();
+    private void refreshItemsFromMobileServiceTable() throws MobileServiceException {
+        mUserTable.execute();
     }
 
     @Override

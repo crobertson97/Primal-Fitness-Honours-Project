@@ -6,7 +6,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -41,8 +40,7 @@ public class FitnessCreationActivity extends AppCompatActivity implements View.O
     private EditText exercise, sets, reps, restSets, restReps, name, weight;
     private List<String[]> array;
     private ServiceHandler sh;
-    private String planName, planType;
-    private boolean planPrivate;
+    private String planName, planType, planPrivate;
     private String [] coachingLinks, emailLinks;
     private MobileServiceTable<UserItem> mUserTable;
     private MobileServiceTable<PlanLinkItem> mLinkTable;
@@ -94,7 +92,7 @@ public class FitnessCreationActivity extends AppCompatActivity implements View.O
         LayoutInflater layoutInflater = (LayoutInflater) getBaseContext()
                 .getSystemService(LAYOUT_INFLATER_SERVICE);
 
-        @SuppressLint("InflateParams") View popupView = layoutInflater.inflate(R.layout.popup, null);
+        @SuppressLint("InflateParams") View popupView = layoutInflater.inflate(R.layout.popup_fitness, null);
 
         PopupWindow popupWindow = new PopupWindow(popupView,
                 LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT,
@@ -118,8 +116,10 @@ public class FitnessCreationActivity extends AppCompatActivity implements View.O
             exerciseLabel.setText("Distance");
             weight.setVisibility(View.GONE);
             popupView.findViewById(R.id.weightInputLabel).setVisibility(View.GONE);
-        } else if (FitnessFragment.planType.equals("Weights")) {
-
+        } else if (FitnessFragment.planType.equals("Calistetics")) {
+            exerciseLabel.setText("Exercise");
+            weight.setVisibility(View.GONE);
+            popupView.findViewById(R.id.weightInputLabel).setVisibility(View.GONE);
         }
         (popupView.findViewById(R.id.add))
                 .setOnClickListener(arg0 -> {
@@ -187,7 +187,6 @@ public class FitnessCreationActivity extends AppCompatActivity implements View.O
                 .setMultiChoiceItems(names, null,
                         (dialog, which, isChecked) -> {
                             if (isChecked) {
-                                //addPlan();
                                 selectedItems.add(which);
                             } else{// if (selectedItems.contains(which)) {
                                 // Else, if the item is already in the array, remove it
@@ -199,37 +198,51 @@ public class FitnessCreationActivity extends AppCompatActivity implements View.O
                     // User clicked OK, so save the selectedItems results somewhere
                     // or return them to the component that opened the dialog
                     addItemLinks(selectedItems, names, email);
-                    planPrivate = true;
+                    planPrivate = "TRUE";
                     addPlan();
                 })
                 .setNegativeButton("Make public", (dialog, id) -> {
-                    planPrivate = false;
+                    planPrivate = "FALSE";
                     addPlan();
                 });
 
             builder.create().show();
     }
 
+    public void addItemToDiary() {
+        if (mClient == null) {
+            return;
+        }
+        PlanLinkItem item = new PlanLinkItem();
+
+        try {
+            item.setPlanName(name.getText().toString());
+            item.setId(sh.createTransactionID());
+            item.setUsername(LoginActivity.loggedInUser);
+            item.setComplete(true);
+            item.setPlanType(FitnessFragment.planType);
+            item.setType("Fitness");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        test(item);
+    }
+
     public void addItemLinks(ArrayList<Integer> links, String [] names, String [] email) {
         if (mClient == null) {
             return;
         }
-        PlanLinkItem item;// = new PlanLinkItem();
-int i= 0;
+        PlanLinkItem item;
 
         for(Object arrad: links) {
 
             item = new PlanLinkItem();
-            //test(arrad, names, email, item);
-            Log.i("TAG", "" + i);
-            i++;
+
             try {
-                Log.i("TAG", "" + names[(int) arrad] + " NEW:" + arrad.toString());
-                Log.i("TAG", "" + email[(int) arrad] + " NEW:" + arrad.toString());
                 item.setPlanName(name.getText().toString());
                 item.setId(sh.createTransactionID());
                 item.setUsername(email[(int) arrad]);
-                item.setComplete(planPrivate);
+                item.setComplete(false);
                 item.setPlanType(FitnessFragment.planType);
                 item.setType("Fitness");
             } catch (Exception e) {
@@ -238,27 +251,14 @@ int i= 0;
 
             test(item);
         }
-//
-//
-//            PlanLinkItem finalItem = item;
-//            @SuppressLint("StaticFieldLeak") AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
-//            @Override
-//            protected Void doInBackground(Void... params) {
-//                try {
-//                    addLinkItemInTable(finalItem);
-//                } catch (final Exception e) {
-//                    sh.createAndShowDialogFromTask(e);
-//                }
-//                return null;
-//            }
-//        };
-//        sh.runAsyncTask(task);
 
     }
 
     private void test(PlanLinkItem item){
 
         @SuppressLint("StaticFieldLeak") AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
+
+
             @Override
             protected Void doInBackground(Void... params) {
                 try {
@@ -270,11 +270,10 @@ int i= 0;
             }
         };
         sh.runAsyncTask(task);
-
     }
 
-    public void addLinkItemInTable(PlanLinkItem item) throws ExecutionException, InterruptedException {
-        mLinkTable.insert(item).get();
+    public void addLinkItemInTable(PlanLinkItem item) {
+        mLinkTable.insert(item);
     }
 
     private void addPlan(){
@@ -296,7 +295,13 @@ int i= 0;
                 } else if (array.isEmpty()) {
                     Toast.makeText(this, "Please add exercises", Toast.LENGTH_LONG).show();
                 } else {
-                    getCoachLinks();
+                    if (LoginActivity.loggedInUserType.equals("Coach")) {
+                        getCoachLinks();
+                    } else {
+                        addItemToDiary();
+                        addPlan();
+                    }
+
                 }
                 break;
 
@@ -434,6 +439,7 @@ int i= 0;
             }
             item.setCreatedBy(LoginActivity.loggedInUser);
             item.setPrivate(planPrivate);
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -452,7 +458,7 @@ int i= 0;
         sh.runAsyncTask(task);
     }
 
-    public void addItemInTable(ExerciseItem item) throws ExecutionException, InterruptedException {
-        mExerciseTable.insert(item).get();
+    public void addItemInTable(ExerciseItem item) {
+        mExerciseTable.insert(item);
     }
 }

@@ -1,6 +1,7 @@
 package com.example.crobe.primalfitness;
 
 import android.annotation.SuppressLint;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.AsyncTask;
@@ -10,6 +11,7 @@ import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -24,7 +26,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class DiaryFragment extends Fragment {
+public class DiaryFragment extends Fragment implements View.OnClickListener {
 
     public static String planSchedule;
 
@@ -32,6 +34,7 @@ public class DiaryFragment extends Fragment {
     private MobileServiceClient mClient;
     private MobileServiceTable<PlanLinkItem> mLinkTable;
     private ServiceHandler sh;
+    private String[] plans;
 
     public DiaryFragment() {
         // Required empty public constructor
@@ -49,6 +52,11 @@ public class DiaryFragment extends Fragment {
         sh = new ServiceHandler(getActivity());
 
         layoutPlans = view.findViewById(R.id.scheduledPlans);
+
+        plans = new String[]{"Calisthetics", "Cardio", "Weights"};
+
+        Button addToDiary = view.findViewById(R.id.addToDiary);
+        addToDiary.setOnClickListener(this);
 
         try {
             mClient = new MobileServiceClient("https://primalfitnesshonours.azurewebsites.net", getActivity());
@@ -118,4 +126,27 @@ public class DiaryFragment extends Fragment {
     }
 
 
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.addToDiary:
+                onCreateDialog();
+                break;
+        }
+    }
+
+
+    public void onCreateDialog() {
+        android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(getActivity());
+        builder.setTitle("Select Type of Program");
+        builder.setSingleChoiceItems(plans, -1, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                FitnessFragment.planType = plans[i];
+                startActivity(new Intent(getActivity(), FitnessCreationActivity.class));
+                dialogInterface.dismiss();
+            }
+        });
+        builder.create().show();
+    }
 }

@@ -1,14 +1,11 @@
 package com.example.crobe.primalfitness;
 
 import android.annotation.SuppressLint;
-import android.app.Dialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -102,9 +99,8 @@ public class PlansToScreen extends AppCompatActivity implements View.OnClickList
             protected Void doInBackground(Void... params) {
                 try {
 
-                    final List<ExerciseItem> results = mFitnessTable.where().field("exercisePlanType").eq(FitnessFragment.planType).execute().get();
+                    final Collection<ExerciseItem> results = mFitnessTable.where().field("exercisePlanType").eq(FitnessFragment.planType).execute().get();
                     final ArrayList<String> stuff = new ArrayList<>();
-
 
                     runOnUiThread(() -> {
                         for (ExerciseItem item : results) {

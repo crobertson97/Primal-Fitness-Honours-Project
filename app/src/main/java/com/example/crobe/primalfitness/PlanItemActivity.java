@@ -24,6 +24,7 @@ import com.microsoft.windowsazure.mobileservices.table.sync.synchandler.SimpleSy
 import com.squareup.okhttp.OkHttpClient;
 
 import java.net.MalformedURLException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,9 +40,11 @@ public class PlanItemActivity extends AppCompatActivity implements View.OnClickL
     private MobileServiceTable<ExerciseItem> mFitnessTable;
     private MobileServiceTable<NutritionItem> mNutritionTable;
     private MobileServiceTable<PlanLinkItem> mLinkTable;
+    private MobileServiceTable<UserItem> mUserTable;
     private ServiceHandler sh;
     private String title;
     public static String planView;
+    private String[] coachingLinks, emailLinks;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +54,9 @@ public class PlanItemActivity extends AppCompatActivity implements View.OnClickL
 
         Button addToSchedule = findViewById(R.id.addToSchedule);
         addToSchedule.setOnClickListener(this);
+        if (LoginActivity.loggedInUserType.equals("Coach")) {
+            addToSchedule.setText("Add To Athletes Schedule");
+        }
 
         Button completePlan = findViewById(R.id.completePlan);
         completePlan.setOnClickListener(this);
@@ -71,6 +77,7 @@ public class PlanItemActivity extends AppCompatActivity implements View.OnClickL
             mFitnessTable = mClient.getTable(ExerciseItem.class);
             mNutritionTable = mClient.getTable(NutritionItem.class);
             mLinkTable = mClient.getTable(PlanLinkItem.class);
+            mUserTable = mClient.getTable(UserItem.class);
             initLocalStore().get();
             refreshItemsFromTable();
 
@@ -151,20 +158,145 @@ public class PlanItemActivity extends AppCompatActivity implements View.OnClickL
         return sh.runAsyncTask(task);
     }
 
+    public void addItemLinks(ArrayList<Integer> links, String[] names, String[] email) {
+        if (mClient == null) {
+            return;
+        }
+        PlanLinkItem item;// = new PlanLinkItem();
+        int i = 0;
+
+        for (Object arrad : links) {
+
+            item = new PlanLinkItem();
+            //test(arrad, names, email, item);
+            Log.i("TAG", "" + i);
+            i++;
+            try {
+                Log.i("TAG", "" + PlansToScreen.plan);
+                item.setPlanName(PlansToScreen.plan);
+                item.setId(sh.createTransactionID());
+                item.setUsername(email[(int) arrad]);
+                item.setComplete(false);
+                item.setPlanType(FitnessFragment.planType);
+                item.setType("Fitness");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            test(item);
+        }
+
+    }
+
+    private void test(PlanLinkItem item) {
+
+        @SuppressLint("StaticFieldLeak") AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... params) {
+                try {
+                    addLinkItemInTable(item);
+                } catch (final Exception e) {
+                    sh.createAndShowDialogFromTask(e);
+                }
+                return null;
+            }
+        };
+        sh.runAsyncTask(task);
+
+    }
+
+    public void addLinkItemInTable(PlanLinkItem item) {
+        mLinkTable.insert(item);
+    }
+
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.addToSchedule:
-                addItem();
-                Toast.makeText(this, "Plan Added to your Schedule", Toast.LENGTH_SHORT).show();
+                if (LoginActivity.loggedInUserType.equals("Coach")) {
+                    getCoachLinks();
+                    Toast.makeText(this, "Plan Added to Athletes Schedule", Toast.LENGTH_SHORT).show();
+                    //this.finish();
+                    break;
+                } else {
+                    addItem();
+                    this.finish();
+                    break;
+                }
+
+
+            case R.id.completePlan:
+                checkItem();
+                Toast.makeText(this, "Plan Completed", Toast.LENGTH_SHORT).show();
                 this.finish();
                 break;
-            case R.id.completePlan:
-                //checkItem();
-                Toast.makeText(this, "Plan Completed", Toast.LENGTH_SHORT).show();
-                //this.finish();
-                break;
         }
+    }
+
+    private void getCoachLinks() {
+        if (mClient == null) {
+            return;
+        }
+
+        @SuppressLint("StaticFieldLeak") AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... params) {
+                try {
+
+                    final List<UserItem> links = mUserTable.where().field("coachLink").eq(LoginActivity.loggedInUser).execute().get();
+                    coachingLinks = new String[links.size()];
+                    emailLinks = new String[links.size()];
+                    runOnUiThread(() -> {
+                        int i = 0;
+                        for (UserItem coachLinks : links) {
+                            try {
+                                coachingLinks[i] = AESCrypt.decrypt(coachLinks.getFirstName()) + " " + AESCrypt.decrypt(coachLinks.getSurname());
+                                emailLinks[i] = coachLinks.getEmail();
+                                i++;
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+
+                        onCreateDialog(coachingLinks, emailLinks);
+                    });
+                } catch (final Exception e) {
+                    sh.createAndShowDialogFromTask(e);
+                }
+                return null;
+            }
+        };
+        sh.runAsyncTask(task);
+
+    }
+
+    public void onCreateDialog(String[] names, String[] email) {
+        ArrayList<Integer> selectedItems = new ArrayList<>();  // Where we track the selected items
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        // Set the dialog title
+        builder.setTitle("Select Athletes");
+        // Specify the list array, the items to be selected by default (null for none),
+        // and the listener through which to receive callbacks when items are selected
+        builder.setMultiChoiceItems(names, null,
+                (dialog, which, isChecked) -> {
+                    if (isChecked) {
+                        //addPlan();
+                        selectedItems.add(which);
+                    } else {// if (selectedItems.contains(which)) {
+                        // Else, if the item is already in the array, remove it
+                        //selectedItems.remove(Integer.valueOf(which));
+                    }
+                });
+        // Set the action buttons
+        builder.setPositiveButton("Link", (dialog, id) -> {
+            addItemLinks(selectedItems, names, email);
+        });
+        builder.setNegativeButton("Cancel", (dialog, id) -> {
+            ;
+            dialog.dismiss();
+        });
+
+        builder.create().show();
     }
 
     private void getFitnessPlans() {
@@ -328,8 +460,8 @@ public class PlanItemActivity extends AppCompatActivity implements View.OnClickL
         sh.runAsyncTask(task);
     }
 
-    private void refreshItemsFromMobileServiceTable() throws ExecutionException, InterruptedException, MobileServiceException {
-        mLinkTable.execute().get();
+    private void refreshItemsFromMobileServiceTable() throws MobileServiceException {
+        mLinkTable.execute();
     }
 
     public void checkItem() {
@@ -373,7 +505,7 @@ public class PlanItemActivity extends AppCompatActivity implements View.OnClickL
 
     }
 
-    public void checkItemInTable(PlanLinkItem item) throws ExecutionException, InterruptedException {
-        mLinkTable.update(item).get();
+    public void checkItemInTable(PlanLinkItem item) {
+        mLinkTable.update(item);
     }
 }

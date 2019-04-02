@@ -27,7 +27,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 public class NutritionCreationActivity extends AppCompatActivity implements View.OnClickListener {
@@ -183,8 +182,8 @@ public class NutritionCreationActivity extends AppCompatActivity implements View
         sh.runAsyncTask(task);
     }
 
-    private void refreshItemsFromMobileServiceTable() throws ExecutionException, InterruptedException {
-        mNutritionTable.where().execute().get();
+    private void refreshItemsFromMobileServiceTable() {
+        mNutritionTable.where().execute();
     }
 
     public void addItem(String[] ingredients) {
@@ -219,8 +218,8 @@ public class NutritionCreationActivity extends AppCompatActivity implements View
         sh.runAsyncTask(task);
     }
 
-    public void addItemInTable(NutritionItem item) throws ExecutionException, InterruptedException {
-        mNutritionTable.insert(item).get();
+    public void addItemInTable(NutritionItem item) {
+        mNutritionTable.insert(item);
     }
 }
 

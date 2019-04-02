@@ -9,7 +9,7 @@ public class ExerciseItem {
     private String mCreatedBy;
 
     @com.google.gson.annotations.SerializedName("private")
-    private Boolean mPrivate;
+    private String mPrivate;
 
     @com.google.gson.annotations.SerializedName("exerciseName")
     private String mExerciseName;
@@ -47,11 +47,11 @@ public class ExerciseItem {
         this.id = id;
     }
 
-    public Boolean getPrivate() {
+    public String getPrivate() {
         return mPrivate;
     }
 
-    public final void setPrivate(Boolean mPrivate) {
+    public final void setPrivate(String mPrivate) {
         this.mPrivate = mPrivate;
     }
 

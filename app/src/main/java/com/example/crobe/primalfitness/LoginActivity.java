@@ -34,12 +34,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
         Button signIn = this.findViewById(R.id.signIn);
         signIn.setOnClickListener(this);
-        Button testCoach = this.findViewById(R.id.testCoach);
-        testCoach.setOnClickListener(this);
-        Button testAthlete = this.findViewById(R.id.testAthlete);
-        testAthlete.setOnClickListener(this);
-        Button testStandard = this.findViewById(R.id.testStandard);
-        testStandard.setOnClickListener(this);
+//        Button testCoach = this.findViewById(R.id.testCoach);
+//        testCoach.setOnClickListener(this);
+//        Button testAthlete = this.findViewById(R.id.testAthlete);
+//        testAthlete.setOnClickListener(this);
+//        Button testStandard = this.findViewById(R.id.testStandard);
+//        testStandard.setOnClickListener(this);
         Button register = this.findViewById(R.id.register);
         register.setOnClickListener(this);
         emailAddress = findViewById(R.id.username);
@@ -75,20 +75,20 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.testCoach:
-                loggedInUserType = "Coach";
-                startActivity(new Intent(this, NavigationActivity.class));
-                break;
-
-            case R.id.testAthlete:
-                loggedInUserType = "Athlete";
-                startActivity(new Intent(this, NavigationActivity.class));
-                break;
-
-            case R.id.testStandard:
-                loggedInUserType = "Standard";
-                startActivity(new Intent(this, NavigationActivity.class));
-                break;
+//            case R.id.testCoach:
+//                loggedInUserType = "Coach";
+//                startActivity(new Intent(this, NavigationActivity.class));
+//                break;
+//
+//            case R.id.testAthlete:
+//                loggedInUserType = "Athlete";
+//                startActivity(new Intent(this, NavigationActivity.class));
+//                break;
+//
+//            case R.id.testStandard:
+//                loggedInUserType = "Standard";
+//                startActivity(new Intent(this, NavigationActivity.class));
+//                break;
 
             case R.id.register:
                 startActivity(new Intent(this, RegisterActivity.class));
