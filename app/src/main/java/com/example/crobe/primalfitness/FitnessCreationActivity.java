@@ -60,6 +60,7 @@ public class FitnessCreationActivity extends AppCompatActivity implements View.O
         Button addExercise = findViewById(R.id.addExercise);
         addExercise.setOnClickListener(this);
 
+
         try {
             // Create the Mobile Service Client instance, using the provided
 
@@ -95,11 +96,12 @@ public class FitnessCreationActivity extends AppCompatActivity implements View.O
         @SuppressLint("InflateParams") View popupView = layoutInflater.inflate(R.layout.popup_fitness, null);
 
         PopupWindow popupWindow = new PopupWindow(popupView,
-                LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT,
                 true);
 
         popupWindow.setTouchable(true);
         popupWindow.setFocusable(true);
+
         popupView.setBackgroundColor(Color.parseColor("#ffffff"));
 
         popupWindow.showAtLocation(popupView, Gravity.CENTER, 0, 0);

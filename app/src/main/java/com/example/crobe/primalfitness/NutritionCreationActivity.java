@@ -57,11 +57,12 @@ public class NutritionCreationActivity extends AppCompatActivity implements View
         @SuppressLint("InflateParams") View popupView = layoutInflater.inflate(R.layout.popup_nutrition, null);
 
         PopupWindow popupWindow = new PopupWindow(popupView,
-                LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT,
                 true);
 
         popupWindow.setTouchable(true);
         popupWindow.setFocusable(true);
+
         popupView.setBackgroundColor(Color.parseColor("#ffffff"));
 
         popupWindow.showAtLocation(popupView, Gravity.CENTER, 0, 0);
