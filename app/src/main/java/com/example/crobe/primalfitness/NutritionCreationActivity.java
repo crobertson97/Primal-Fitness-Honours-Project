@@ -7,10 +7,13 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,15 +32,54 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+
 public class NutritionCreationActivity extends AppCompatActivity implements View.OnClickListener {
 
     private MobileServiceClient mClient;
-    private MobileServiceTable<NutritionItem> mNutritionTable;
-    private Dialog myDialog;
+    private MobileServiceTable<ExerciseItem> mExerciseTable;
     private EditText ingredient, calories, name;
     private List<String[]> array;
     private ServiceHandler sh;
     private String planName, planType;
+    private String[] coachingLinks, emailLinks;
+    private MobileServiceTable<UserItem> mUserTable;
+    private MobileServiceTable<PlanLinkItem> mLinkTable;
+    private MobileServiceTable<NutritionItem> mNutritionTable;
+    private Dialog myDialog;
+
+
+    @SuppressLint("SetTextI18n")
+    private void callPopup() {
+
+        LayoutInflater layoutInflater = (LayoutInflater) getBaseContext()
+                .getSystemService(LAYOUT_INFLATER_SERVICE);
+
+        @SuppressLint("InflateParams") View popupView = layoutInflater.inflate(R.layout.popup_nutrition, null);
+
+        PopupWindow popupWindow = new PopupWindow(popupView,
+                LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT,
+                true);
+
+        popupWindow.setTouchable(true);
+        popupWindow.setFocusable(true);
+        popupView.setBackgroundColor(Color.parseColor("#ffffff"));
+
+        popupWindow.showAtLocation(popupView, Gravity.CENTER, 0, 0);
+        ingredient = popupView.findViewById(R.id.ingredientName);
+        calories = popupView.findViewById(R.id.calories);
+
+
+        (popupView.findViewById(R.id.add))
+                .setOnClickListener(arg0 -> {
+                    if (checkInputs()) {
+                        array.add(new String[]{ingredient.getText().toString(), calories.getText().toString()});
+                    }
+
+                    popupWindow.dismiss();
+                });
+        (popupView.findViewById(R.id.cancel))
+                .setOnClickListener(arg0 -> popupWindow.dismiss());
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +93,9 @@ public class NutritionCreationActivity extends AppCompatActivity implements View
         Button createPlan = findViewById(R.id.createRecipe);
         createPlan.setOnClickListener(this);
 
+        Button addExercise = findViewById(R.id.addFood);
+        addExercise.setOnClickListener(this);
+
         try {
             mClient = new MobileServiceClient("https://primalfitnesshonours.azurewebsites.net",this);
             mClient.setAndroidHttpClientFactory(() -> {
@@ -60,6 +105,8 @@ public class NutritionCreationActivity extends AppCompatActivity implements View
                 return client;
             });
             mNutritionTable = mClient.getTable(NutritionItem.class);
+            mUserTable = mClient.getTable(UserItem.class);
+            mLinkTable = mClient.getTable(PlanLinkItem.class);
             initLocalStore().get();
             refreshItemsFromTable();
         } catch (MalformedURLException e) {
@@ -67,15 +114,6 @@ public class NutritionCreationActivity extends AppCompatActivity implements View
         } catch (Exception e) {
             sh.createAndShowDialog(e, "Error");
         }
-    }
-
-    public void ShowPopup(View v) {
-        myDialog.setContentView(R.layout.pop_nutrition);
-        Button submitRecipe = myDialog.findViewById(R.id.submitRecipe);
-        submitRecipe.setOnClickListener(this);
-        ingredient = myDialog.findViewById(R.id.ingredientName);
-        calories = myDialog.findViewById(R.id.calories);
-        myDialog.show();
     }
 
     @Override
@@ -87,12 +125,11 @@ public class NutritionCreationActivity extends AppCompatActivity implements View
                 } else if (array.isEmpty()) {
                     Toast.makeText(this, "Please add ingredients", Toast.LENGTH_LONG).show();
                 } else {
-                    for (String[] arra : array) {
-                        planName = name.getText().toString();
-                        planType = NutritionFragment.planType;
-                        addItem(arra);
-                        Toast.makeText(this, "Recipe Added", Toast.LENGTH_LONG).show();
-                        this.finish();
+                    if (LoginActivity.loggedInUserType.equals("Coach")) {
+                        getCoachLinks();
+                    } else {
+                        addItemToDiary();
+                        addPlan();
                     }
                 }
                 break;
@@ -103,6 +140,154 @@ public class NutritionCreationActivity extends AppCompatActivity implements View
                     myDialog.dismiss();
                 }
                 break;
+
+            case R.id.addFood:
+                callPopup();
+                break;
+        }
+    }
+
+    private void getCoachLinks() {
+        if (mClient == null) {
+            return;
+        }
+
+        @SuppressLint("StaticFieldLeak") AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... params) {
+                try {
+
+                    final List<UserItem> links = mUserTable.where().field("coachLink").eq(LoginActivity.loggedInUser).execute().get();
+                    coachingLinks = new String[links.size()];
+                    emailLinks = new String[links.size()];
+                    runOnUiThread(() -> {
+                        int i = 0;
+                        for (UserItem coachLinks : links) {
+                            try {
+                                coachingLinks[i] = AESCrypt.decrypt(coachLinks.getFirstName()) + " " + AESCrypt.decrypt(coachLinks.getSurname());
+                                emailLinks[i] = coachLinks.getEmail();
+                                i++;
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+
+                        onCreateDialog(coachingLinks, emailLinks);
+                    });
+                } catch (final Exception e) {
+                    sh.createAndShowDialogFromTask(e);
+                }
+                return null;
+            }
+        };
+        sh.runAsyncTask(task);
+
+    }
+
+    public void onCreateDialog(String[] names, String[] email) {
+        ArrayList<Integer> selectedItems = new ArrayList<>();  // Where we track the selected items
+        android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(this);
+        // Set the dialog title
+        builder.setTitle("Select Athletes")
+                // Specify the list array, the items to be selected by default (null for none),
+                // and the listener through which to receive callbacks when items are selected
+                .setMultiChoiceItems(names, null,
+                        (dialog, which, isChecked) -> {
+                            if (isChecked) {
+                                selectedItems.add(which);
+                            } else {// if (selectedItems.contains(which)) {
+                                // Else, if the item is already in the array, remove it
+                                selectedItems.remove(Integer.valueOf(which));
+                            }
+                        })
+                // Set the action buttons
+                .setPositiveButton("Link", (dialog, id) -> {
+                    // User clicked OK, so save the selectedItems results somewhere
+                    // or return them to the component that opened the dialog
+                    addItemLinks(selectedItems, names, email);
+                    addPlan();
+                })
+                .setNegativeButton("Make public", (dialog, id) -> {
+                    addPlan();
+                });
+
+        builder.create().show();
+    }
+
+    public void addItemToDiary() {
+        if (mClient == null) {
+            return;
+        }
+        PlanLinkItem item = new PlanLinkItem();
+
+        try {
+            item.setPlanName(name.getText().toString());
+            item.setId(sh.createTransactionID());
+            item.setUsername(LoginActivity.loggedInUser);
+            item.setComplete(true);
+            item.setPlanType(NutritionFragment.planType);
+            item.setType("Nutrition");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        test(item);
+    }
+
+    public void addItemLinks(ArrayList<Integer> links, String[] names, String[] email) {
+        if (mClient == null) {
+            return;
+        }
+        PlanLinkItem item;
+
+        for (Object arrad : links) {
+
+            item = new PlanLinkItem();
+
+            try {
+                item.setPlanName(name.getText().toString());
+                item.setId(sh.createTransactionID());
+                item.setUsername(email[(int) arrad]);
+                item.setComplete(false);
+                item.setPlanType(NutritionFragment.planType);
+                item.setType("Nutrition");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            test(item);
+        }
+
+    }
+
+    private void test(PlanLinkItem item) {
+
+        @SuppressLint("StaticFieldLeak") AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
+
+
+            @Override
+            protected Void doInBackground(Void... params) {
+                try {
+                    addLinkItemInTable(item);
+                } catch (final Exception e) {
+                    sh.createAndShowDialogFromTask(e);
+                }
+                return null;
+            }
+        };
+        sh.runAsyncTask(task);
+    }
+
+    public void addLinkItemInTable(PlanLinkItem item) {
+        mLinkTable.insert(item);
+    }
+
+    private void addPlan() {
+        for (String[] arra : array) {
+            planName = name.getText().toString();
+            planType = NutritionFragment.planType;
+            addItem(arra);
+            Toast.makeText(this, "Plan Added", Toast.LENGTH_LONG).show();
+            this.finish();
         }
     }
 
@@ -166,6 +351,7 @@ public class NutritionCreationActivity extends AppCompatActivity implements View
     }
 
     private void refreshItemsFromTable() {
+
         @SuppressLint("StaticFieldLeak") AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... params) {
@@ -196,6 +382,7 @@ public class NutritionCreationActivity extends AppCompatActivity implements View
             item.setRecipeName(planName);
             item.setRecipeType(planType);
             item.setId(sh.createTransactionID());
+            item.setFoodName(ingredients[0]);
             item.setCalories(ingredients[1]);
             item.setCreatedBy(LoginActivity.loggedInUser);
 
@@ -222,4 +409,5 @@ public class NutritionCreationActivity extends AppCompatActivity implements View
         mNutritionTable.insert(item);
     }
 }
+
 

@@ -1,6 +1,7 @@
 package com.example.crobe.primalfitness;
 
 import android.annotation.SuppressLint;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.AsyncTask;
@@ -10,6 +11,7 @@ import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -24,7 +26,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class NutritionDiaryFragment extends Fragment {
+public class NutritionDiaryFragment extends Fragment implements View.OnClickListener {
 
     public static Boolean diary;
     public static String planSchedule;
@@ -33,6 +35,7 @@ public class NutritionDiaryFragment extends Fragment {
     private MobileServiceClient mClient;
     private MobileServiceTable<PlanLinkItem> mLinkTable;
     private ServiceHandler sh;
+    private String[] plans;
 
     public NutritionDiaryFragment() {
         // Required empty public constructor
@@ -40,8 +43,7 @@ public class NutritionDiaryFragment extends Fragment {
 
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
 
         View view = inflater.inflate(R.layout.fragment_nutrition_diary, container, false);
@@ -50,6 +52,11 @@ public class NutritionDiaryFragment extends Fragment {
         sh = new ServiceHandler(getActivity());
 
         layoutPlans = view.findViewById(R.id.scheduledPlans);
+
+        plans = new String[]{"Breakfast", "Lunch", "Dinner"};
+
+        Button addToDiary = view.findViewById(R.id.addToDiary);
+        addToDiary.setOnClickListener(this);
 
         try {
             mClient = new MobileServiceClient("https://primalfitnesshonours.azurewebsites.net", getActivity());
@@ -117,6 +124,30 @@ public class NutritionDiaryFragment extends Fragment {
             startActivity(new Intent(getActivity(), PlanItemActivity.class));
         });
         layoutPlans.addView(planOnScreen);
+    }
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.addToDiary:
+                onCreateDialog();
+                break;
+        }
+    }
+
+
+    public void onCreateDialog() {
+        android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(getActivity());
+        builder.setTitle("Select Type of Program");
+        builder.setSingleChoiceItems(plans, -1, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                NutritionFragment.planType = plans[i];
+                startActivity(new Intent(getActivity(), NutritionCreationActivity.class));
+                dialogInterface.dismiss();
+            }
+        });
+        builder.create().show();
     }
 
 
