@@ -384,13 +384,33 @@ public class PlanItemActivity extends AppCompatActivity implements View.OnClickL
         planOnScreen.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
         planOnScreen.setTextColor(Color.parseColor("#ff000000"));
         planOnScreen.setOnClickListener(view -> {
-            title = "Exercise: " + planOnScreen.getText().toString();
-            String[] meh = new String[4];
-            meh[0] = "Sets: " + item.getSetsSuggested();
-            meh[1] = "Reps: " + item.getRepsSuggested();
-            meh[2] = "Rest Sets: " + item.getRestSets() + "(mm:ss)";
-            meh[3] = "Rest Reps: " + item.getRestReps() + "(mm:ss)";
-            onCreateDialog(meh);
+            if(FitnessFragment.planType.equals("Weights")){
+                title = "Exercise: " + planOnScreen.getText().toString();
+                String[] meh = new String[5];
+                meh[0] = "Weight: " + item.getWeight() + "Kg";
+                meh[1] = "Sets: " + item.getSetsSuggested();
+                meh[2] = "Reps: " + item.getRepsSuggested();
+                meh[3] = "Rest Sets: " + item.getRestSets() + "\n(mm:ss)";
+                meh[4] = "Rest Reps: " + item.getRestReps() + "\n(mm:ss)";
+                onCreateDialog(meh);
+            } else if(FitnessFragment.planType.equals("Cardio")){
+                title = "Distance: " + planOnScreen.getText().toString();
+                String[] meh = new String[4];
+                meh[0] = "Sets: " + item.getSetsSuggested();
+                meh[1] = "Reps: " + item.getRepsSuggested();
+                meh[2] = "Rest Sets: " + item.getRestSets() + "\n(mm:ss)";
+                meh[3] = "Rest Reps: " + item.getRestReps() + "\n(mm:ss)";;
+                onCreateDialog(meh);
+            } else if(FitnessFragment.planType.equals("Calisthetics")){
+                title = "Exercise: " + planOnScreen.getText().toString();
+                String[] meh = new String[4];
+                meh[0] = "Sets: " + item.getSetsSuggested();
+                meh[1] = "Reps: " + item.getRepsSuggested();
+                meh[2] = "Rest Sets: " + item.getRestSets() + "\n(mm:ss)";
+                meh[3] = "Rest Reps: " + item.getRestReps() + "\n(mm:ss)";;
+                onCreateDialog(meh);
+            }
+
         });
         layoutPlans.addView(planOnScreen);
     }

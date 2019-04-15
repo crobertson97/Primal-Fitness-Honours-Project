@@ -120,6 +120,7 @@ public class DiaryFragment extends Fragment implements View.OnClickListener {
         planOnScreen.setOnClickListener(view -> {
             planSchedule = planOnScreen.getText().toString();
             PlanItemActivity.planView = "Fitness Diary";
+            FitnessFragment.planType = item.getPlanType();
             startActivity(new Intent(getActivity(), PlanItemActivity.class));
         });
         layoutPlans.addView(planOnScreen);

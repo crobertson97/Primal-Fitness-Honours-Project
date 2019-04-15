@@ -43,6 +43,7 @@ public class PlansToScreen extends AppCompatActivity implements View.OnClickList
         sh = new ServiceHandler(this);
 
         layoutPlans = findViewById(R.id.createdPlans);
+        this.setTitle(FitnessFragment.planType);
 
         TextView newPlan = findViewById(R.id.createPlan);
         newPlan.setOnClickListener(this);

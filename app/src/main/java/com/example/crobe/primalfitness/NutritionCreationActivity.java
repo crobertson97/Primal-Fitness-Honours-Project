@@ -135,12 +135,7 @@ public class NutritionCreationActivity extends AppCompatActivity implements View
                 }
                 break;
 
-            case R.id.submitRecipe:
-                if (checkInputs()) {
-                    array.add(new String[]{ingredient.getText().toString(), calories.getText().toString()});
-                    myDialog.dismiss();
-                }
-                break;
+
 
             case R.id.addFood:
                 callPopup();
